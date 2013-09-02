@@ -12,6 +12,13 @@ var formidable	= require('formidable'),
 
 module.exports = function () {
 
+	// Grab a logger (use sails.log if available)
+	var log = typeof sails !== 'undefined' ? sails.log : {
+		verbose: console.log,
+		warn: console.warn,
+		error: console.error
+	};
+
 	return function streamingBodyParser ( req, res, next ) {
 
 		// Should we actually do this?
@@ -112,7 +119,7 @@ module.exports = function () {
 
 			// Continue to next middleware
 			if (hasControl) {
-				console.log('passControl() :: Timed out waiting for files...');
+				log('passControl() :: Timed out waiting for files...');
 				passControl();
 			}
 
@@ -131,8 +138,8 @@ module.exports = function () {
 
 			hasControl = false;
 
-			console.log('-------- No more params allowed. --------');
-			console.log('   * NEXT :: Passing control to app...');
+			log('-------- No more params allowed. --------');
+			log('   * NEXT :: Passing control to app...');
 			console.timeEnd('streamingBodyParser waitTime');
 
 			// Cancel max-wait timer 
@@ -158,9 +165,9 @@ module.exports = function () {
 		function requestComplete (err, fields, files) {
 
 			if (err) {
-				console.error('Error in multipart upload :: ', err);
+				log.error('Error in multipart upload :: ', err);
 			}
-			else console.log('Multipart upload complete. (' + req.url + ')');
+			else log('Multipart upload complete. (' + req.url + ')');
 
 			// `end` global upload stream
 			req.files.end(err);
@@ -176,7 +183,7 @@ module.exports = function () {
 
 			// Continue to next middleware
 			if (hasControl) {
-				console.log('passControl() :: Request stream ended.');
+				log('passControl() :: Request stream ended.');
 				passControl();
 			}
 		}
@@ -224,7 +231,7 @@ module.exports = function () {
 				logPrefix	= ' * ',
 				logSuffix	= ':: file :: ' + fieldName + ', filename :: ' + filename;
 
-			console.log(logPrefix, 'IDENTIFIED',logSuffix);
+			log(logPrefix, 'IDENTIFIED',logSuffix);
 
 			// Generate unique id for fieldStream 
 			// then increment the _nextFileId auto-increment key
@@ -235,7 +242,7 @@ module.exports = function () {
 			// (i.e. start a buffer and send data there instead of emitting `data` events)
 			Resumable(fieldStream);
 
-			console.log(logPrefix, 'PAUSED',logSuffix);
+			log(logPrefix, 'PAUSED',logSuffix);
 
 			// Announce the new file on the global listener stream
 			req.files.write(fieldStream);
@@ -275,7 +282,7 @@ module.exports = function () {
 			
 			// Continue to next middleware
 			if (hasControl) {
-				console.log('passControl() :: First uploading file detected...');
+				log('passControl() :: First uploading file detected...');
 				passControl();
 			}
 		}
@@ -291,11 +298,11 @@ module.exports = function () {
 
 		 form.on('field', function (fieldName, value) {
 
-		 	// If a file has already been sent, but we run across a semantic param,
+			// If a file has already been sent, but we run across a semantic param,
 			// it's too late to include it in req.body, since the app-level code has
 			// likely already finished.  Log a warning.
 			if (anyFilesDetected) {
-				console.warn(
+				log.warn(
 					'Unable to expose body parameter `' + fieldName + '` in streaming upload ::', 
 					'Client tried to send a text parameter (' + fieldName + ') ' + 
 					'after one or more files had already been sent.\n',
@@ -304,54 +311,8 @@ module.exports = function () {
 				);
 			}
 
-		 	req.body[fieldName] = value;
-		 });
-
-
-		// Unused now
-		// function receiveParam (fieldStream) {
-
-		// 	var fieldName	= fieldStream.name,
-		// 		paramValue	= '',
-		// 		logPrefix	= ' * ',
-		// 		logSuffix	= ':: param :: ' + fieldName;
-
-		// 	console.log(logPrefix, 'IDENTIFIED',logSuffix);
-
-		// 	// If a file has already been sent, but we run across a semantic param,
-		// 	// it's too late to include it in req.body, since the app-level code has
-		// 	// likely already finished.  Log a warning.
-		// 	if (anyFilesDetected) {
-		// 		console.warn(
-		// 			'Unable to expose body parameter `' + fieldName + '` in streaming upload ::', 
-		// 			'Client tried to send a text parameter (' + fieldName + ') ' + 
-		// 			'after one or more files had already been sent.\n',
-		// 			'Make sure you always send text params first, then your files.\n',
-		// 			'(In an HTML form, it\'s as easy as making sure your inputs are listed in order.'
-		// 		);
-		// 	}
-
-		// 	fieldStream.on('data', function fieldProgress (data) {
-		// 		paramValue += data;
-		// 	});
-
-		// 	fieldStream.on('end', function fieldDone (err) {
-		// 		if (err) {
-		// 			console.error(logPrefix, 'ERROR',logSuffix);
-		// 			return;
-		// 		}
-
-		// 		// Keep track of final param value
-		// 		req.body[fieldName] = paramValue;
-
-		// 		console.log(logPrefix, 'END', logSuffix);
-		// 	});
-
-		// 	fieldStream.on('error', function fieldError (err) {
-		// 		console.error(logPrefix, 'ERROR', logSuffix);
-		// 		errors.push(err);
-		// 	});
-		// }
+			req.body[fieldName] = value;
+		});
 	};
 };
 

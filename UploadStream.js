@@ -39,13 +39,20 @@ module.exports = UploadStream;
 inherits(UploadStream, Stream);
 function UploadStream (fieldName) {
 
+	// Grab a logger (use sails.log if available)
+	var log = typeof sails !== 'undefined' ? sails.log : {
+		verbose: console.log,
+		warn: console.warn,
+		error: console.error
+	};
+
 	// Fieldname is only saved so that we can create useful logs
 	this.fieldName = fieldName;
 	if (fieldName !== 0 && fieldName !== '' && !fieldName) {
-		console.log('Unified upload stream now listening to all fields (multiple file upload)...');
+		log('Unified upload stream now listening to all fields (multiple file upload)...');
 
 	}
-	else console.log('New upload stream listening to '+ this.fieldName + '...');
+	else log('New upload stream listening to '+ this.fieldName + '...');
 
 	this.writable = true;
 	_.bindAll(this);
@@ -94,7 +101,7 @@ UploadStream.prototype.write = function( fileStream ) {
 		_id				: fileStream._id
 	};
 
-	console.log('UploadStream.write() ::', fileStream.filename);
+	log('UploadStream.write() ::', fileStream.filename);
 
 	// Listen for chunks coming down the field stream
 	// and run this.interrupt
@@ -107,7 +114,7 @@ UploadStream.prototype.write = function( fileStream ) {
 			logmsg += 'Unified (multi-upload) stream :: ';
 		}
 		else logmsg += 'Field stream :: "' + uploadStream.fieldName + '" ';
-		console.log(logmsg + 'received ' + newBytes.length + 'B chunk of "' + this.filename + '"...');
+		log(logmsg + 'received ' + newBytes.length + 'B chunk of "' + this.filename + '"...');
 
 		// Calculate the total # of bytes written on this FileStream 
 		// within this UploadStream
@@ -177,7 +184,7 @@ UploadStream.prototype.onFileData = function (newBytes, fileStream) {
 UploadStream.prototype.enforceMaxBytes = function (totalBytesWritten, fileStream) {
 
 	// Enforce combined file upload limit
-	console.log('Enforcing ' + this.maxBytes + 'B upload limit...');
+	log('Enforcing ' + this.maxBytes + 'B upload limit...');
 
 	if (totalBytesWritten > this.maxBytes) {
 
@@ -191,7 +198,7 @@ UploadStream.prototype.enforceMaxBytes = function (totalBytesWritten, fileStream
 			bytesExceeded: bytesExceeded
 		};
 
-		console.error(this.maxBytes + 'B upload limit exceeded!');
+		log.error(this.maxBytes + 'B upload limit exceeded!');
 
 		// Trigger the `end` of the upload stream, so that no more files show up,
 		// passing along a descriptive error argument
