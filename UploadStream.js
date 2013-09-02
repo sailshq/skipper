@@ -8,7 +8,9 @@ var inherits	= require('util').inherits,
 	_			= require('lodash');
 
 
-
+// TODO: 
+// implement https://npmjs.org/package/lazystream
+// to deal with `too many open files` issues that are likely to come up in production
 
 /**
  * Expose stream constructor
