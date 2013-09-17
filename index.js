@@ -13,11 +13,15 @@ var formidable	= require('formidable'),
 module.exports = function () {
 
 	// Grab a logger (use sails.log if available)
-	var log = typeof sails !== 'undefined' ? sails.log : {
-		verbose: console.log,
-		warn: console.warn,
-		error: console.error
-	};
+	var log;
+	if (typeof sails !== 'undefined') {
+		log = sails.log;
+	} else {
+		log = console.log;
+		log.verbose = function() {};
+		log.warn = console.warn;
+		log.error = console.error;
+	}
 
 	return function streamingBodyParser ( req, res, next ) {
 
