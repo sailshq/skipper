@@ -20,8 +20,16 @@ var inherits	= require('util').inherits,
 
 module.exports = UploadStream;
 
-
-
+// Grab a logger (use sails.log if available)
+var log;
+if (typeof sails !== 'undefined') {
+	log = sails.log;
+} else {
+	log = console.log;
+	log.verbose = function() {};
+	log.warn = console.warn;
+	log.error = console.error;
+}
 
 /**
 * UploadStream
@@ -40,14 +48,6 @@ module.exports = UploadStream;
 
 inherits(UploadStream, Stream);
 function UploadStream (fieldName) {
-
-	// Grab a logger (use sails.log if available)
-	var log = typeof sails !== 'undefined' ? sails.log : {
-		verbose: console.log,
-		warn: console.warn,
-		error: console.error
-	};
-
 	// Fieldname is only saved so that we can create useful logs
 	this.fieldName = fieldName;
 	if (fieldName !== 0 && fieldName !== '' && !fieldName) {
@@ -103,7 +103,7 @@ UploadStream.prototype.write = function( fileStream ) {
 		_id				: fileStream._id
 	};
 
-	log('UploadStream.write() ::', fileStream.filename);
+	log.verbose('UploadStream.write() ::', fileStream.filename);
 
 	// Listen for chunks coming down the field stream
 	// and run this.interrupt
@@ -116,7 +116,7 @@ UploadStream.prototype.write = function( fileStream ) {
 			logmsg += 'Unified (multi-upload) stream :: ';
 		}
 		else logmsg += 'Field stream :: "' + uploadStream.fieldName + '" ';
-		log(logmsg + 'received ' + newBytes.length + 'B chunk of "' + this.filename + '"...');
+		log.verbose(logmsg + 'received ' + newBytes.length + 'B chunk of "' + this.filename + '"...');
 
 		// Calculate the total # of bytes written on this FileStream 
 		// within this UploadStream
@@ -186,7 +186,7 @@ UploadStream.prototype.onFileData = function (newBytes, fileStream) {
 UploadStream.prototype.enforceMaxBytes = function (totalBytesWritten, fileStream) {
 
 	// Enforce combined file upload limit
-	log('Enforcing ' + this.maxBytes + 'B upload limit...');
+	log.verbose('Enforcing ' + this.maxBytes + 'B upload limit...');
 
 	if (totalBytesWritten > this.maxBytes) {
 
