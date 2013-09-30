@@ -1,36 +1,34 @@
-/**
- * Module dependencies
- */
+module.exports = function(log) {
+	log = require('./logger')(log);
 
-var formidable	= require('formidable'),
-	_			= require('lodash'),
-	Resumable	= require('./Resumable'),
-	UploadStream= require('./UploadStream'),
-	NoopStream	= require('./NoopStream');
+	/**
+	 * Module dependencies
+	 */
+
+	var formidable = require('formidable'),
+		_ = require('lodash'),
+		Resumable = require('./Resumable'),
+		UploadStream = require('./UploadStream')(log),
+		NoopStream = require('./NoopStream');
 
 
+	/**
+	 * File Parser
+	 *
+	 * Opinionated variant of the Connect body parser
+	 * with support for streaming monolithic file uploads 
+	 * to a compatible Waterline adapter
+	 *
+	 */
+	return function streamingBodyParser(req, res, next) {
 
-module.exports = function () {
-
-	// Grab a logger (use sails.log if available)
-	var log;
-	if (typeof sails !== 'undefined') {
-		log = sails.log;
-	} else {
-		log = console.log;
-		log.verbose = function() {};
-		log.warn = console.warn;
-		log.error = console.error;
-	}
-
-	return function streamingBodyParser ( req, res, next ) {
 
 		// Should we actually do this?
 		// (since the `Content-type` header could be wrong)
 		//
 		// if this isn't a multipart request, 
 		// continue to standard json/form data bodyParser
-		if ( ! req.is('multipart/form-data') ) {
+		if (!req.is('multipart/form-data')) {
 			next();
 			return;
 		}
@@ -64,8 +62,8 @@ module.exports = function () {
 		// Expose `req.file('fieldName')` to subsequent middleware
 		// Returns a buffered UploadStream that signals ONLY when a file
 		// is uploaded to the `fieldName` field
-		req.file = function (fieldName) {
-			if ( !fieldName && fieldName !== 0 && fieldName !== '' ) {
+		req.file = function(fieldName) {
+			if (!fieldName && fieldName !== 0 && fieldName !== '') {
 				throw new Error('Invalid usage of `req.file(\'fieldName\')`!');
 			}
 
@@ -74,7 +72,7 @@ module.exports = function () {
 				return new NoopStream();
 			}
 
-			if ( ! req.files._watchedFields[fieldName] ) {
+			if (!req.files._watchedFields[fieldName]) {
 				// Instantiate stream if it doesn't exist already
 				req.files._watchedFields[fieldName] = new UploadStream(fieldName);
 
@@ -119,7 +117,7 @@ module.exports = function () {
 		// Maximum amount of time (ms) to wait before declaring 
 		// "no files here, nope!"
 		var maxWaitTime = 50;
-		var maxWaitTimer = setTimeout(function giveUpOnFiles () {
+		var maxWaitTimer = setTimeout(function giveUpOnFiles() {
 
 			// Continue to next middleware
 			if (hasControl) {
@@ -153,7 +151,7 @@ module.exports = function () {
 			// If request stream ends, whether it's because the request was canceled
 			// the files finished uploading, or the response was sent, buffering stops,
 			// since the UploadStream stops sending data
-			
+
 			// So we're good!
 			next();
 		}
@@ -166,18 +164,17 @@ module.exports = function () {
 		 * the UploadStream, which communicates completion to other users downstream.
 		 */
 
-		function requestComplete (err, fields, files) {
+		function requestComplete(err, fields, files) {
 
 			if (err) {
 				log.error('Error in multipart upload :: ', err);
-			}
-			else log('Multipart upload complete. (' + req.url + ')');
+			} else log('Multipart upload complete. (' + req.url + ')');
 
 			// `end` global upload stream
 			req.files.end(err);
 
 			// Notify any existing field upload streams
-			_.each(req.files._watchedFields, function (stream) {
+			_.each(req.files._watchedFields, function(stream) {
 				stream.end(err);
 			});
 
@@ -194,17 +191,16 @@ module.exports = function () {
 
 
 
-
 		/**
 		 * Triggered when a new FieldStream is first detected in the UploadStream
 		 *
 		 * @param {Stream} fieldStream
 		 */
 
-		function receiveFieldStream (fieldStream) {
+		function receiveFieldStream(fieldStream) {
 
-			var fieldName	= fieldStream.name,
-				isFile		= !!fieldStream.filename;
+			var fieldName = fieldStream.name,
+				isFile = !! fieldStream.filename;
 
 
 			// Handle file streams manually
@@ -230,12 +226,12 @@ module.exports = function () {
 		 */
 
 		function receiveFile(fieldStream) {
-			var fieldName	= fieldStream.name,
-				filename	= fieldStream.filename,
-				logPrefix	= ' * ',
-				logSuffix	= ':: file :: ' + fieldName + ', filename :: ' + filename;
+			var fieldName = fieldStream.name,
+				filename = fieldStream.filename,
+				logPrefix = ' * ',
+				logSuffix = ':: file :: ' + fieldName + ', filename :: ' + filename;
 
-			log(logPrefix, 'IDENTIFIED',logSuffix);
+			log(logPrefix, 'IDENTIFIED', logSuffix);
 
 			// Generate unique id for fieldStream 
 			// then increment the _nextFileId auto-increment key
@@ -246,7 +242,7 @@ module.exports = function () {
 			// (i.e. start a buffer and send data there instead of emitting `data` events)
 			Resumable(fieldStream);
 
-			log(logPrefix, 'PAUSED',logSuffix);
+			log(logPrefix, 'PAUSED', logSuffix);
 
 			// Announce the new file on the global listener stream
 			req.files.write(fieldStream);
@@ -268,7 +264,7 @@ module.exports = function () {
 			// parameters as, for all intents and purposes, loaded, then start running 
 			// app-level code.  If any more semantic params show up, we'll ignore them
 			// and flash a warning.
-			if ( !anyFilesDetected ) {
+			if (!anyFilesDetected) {
 				receiveFirstFile();
 			}
 		}
@@ -279,11 +275,11 @@ module.exports = function () {
 		 * Triggered when a file is received for the first time
 		 */
 
-		function receiveFirstFile () {
+		function receiveFirstFile() {
 
 			// Flag that first file has been received
 			anyFilesDetected = true;
-			
+
 			// Continue to next middleware
 			if (hasControl) {
 				log('passControl() :: First uploading file detected...');
@@ -300,15 +296,15 @@ module.exports = function () {
 		 * @param {Stream} fieldStream
 		 */
 
-		 form.on('field', function (fieldName, value) {
+		form.on('field', function(fieldName, value) {
 
 			// If a file has already been sent, but we run across a semantic param,
 			// it's too late to include it in req.body, since the app-level code has
 			// likely already finished.  Log a warning.
 			if (anyFilesDetected) {
 				log.warn(
-					'Unable to expose body parameter `' + fieldName + '` in streaming upload ::', 
-					'Client tried to send a text parameter (' + fieldName + ') ' + 
+					'Unable to expose body parameter `' + fieldName + '` in streaming upload ::',
+					'Client tried to send a text parameter (' + fieldName + ') ' +
 					'after one or more files had already been sent.\n',
 					'Make sure you always send text params first, then your files.\n',
 					'(In an HTML form, it\'s as easy as making sure your inputs are listed in order.'
@@ -319,4 +315,3 @@ module.exports = function () {
 		});
 	};
 };
-
