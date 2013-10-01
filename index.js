@@ -1,10 +1,5 @@
 module.exports = function(options) {
 	
-	// Use log if specified
-	options = options || {};
-	var log = require('./logger')(options.log);
-
-
 	/**
 	 * Module dependencies
 	 */
@@ -12,8 +7,20 @@ module.exports = function(options) {
 	var formidable = require('formidable'),
 		_ = require('lodash'),
 		Resumable = require('./Resumable'),
-		UploadStream = require('./UploadStream')(log),
+		UploadStream = require('./UploadStream'),
 		NoopStream = require('./NoopStream');
+
+
+	// Apply defaults
+	options = options || {};
+	_.defaults(options, {
+		maxWaitTime: 50
+	});
+	// Instantiate logger
+	var log = require('./logger')(options.log);
+
+	// Pass logger down to dependencies that need it
+	UploadStream = UploadStream(log);
 
 
 	/**
@@ -27,15 +34,14 @@ module.exports = function(options) {
 	return function streamingBodyParser(req, res, next) {
 
 
-		// Should we actually do this?
-		// (since the `Content-type` header could be wrong)
-		//
-		// if this isn't a multipart request, 
-		// continue to standard json/form data bodyParser
-		// if (!req.is('multipart/form-data')) {
-		// 	next();
-		// 	return;
-		// }
+		// If this isn't a multipart request,
+		// go ahead and parse everything as text parameters
+		// (using underlying Connect bodyParser)
+		// and continue to next middleware
+		if (!req.is('multipart/form-data')) {
+			log('Not a multipart request...');
+			parseAsTextParams(passControl);
+		}
 
 		// Reset the auto-increment id for this request
 		// This is used to uniquely identify part/file streams 
@@ -125,29 +131,56 @@ module.exports = function(options) {
 
 		// Maximum amount of time (ms) to wait before declaring 
 		// "no files here, nope!"
-		var maxWaitTime = 50;
 		var maxWaitTimer = setTimeout(function giveUpOnFiles() {
 
-			// Continue to next middleware
-			if (hasControl) {
-				log('passControl() :: Timed out waiting for files...');
-				passControl();
+			// If this isn't a multipart request,
+			// go ahead and parse everything as text parameters
+			// (using underlying Connect bodyParser)
+			// and continue to next middleware
+			if ( !anyFilesDetected ) {
+				log('Timed out waiting for files...');
+				return passControl();
 			}
 
-		}, maxWaitTime);
+		}, options.maxWaitTime);
+
+
+		/**
+		 * Defer to the underlying Connect bodyParser
+		 * to parse requests which do not contain multipart file uploads
+		 */
+		function parseAsTextParams (cb) {
+
+			// Stub `req.files` and `req.file()`
+			// to allow for consistent usage in subequent middleware
+			// no matter the type of request
+			req.file = function () { return new NoopStream(); };
+			req.files = new NoopStream();
+
+			// Pass through to connect bodyParser
+			var bodyParser = require('connect').bodyParser();
+			return bodyParser(req,res,cb);
+		}
 
 
 
 		/**
-		 * Called when either the first file has been detected
-		 * or the maximum allowed wait-time has passed
+		 * Called the first time one of the following occurs:
+		 * -> the first file has been detected
+		 * -> the request closes
+		 * -> the maximum allowed wait-time has passed
 		 *
-		 * At this point, all non-binary params should be populated in req.body.
+		 * At this point, we can reasonable expect that all non-binary params
+		 * i.e. req.params.all(), should be populated in req.body.
 		 */
 
-		function passControl() {
+		function passControl(err) {
 
+			// Spinlock/CV
+			if (!hasControl) return;
 			hasControl = false;
+
+			if (err) return next(err);
 
 			log('-------- No more params allowed. --------');
 			log('   * NEXT :: Passing control to app...');
@@ -176,26 +209,33 @@ module.exports = function(options) {
 		function requestComplete(err, fields, files) {
 
 			if (err) {
-				log.error('Error in multipart upload :: ', err);
-			} else log('Multipart upload complete. (' + req.url + ')');
+				log.error('Error in multipart request stream :: ', err);
+			}
+			else log('Multipart request stream ended (' + req.url + ')');
 
-			// `end` global upload stream
+			console.log('fields!',fields);
+			console.log('files!',files);
+
+			// Notify global upload stream (`end`)
 			req.files.end(err);
 
-			// Notify any existing field upload streams
+			// Notify any existing field upload streams (`end`)
 			_.each(req.files._watchedFields, function(stream) {
 				stream.end(err);
 			});
 
-			// Flag request as closed so that subsequent field upload streams 
-			// will promptly end
+			// Flag request as closed
+			// This will force field upload streams added in subsequent middleware
+			// with req.file() (i.e. user code) to end promptly
 			reqClosed = true;
 
-			// Continue to next middleware
-			if (hasControl) {
-				log('passControl() :: Request stream ended.');
-				passControl();
-			}
+			// If no files were detected, go ahead and parse everything 
+			// as text parameters and continue to next middleware
+			// if (!anyFilesDetected) {
+			//	return parseAsTextParams(passControl);
+			// }
+
+			return passControl();
 		}
 
 
@@ -221,6 +261,7 @@ module.exports = function(options) {
 			// let formidable handle all non-file parts
 			form.handlePart(fieldStream);
 
+			console.log('*****------>> text param received :: ', fieldName);
 			// If the parameter is not a file, then it is a param
 			// receiveParam(fieldStream);
 		}
@@ -290,10 +331,8 @@ module.exports = function(options) {
 			anyFilesDetected = true;
 
 			// Continue to next middleware
-			if (hasControl) {
-				log('passControl() :: First uploading file detected...');
-				passControl();
-			}
+			log('First uploading file detected...');
+			return passControl();
 		}
 
 

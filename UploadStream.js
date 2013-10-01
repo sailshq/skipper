@@ -136,6 +136,8 @@ module.exports = function(log) {
 
 
 	/**
+	 * Notify listeners on the stream that the upload is complete.
+	 *
 	 * If err set, emit `error`, otherwise emit `end` event.
 	 */
 
