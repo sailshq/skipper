@@ -67,8 +67,12 @@ module.exports = function(options) {
 		// Returns a buffered UploadStream that signals ONLY when a file
 		// is uploaded to the `fieldName` field
 		req.file = function(fieldName) {
-			if (!fieldName && fieldName !== 0 && fieldName !== '') {
-				throw new Error('Invalid usage of `req.file(\'fieldName\')`!');
+
+			if ( ! validFieldName(fieldName) ) {
+				throw new Error(
+					'Invalid usage of `req.file(\'fieldName\')`!' + '\n' +
+					'`' + fieldName + '` is not a valid field name.'
+				);
 			}
 
 			// If the request has already ended, return a noop stream
@@ -76,11 +80,10 @@ module.exports = function(options) {
 				return new NoopStream();
 			}
 
+			// Instantiate stream if it doesn't exist already
+			// Save reference to fieldName (for use in logging)
 			if (!req.files._watchedFields[fieldName]) {
-				// Instantiate stream if it doesn't exist already
 				req.files._watchedFields[fieldName] = new UploadStream(fieldName);
-
-				// Save reference to fieldName for kicks
 				req.files._watchedFields[fieldName].fieldName = fieldName;
 			}
 
@@ -100,9 +103,11 @@ module.exports = function(options) {
 		// Build form obj using formidable
 		var form = new formidable.IncomingForm();
 
-		// Receive each formidable FieldStream as it becomes available
+		// Subscribe listener to receive each formidable
+		// FieldStream as it becomes available
 		form.onPart = receiveFieldStream;
 
+		// Tell Formidable to start parsing the the upload stream
 		// `requestComplete` (Formidable's callback) is triggered 
 		// when all FieldStreams have ended
 		form.parse(req, requestComplete);
@@ -289,6 +294,23 @@ module.exports = function(options) {
 				log('passControl() :: First uploading file detected...');
 				passControl();
 			}
+		}
+
+
+
+		/**
+		 * validFieldName
+		 *
+		 * @param {String|Number} fieldName
+		 * @returns whether `fieldName` is valid
+		 */
+
+		function validFieldName (fieldName) {
+			return !_.isUndefined(fieldName) && (
+				_.isString(fieldName) ||
+				_.isFinite(fieldName) ||
+				fieldName === 0
+			);
 		}
 
 
