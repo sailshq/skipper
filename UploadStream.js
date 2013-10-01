@@ -33,7 +33,7 @@ module.exports = function(log) {
 	 * @implements Resumeable
 	 * @extends {Stream}
 	 */
-
+	inherits(UploadStream, Stream);
 	function UploadStream(fieldName) {
 		// Fieldname is only saved so that we can create useful logs
 		this.fieldName = fieldName;
@@ -61,7 +61,6 @@ module.exports = function(log) {
 		this.maxBytesPerFile = 1000 * 1000 * 25; // 25MB
 
 	}
-	inherits(UploadStream, Stream);
 
 
 

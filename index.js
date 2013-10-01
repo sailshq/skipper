@@ -1,5 +1,9 @@
-module.exports = function(log) {
-	log = require('./logger')(log);
+module.exports = function(options) {
+	
+	// Use log if specified
+	options = options || {};
+	var log = require('./logger')(options.log);
+
 
 	/**
 	 * Module dependencies
@@ -28,10 +32,10 @@ module.exports = function(log) {
 		//
 		// if this isn't a multipart request, 
 		// continue to standard json/form data bodyParser
-		if (!req.is('multipart/form-data')) {
-			next();
-			return;
-		}
+		// if (!req.is('multipart/form-data')) {
+		// 	next();
+		// 	return;
+		// }
 
 		// Reset the auto-increment id for this request
 		// This is used to uniquely identify part/file streams 
