@@ -5,13 +5,15 @@
  * Then fall back to global `sails.log[.*]()`, if available.
  * Finally, default to `console.log[.*]()`
  */
-module.exports = function Logger (log) {
+module.exports = function Logger (options) {
 
-	if (typeof log !== 'undefined') return log;
+	options = options || {};
+
+	if (typeof options.log !== 'undefined') return log;
 	if (typeof sails !== 'undefined') return sails.log;
 		
 	// Build comatible fallback logger
-	log = getLogger('log');
+	var log = getLogger('log');
 	log.info = getLogger('log');
 	log.debug = getLogger('log');
 	log.verbose = function() {};
@@ -21,6 +23,9 @@ module.exports = function Logger (log) {
 	// Based on console
 	function getLogger (type) {
 		return function consoleLog () {
+			// Disable all but errors in production
+			if (options.environment === 'production' && type !== 'error') return;
+
 			var args = Array.prototype.slice.call(arguments);
 			console[type].apply(console, args);
 		};

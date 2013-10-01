@@ -1,5 +1,5 @@
-module.exports = function(log) {
-	log = require('./logger')(log);
+module.exports = function(options) {
+	var log = require('./logger')(options);
 
 	/**
 	 * Module dependencies

@@ -14,13 +14,14 @@ module.exports = function(options) {
 	// Apply defaults
 	options = options || {};
 	_.defaults(options, {
-		maxWaitTime: 50
+		maxWaitTime: 50,
+		environment: 'production'
 	});
 	// Instantiate logger
-	var log = require('./logger')(options.log);
+	var log = require('./logger')(options);
 
 	// Pass logger down to dependencies that need it
-	UploadStream = UploadStream(log);
+	UploadStream = UploadStream(options);
 
 
 	/**
@@ -33,6 +34,15 @@ module.exports = function(options) {
 	 */
 	return function streamingBodyParser(req, res, next) {
 
+		// Spinlock to keep track of whether the stream parser has control
+		var hasControl = true;
+
+		// DEBUG:
+		// Measure how long passes between the first run of the middleware
+		// and the detection of the first file
+		if (options.environment !== 'production') {
+			console.time('streamingBodyParser waitTime');
+		}
 
 		// If this isn't a multipart request,
 		// go ahead and parse everything as text parameters
@@ -40,19 +50,13 @@ module.exports = function(options) {
 		// and continue to next middleware
 		if (!req.is('multipart/form-data')) {
 			log('Not a multipart request...');
-			parseAsTextParams(passControl);
+			return parseAsTextParams(passControl);
 		}
 
 		// Reset the auto-increment id for this request
 		// This is used to uniquely identify part/file streams 
 		// across different UploadStreams and adapters.
 		var _nextFileId = 0;
-
-
-		// DEBUG:
-		// Measure how long passes between the first run of the middleware
-		// and the detection of the first file
-		console.time('streamingBodyParser waitTime');
 
 		// Aggregate any errors that occur
 		var errors = [];
@@ -102,23 +106,6 @@ module.exports = function(options) {
 		// TODO:	support jQuery file upload out of the box
 
 
-		// Keep track of whether the stream parser has control
-		var hasControl = true;
-
-
-		// Build form obj using formidable
-		var form = new formidable.IncomingForm();
-
-		// Subscribe listener to receive each formidable
-		// FieldStream as it becomes available
-		form.onPart = receiveFieldStream;
-
-		// Tell Formidable to start parsing the the upload stream
-		// `requestComplete` (Formidable's callback) is triggered 
-		// when all FieldStreams have ended
-		form.parse(req, requestComplete);
-
-
 		// Whether or not the body params have been captured and parsed.
 		// Notably, this is declared `true` as soon as first file has been 
 		// detected, since you should always be sending your semantic fields
@@ -131,6 +118,7 @@ module.exports = function(options) {
 
 		// Maximum amount of time (ms) to wait before declaring 
 		// "no files here, nope!"
+		log(':::::::::::::: SET TIMEOUT :::::::::::::::');
 		var maxWaitTimer = setTimeout(function giveUpOnFiles() {
 
 			// If this isn't a multipart request,
@@ -138,11 +126,23 @@ module.exports = function(options) {
 			// (using underlying Connect bodyParser)
 			// and continue to next middleware
 			if ( !anyFilesDetected ) {
-				log('Timed out waiting for files...');
+				log('Timed out after waiting for files for ' + options.maxWaitTime + 'ms...');
 				return passControl();
 			}
 
 		}, options.maxWaitTime);
+
+		// Build form obj using formidable
+		var form = new formidable.IncomingForm();
+
+		// Subscribe listener to receive each formidable
+		// FieldStream as it becomes available
+		form.onPart = receiveFieldStream;
+
+		// Tell Formidable to start parsing the the upload stream
+		// `requestComplete` (Formidable's callback) is triggered 
+		// when all FieldStreams have ended
+		form.parse(req, requestComplete);
 
 
 		/**
@@ -176,26 +176,28 @@ module.exports = function(options) {
 
 		function passControl(err) {
 
-			// Spinlock/CV
-			if (!hasControl) return;
-			hasControl = false;
-
-			if (err) return next(err);
-
-			log('-------- No more params allowed. --------');
-			log('   * NEXT :: Passing control to app...');
-			console.timeEnd('streamingBodyParser waitTime');
 
 			// Cancel max-wait timer 
 			// (since we could have gotten here via other means)
+			log.verbose(':::::::::::::: CLEARED TIMEOUT :::::::::::::::');
 			clearTimeout(maxWaitTimer);
 
 			// If request stream ends, whether it's because the request was canceled
 			// the files finished uploading, or the response was sent, buffering stops,
 			// since the UploadStream stops sending data
 
+			// Spinlock/CV
+			if (!hasControl) return;
+			hasControl = false;
+			log('-------- No more params allowed. --------');
+			if (options.environment !== 'production') {
+				console.timeEnd('streamingBodyParser waitTime');
+			}
+			log('   * NEXT :: Passing control to app...');
+
 			// So we're good!
-			next();
+			// (pass on error, if one exists)
+			return next(err);
 		}
 
 
@@ -212,9 +214,6 @@ module.exports = function(options) {
 				log.error('Error in multipart request stream :: ', err);
 			}
 			else log('Multipart request stream ended (' + req.url + ')');
-
-			console.log('fields!',fields);
-			console.log('files!',files);
 
 			// Notify global upload stream (`end`)
 			req.files.end(err);
@@ -258,12 +257,55 @@ module.exports = function(options) {
 				return;
 			}
 
-			// let formidable handle all non-file parts
-			form.handlePart(fieldStream);
+			// If the parameter is not a file, then it is a text param
+			receiveTextParameter(fieldStream);
+		}
 
-			console.log('*****------>> text param received :: ', fieldName);
-			// If the parameter is not a file, then it is a param
-			// receiveParam(fieldStream);
+
+
+		/**
+		 * Triggered when a FieldStream is first identified as a semantic parameter
+		 * (i.e. not a file)
+		 *
+		 * @param {Stream} fieldStream
+		 */
+
+		function receiveTextParameter (fieldStream) {
+
+			var fieldName = fieldStream.name,
+				value = '',
+				StringDecoder = require('string_decoder').StringDecoder,
+				decoder = new StringDecoder(form.encoding);
+
+			fieldStream.on('data', function(buffer) {
+				form._fieldsSize += buffer.length;
+				if (form._fieldsSize > form.maxFieldsSize) {
+					form._error(new Error('maxFieldsSize exceeded, received ' + form._fieldsSize + ' bytes of field data'));
+					return;
+				}
+				value += decoder.write(buffer);
+			});
+
+			fieldStream.on('end', function() {
+				
+				log('!!!!! Saving text parameter (' + fieldName + ')...');
+
+				// If a file has already been sent, but we run across a semantic param,
+				// it's too late to include it in req.body, since the app-level code has
+				// likely already finished.  Log a warning.
+				if (anyFilesDetected) {
+					log.error(
+						'Unable to expose body parameter `' + fieldName + '` in streaming upload!\n',
+						'Client tried to send a text parameter (' + fieldName + ') ' +
+						'after one or more files had already been sent.\n',
+						'Make sure you always send text params first, then your files.\n',
+						'(In an HTML form, it\'s as easy as making sure your inputs are listed in that order.'
+					);
+				}
+
+				// Save param
+				req.body[fieldName] = value;
+			});
 		}
 
 
@@ -281,7 +323,7 @@ module.exports = function(options) {
 				logPrefix = ' * ',
 				logSuffix = ':: file :: ' + fieldName + ', filename :: ' + filename;
 
-			log(logPrefix, 'IDENTIFIED', logSuffix);
+			log('Identified file in `' + fieldName + '`');
 
 			// Generate unique id for fieldStream 
 			// then increment the _nextFileId auto-increment key
@@ -292,7 +334,7 @@ module.exports = function(options) {
 			// (i.e. start a buffer and send data there instead of emitting `data` events)
 			Resumable(fieldStream);
 
-			log(logPrefix, 'PAUSED', logSuffix);
+			log('Paused file in `' + fieldName + '`');
 
 			// Announce the new file on the global listener stream
 			req.files.write(fieldStream);
@@ -353,30 +395,5 @@ module.exports = function(options) {
 		}
 
 
-
-		/**
-		 * Triggered when a FieldStream is first identified as a semantic parameter
-		 * (i.e. not a file)
-		 *
-		 * @param {Stream} fieldStream
-		 */
-
-		form.on('field', function(fieldName, value) {
-
-			// If a file has already been sent, but we run across a semantic param,
-			// it's too late to include it in req.body, since the app-level code has
-			// likely already finished.  Log a warning.
-			if (anyFilesDetected) {
-				log.warn(
-					'Unable to expose body parameter `' + fieldName + '` in streaming upload ::',
-					'Client tried to send a text parameter (' + fieldName + ') ' +
-					'after one or more files had already been sent.\n',
-					'Make sure you always send text params first, then your files.\n',
-					'(In an HTML form, it\'s as easy as making sure your inputs are listed in order.'
-				);
-			}
-
-			req.body[fieldName] = value;
-		});
 	};
 };
