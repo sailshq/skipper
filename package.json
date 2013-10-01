@@ -1,6 +1,6 @@
 {
   "name": "file-parser",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Opinionated variant of the Connect body parser with support for streaming monolithic file uploads to a compatible Waterline adapter",
   "main": "index.js",
   "directories": {},
