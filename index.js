@@ -24,6 +24,16 @@ module.exports = function(options) {
 	UploadStream = UploadStream(options);
 
 
+	// Instantiate relevant connect bodyParsers
+	// (for parsing text params in req.body)
+	var bodyParsers = {
+		urlencoded: require('connect').urlencoded(),
+		json: require('connect').json()
+	};
+
+
+
+
 	/**
 	 * File Parser
 	 *
@@ -157,9 +167,12 @@ module.exports = function(options) {
 			req.file = function () { return new NoopStream(); };
 			req.files = new NoopStream();
 
-			// Pass through to connect bodyParser
-			var bodyParser = require('connect').bodyParser();
-			return bodyParser(req,res,cb);
+			// Pass textual body through to the relevant body parsers
+			bodyParsers.urlencoded(req, res, function (err) {
+				if (err) return cb(err);
+				bodyParsers.json(req,res, cb);
+			});
+			return;
 		}
 
 
