@@ -17,6 +17,8 @@ module.exports = {
 
 		var PARAM_TO_INSPECT_FOR_FILES = 'file';
 
+		sails.log('Check out all these params!', req.params.all());
+
 		var incomingFileStream = req.file(PARAM_TO_INSPECT_FOR_FILES);
 
 		// Create File of type `binary`
@@ -34,7 +36,7 @@ module.exports = {
 			if (err) return res.serverError(err);
 			if (!files || !_.keys(files).length) {
 				return res.badRequest([{
-					message: 'No files were uploaded as parameter.',
+					message: 'No files were uploaded to the `'+PARAM_TO_INSPECT_FOR_FILES+'` parameter.',
 					files: files
 				}]);
 			}
