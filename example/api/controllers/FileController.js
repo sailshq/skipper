@@ -20,12 +20,13 @@ module.exports = {
 		sails.log('Check out all these params!', req.params.all());
 
 		var incomingFileStream = req.file(PARAM_TO_INSPECT_FOR_FILES);
+		var streamOfAllIncomingFiles = req.files;
 
 		// Create File of type `binary`
 		File.write(incomingFileStream, {
 
 			// 25MB max upload at a time
-			maxBytes: 25 * 1000 * 1000,
+			maxBytes: 55 * 1000 * 1000,
 
 			// Optional map function for generating the name of the file when it is stored in the adapter
 			// (nonsense-ified mutation of the original filename, i.e. `downloadName`)
@@ -40,6 +41,11 @@ module.exports = {
 					files: files
 				}]);
 			}
+
+			// Trying to get files from a field
+			// which was not used to upload files
+			// will return a NoopStream:
+			// req.file('foobar');
 
 			res.json({
 				message: _.keys(files).length + ' files uploaded!',

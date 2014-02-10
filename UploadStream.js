@@ -40,7 +40,7 @@ module.exports = function(options) {
 		if (fieldName !== 0 && fieldName !== '' && !fieldName) {
 			log('Unified upload stream now listening to all fields (multiple file upload)...');
 
-		} else log('New upload stream listening to ' + this.fieldName + '...');
+		} else log('Instantiated an upload stream for the file detected in `' + this.fieldName + '`...');
 
 		this.writable = true;
 		_.bindAll(this);
@@ -57,8 +57,8 @@ module.exports = function(options) {
 		Resumeable(this);
 
 		// Default options
-		this.maxBytes = 1000 * 1000 * 1000; // 1GB
-		this.maxBytesPerFile = 1000 * 1000 * 25; // 25MB
+		this.maxBytes = 1000 * 1000 * 5; // 5MB
+		this.maxBytesPerFile = 1000 * 1000 * 5; // 5MB
 
 	}
 

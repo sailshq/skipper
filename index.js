@@ -6,6 +6,7 @@ module.exports = function(options) {
 
 	var formidable = require('formidable'),
 		_ = require('lodash'),
+		util = require('util'),
 		Resumable = require('./Resumable'),
 		UploadStream = require('./UploadStream'),
 		NoopStream = require('./NoopStream');
@@ -15,7 +16,7 @@ module.exports = function(options) {
 	options = options || {};
 	_.defaults(options, {
 		maxWaitTime: 50,
-		environment: 'production'
+		// environment: 'production'
 	});
 	// Instantiate logger
 	var log = require('./logger')(options);
@@ -95,8 +96,17 @@ module.exports = function(options) {
 				);
 			}
 
+			log('`req.file("'+fieldName+'")` was accessed...');
+
+
+			// TODO: figure out why this was here-- it causes issues when req.file()
+			// is not accessed immediately...
+			// 
+			// log('Here\'s what I have for that field stream currently:', req.files._watchedFields[fieldName]);
 			// If the request has already ended, return a noop stream
-			if (reqClosed) {
+			var fileIsBeingUploaded = req.files._watchedFields[fieldName];
+			if (reqClosed && !fileIsBeingUploaded) {
+				log('Creating a NoopStream to represent `'+fieldName+'`');
 				return new NoopStream();
 			}
 
@@ -112,8 +122,6 @@ module.exports = function(options) {
 
 		// TODO:	if socket exists with matching session id, 
 		//			subscribe it to progress updates for the upload stream(s)
-
-		// TODO:	support jQuery file upload out of the box
 
 
 		// Whether or not the body params have been captured and parsed.
@@ -183,8 +191,13 @@ module.exports = function(options) {
 		 * -> the request closes
 		 * -> the maximum allowed wait-time has passed
 		 *
-		 * At this point, we can reasonable expect that all non-binary params
-		 * i.e. req.params.all(), should be populated in req.body.
+		 * At this point, we can reasonable expect that all non-binary 
+		 * params, i.e. req.params.all(), should be populated in req.body.
+		 *
+		 * NOTE:
+		 * This function may actually be called more than once.  It uses
+		 * the `hasControl` closure variable to prevent it from actually
+		 * triggering the callback multiple times.
 		 */
 
 		function passControl(err) {
@@ -195,14 +208,17 @@ module.exports = function(options) {
 			log.verbose(':::::::::::::: CLEARED TIMEOUT :::::::::::::::');
 			clearTimeout(maxWaitTimer);
 
-			// If request stream ends, whether it's because the request was canceled
-			// the files finished uploading, or the response was sent, buffering stops,
-			// since the UploadStream stops sending data
+			// If formidable finishes parsing the request stream, whether it's because
+			// the request was canceled, the files finished uploading, or the response was sent,
+			// buffering stops, since the UploadStream stops sending data.
 
 			// Spinlock/CV
+			// (make sure we only actually passControl() once)
 			if (!hasControl) return;
 			hasControl = false;
-			log('-------- No more params allowed. --------');
+
+
+			log('-------- No more non-file params allowed. --------');
 			if (options.environment !== 'production') {
 				console.timeEnd('streamingBodyParser waitTime');
 			}
@@ -219,14 +235,22 @@ module.exports = function(options) {
 		 * Triggered when formidable is finished parsing/uploading
 		 * (all FieldStreams have ended).  Main purpose here is to end
 		 * the UploadStream, which communicates completion to other users downstream.
+		 *
+		 * The `fields` and `files` arguments which you might expect to find as the 2nd and 3rd
+		 * arguments are actually useless, since we're manually overriding formidable's `onPart`
+		 * handler.
+		 *
+		 * @param {Error} err
 		 */
 
-		function requestComplete(err, fields, files) {
+		function requestComplete (err) {
 
 			if (err) {
-				log.error('Error in multipart request stream :: ', err);
+				log.error('Finished parsing multipart request stream, but with error :: ', err);
 			}
-			else log('Multipart request stream ended (' + req.url + ')');
+			else log('Finished parsing multipart request stream (' + req.url + ')');
+
+			// log('The following files were parsed ::', );
 
 			// Notify global upload stream (`end`)
 			req.files.end(err);

@@ -30,6 +30,18 @@ module.exports.routes = {
     view: 'homepage'
   },
 
+  '/file/upload': function (req, res, next) {
+
+    sails.log('Waiting to proceed to controller on purpose...');
+
+    // Experiment-- force the request to wait
+    var MS = 500;
+    setTimeout(function (){
+      sails.log(MS+'ms have elapsed. Proceeding to controller...');
+      next();
+    }, MS);
+  },
+
 
   // Custom routes here...
 
