@@ -23,7 +23,7 @@ module.exports = {
 		File.write(incomingFileStream, {
 
 			// 25MB max upload at a time
-			maxBytes: 25,
+			maxBytes: 25 * 1000 * 1000,
 
 			// Optional map function for generating the name of the file when it is stored in the adapter
 			// (nonsense-ified mutation of the original filename, i.e. `downloadName`)
