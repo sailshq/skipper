@@ -177,13 +177,13 @@ module.exports = function(options) {
 			var bytesExceeded = totalBytesWritten - this.maxBytes;
 			var quotaExceededError = {
 				status: 'Forbidden',
-				message: 'Quota exceeded :: ' + totalBytesWritten + 'B upload exceeds quota (' + this.maxBytes + 'B) by ' + bytesExceeded + 'B.',
+				message: 'Quota exceeded :: ' + totalBytesWritten + 'B upload exceeds `maxBytes` (' + this.maxBytes + 'B) by ' + bytesExceeded + 'B.  Upload cancelled.',
 				totalBytesWritten: totalBytesWritten,
 				maxBytes: this.maxBytes,
 				bytesExceeded: bytesExceeded
 			};
 
-			log.error(this.maxBytes + 'B upload limit exceeded!');
+			// log.error(this.maxBytes + 'B upload limit exceeded!');
 
 			// Trigger the `end` of the upload stream, so that no more files show up,
 			// passing along a descriptive error argument
