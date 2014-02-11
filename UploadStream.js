@@ -62,14 +62,14 @@ module.exports = function(options) {
 		_.bindAll(this);
 
 		// Keep track of the things which are consuming this upload stream
-		this.attachedTo = [];
+		this.connectedTo = [];
 
 		// Keep track of files written through this stream
 		this.files = {};
 		this.fileStreams = {};
 
 		// Zero out global bytesWritten counter
-		// (byte sum of ALL files uploaded via this UploadStream)
+		// (byte sum of ALL files uploaded via THIS UploadStream)
 		this._bytesWritten = 0;
 
 		// Immediately pause and buffer stream
@@ -200,7 +200,7 @@ module.exports = function(options) {
 		log('     files :: '+_.pluck(this.files, 'filename') );
 		log('     bytes received :: '+this._bytesWritten);
 
-		console.log('ENDING UPLOAD STREAM ('+this.fieldName+') WITH ERROR:',err);
+		console.log('ENDING UPLOAD STREAM ('+this.fieldName+')' + (err ? ' WITH ERROR:'+err : ''));
 
 		// Cancel maxBufferTimer
 		clearTimeout(this.maxBufferTimer);

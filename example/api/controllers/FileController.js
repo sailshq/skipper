@@ -14,18 +14,15 @@ module.exports = {
 	// finish before the end of the request stream, since the request is sending lots of binary data 
 	// Still, we should make sure and handle this case-- so... TODO (Mike): patch file-parser
 	upload: function(req, res) {
+		sails.log('Text body params available when the request reaches the controller:\n', req.body);
 
 		var PARAM_TO_INSPECT_FOR_FILES = 'hm';
-
-		sails.log('Check out all these params!', req.params.all());
-
-		var incomingFileStream = req.file(PARAM_TO_INSPECT_FOR_FILES);
-		// var streamOfAllIncomingFiles = req.files;
+		var uploadStream = req.file(PARAM_TO_INSPECT_FOR_FILES);
 
 		// Create File of type `binary`
-		var stream = File.write(incomingFileStream, {
+		var stream = File.write(uploadStream, {
 
-			// 50MB cumulative max per request
+			// Cumulative bytes allowed per request on this uploadstream
 			maxBytes: 50 * 1000,
 
 			// Optional map function for generating the name of the file when it is stored in the adapter
