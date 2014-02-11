@@ -23,7 +23,7 @@ module.exports = {
 		var stream = File.write(uploadStream, {
 
 			// Cumulative bytes allowed per request on this uploadstream
-			maxBytes: 50 * 1000,
+			maxBytes: 20 * 1000,
 
 			// Optional map function for generating the name of the file when it is stored in the adapter
 			// (nonsense-ified mutation of the original filename, i.e. `downloadName`)
@@ -31,31 +31,36 @@ module.exports = {
 
 		}, function allUploadsComplete(err, files) {
 
-			if (err) return res.serverError(err);
-			if (!files || !_.keys(files).length) {
-				return res.badRequest([{
-					message: 'No files were uploaded to the `'+PARAM_TO_INSPECT_FOR_FILES+'` parameter.',
+			sails.log(
+				require('util').format(
+					'File adapter triggered callback with %s and %s.',
+					Object.keys(files).length + ' files',
+					err ? 'an error: '+err : 'no error.'
+				)
+			);
+
+			setTimeout(function waitAWhileToBeEvenMoreOrnery () {
+
+				if (err) return res.serverError(err);
+				if (!files || !_.keys(files).length) {
+					return res.badRequest([{
+						message: 'No files were uploaded to the `'+PARAM_TO_INSPECT_FOR_FILES+'` parameter.',
+						files: files
+					}]);
+				}
+
+				var kb = _.reduce(files, function (b, file) {
+					return b+file.size;
+				}, 0);
+				kb /= 1000;
+				sails.log('Sending response-- uploaded ~'+kb+'KB...');
+				res.json({
+					message: _.keys(files).length + ' files uploaded!',
 					files: files
-				}]);
-			}
+				});
 
+			}, 2000);
 
-			// stream.maxBytes = 
-
-			// Trying to get files from a field
-			// which was not used to upload files
-			// will return a NoopStream:
-			// req.file('foobar');
-
-			var kb = _.reduce(files, function (b, file) {
-				return b+file.size;
-			}, 0);
-			kb /= 1000;
-			sails.log('Sending response-- uploaded ~'+kb+'KB...');
-			res.json({
-				message: _.keys(files).length + ' files uploaded!',
-				files: files
-			});
 		});
 	}
 };

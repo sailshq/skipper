@@ -24,7 +24,7 @@ module.exports = function(options) {
 
 		// maxBufferTime is the maximum # of ms to wait for an uploadStream
 		// to be used before dropping it.
-		maxBufferTime: 2500,
+		maxBufferTime: 250,
 
 		environment: 'production'
 	});
