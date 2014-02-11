@@ -1,17 +1,20 @@
+/**
+ * Module dependencies
+ */
+
+var formidable = require('formidable'),
+	_ = require('lodash'),
+	Connect = require('connect'),
+	util = require('util'),
+	StringDecoder = require('string_decoder').StringDecoder,
+	Logger = require('./lib/logger'),
+	Resumable = require('./lib/resumable'),
+	UploadStream = require('./lib/UploadStream'),
+	NoopStream = require('./lib/NoopStream');
+
+
 module.exports = function(options) {
 	
-	/**
-	 * Module dependencies
-	 */
-
-	var formidable = require('formidable'),
-		_ = require('lodash'),
-		util = require('util'),
-		Resumable = require('./Resumable'),
-		UploadStream = require('./UploadStream'),
-		NoopStream = require('./NoopStream');
-
-
 	// Apply defaults
 	options = options || {};
 	_.defaults(options, {
@@ -25,8 +28,9 @@ module.exports = function(options) {
 
 		environment: 'production'
 	});
+
 	// Instantiate logger
-	var log = require('./logger')(options);
+	var log = Logger(options);
 
 	// Pass logger down to dependencies that need it
 	UploadStream = UploadStream(options);
@@ -35,8 +39,8 @@ module.exports = function(options) {
 	// Instantiate relevant connect bodyParsers
 	// (for parsing text params in req.body)
 	var bodyParsers = {
-		urlencoded: require('connect').urlencoded(),
-		json: require('connect').json()
+		urlencoded: Connect.urlencoded(),
+		json: Connect.json()
 	};
 
 
@@ -62,6 +66,9 @@ module.exports = function(options) {
 			console.time('streamingBodyParser waitTime');
 		}
 
+		// TODO: prevent the request from ever making it here if it
+		// isn't explicitly "multipart".
+
 		// If this isn't a multipart request,
 		// go ahead and parse everything as text parameters
 		// (using underlying Connect bodyParser)
@@ -80,6 +87,7 @@ module.exports = function(options) {
 		var errors = [];
 
 		// Clear out req.body so it can hold the body params
+		// (there shouldn't be anything in it anyways)
 		req.body = req.body || {};
 
 
@@ -321,7 +329,6 @@ module.exports = function(options) {
 
 			var fieldName = fieldStream.name,
 				value = '',
-				StringDecoder = require('string_decoder').StringDecoder,
 				decoder = new StringDecoder(form.encoding);
 
 			fieldStream.on('data', function(buffer) {
