@@ -35,7 +35,7 @@ module.exports.routes = {
     sails.log('Waiting to proceed to controller on purpose...');
 
     // Experiment-- force the request to wait
-    var MS = 500;
+    var MS = 1000;
     setTimeout(function (){
       sails.log(MS+'ms have elapsed. Proceeding to controller...');
       next();

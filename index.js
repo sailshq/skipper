@@ -15,8 +15,15 @@ module.exports = function(options) {
 	// Apply defaults
 	options = options || {};
 	_.defaults(options, {
-		maxWaitTime: 50,
-		// environment: 'production'
+		
+		// maxWaitTime is the maximum # of ms to wait for the first file
+		maxWaitTime: 50, 
+
+		// maxBufferTime is the maximum # of ms to wait for an uploadStream
+		// to be used before dropping it.
+		maxBufferTime: 2500,
+
+		environment: 'production'
 	});
 	// Instantiate logger
 	var log = require('./logger')(options);
@@ -78,11 +85,12 @@ module.exports = function(options) {
 
 		// Expose `req.files` to subsequent middleware
 		// (buffered UploadStream that signals when any file is uploaded)
-		req.files = new UploadStream();
+		// TODO: bring req.files back eventually
+		// req.files = new UploadStream();
 
 		// Set of buffered UploadStreams that watch particular fields
 		// and signal when a file is uploaded to their field
-		req.files._watchedFields = {};
+		var _watchedFields = {};
 
 		// Expose `req.file('fieldName')` to subsequent middleware
 		// Returns a buffered UploadStream that signals ONLY when a file
@@ -99,23 +107,23 @@ module.exports = function(options) {
 			log('`req.file("'+fieldName+'")` was accessed...');
 
 
-			// log('Here\'s what I have for that field stream currently:', req.files._watchedFields[fieldName]);
+			// log('Here\'s what I have for that field stream currently:', _watchedFields[fieldName]);
 			// If the request has already ended, return a noop stream
-			var fileIsBeingUploaded = req.files._watchedFields[fieldName];
-			if (reqClosed) {    // && !fileIsBeingUploaded) {
+			var fileIsBeingUploaded = _watchedFields[fieldName];
+			if (reqClosed && !fileIsBeingUploaded) {
 				log('Creating a NoopStream to represent `'+fieldName+'`');
 				return new NoopStream();
 			}
 
 			// Instantiate stream if it doesn't exist already
 			// Save reference to fieldName (for use in logging)
-			if (!req.files._watchedFields[fieldName]) {
+			if (!_watchedFields[fieldName]) {
 				log('Creating a new UploadStream to represent `'+fieldName+'`');
-				req.files._watchedFields[fieldName] = new UploadStream(fieldName);
-				req.files._watchedFields[fieldName].fieldName = fieldName;
+				_watchedFields[fieldName] = new UploadStream(fieldName);
+				_watchedFields[fieldName].fieldName = fieldName;
 			}
 
-			return req.files._watchedFields[fieldName];
+			return _watchedFields[fieldName];
 		};
 
 		// TODO:	if socket exists with matching session id, 
@@ -135,7 +143,11 @@ module.exports = function(options) {
 		// Maximum amount of time (ms) to wait before declaring 
 		// "no files here, nope!"
 		log(':::::::::::::: SET TIMEOUT :::::::::::::::');
-		var maxWaitTimer = setTimeout(function giveUpOnFiles() {
+		var maxWaitTimer = setTimeout(function giveUpWaitingForFileParams() {
+
+			// This callback should only be triggered for quite large request payloads,
+			// or when a user sends a MPU with a text parameter AFTER one or more file
+			// parameters.
 
 			// If this isn't a multipart request,
 			// go ahead and parse everything as text parameters
@@ -171,7 +183,7 @@ module.exports = function(options) {
 			// to allow for consistent usage in subequent middleware
 			// no matter the type of request
 			req.file = function () { return new NoopStream(); };
-			req.files = new NoopStream();
+			// req.files = new NoopStream();
 
 			// Pass textual body through to the relevant body parsers
 			bodyParsers.urlencoded(req, res, function (err) {
@@ -251,10 +263,10 @@ module.exports = function(options) {
 			// log('The following files were parsed ::', );
 
 			// Notify global upload stream (`end`)
-			req.files.end(err);
+			// req.files.end(err);
 
 			// Notify any existing field upload streams (`end`)
-			_.each(req.files._watchedFields, function(stream) {
+			_.each(_watchedFields, function(stream) {
 				stream.end(err);
 			});
 
@@ -334,7 +346,7 @@ module.exports = function(options) {
 						'Client tried to send a text parameter (' + fieldName + ') ' +
 						'after one or more files had already been sent.\n',
 						'Make sure you always send text params first, then your files.\n',
-						'(In an HTML form, it\'s as easy as making sure your inputs are listed in that order.'
+						'(In an HTML form, it\'s as easy as making sure your text inputs are listed before your file inputs.'
 					);
 				}
 
@@ -372,7 +384,7 @@ module.exports = function(options) {
 			log('Paused file in `' + fieldName + '`');
 
 			// Announce the new file on the global listener stream
-			req.files.write(fieldStream);
+			// req.files.write(fieldStream);
 
 			// Find or create a listener stream for this particular field
 			var specificUploadStream = req.file(fieldName);

@@ -16,7 +16,8 @@ module.exports.connections = {
 
   // Local disk storage for file uploads.
   tmpDirectoryOnLocalFilesystem: {
-    adapter: 'sails-local-fs'
+    adapter: 'sails-local-fs',
+    pathPrefix: '.tmp/foo'
   },
 
 
