@@ -99,13 +99,10 @@ module.exports = function(options) {
 			log('`req.file("'+fieldName+'")` was accessed...');
 
 
-			// TODO: figure out why this was here-- it causes issues when req.file()
-			// is not accessed immediately...
-			// 
 			// log('Here\'s what I have for that field stream currently:', req.files._watchedFields[fieldName]);
 			// If the request has already ended, return a noop stream
 			var fileIsBeingUploaded = req.files._watchedFields[fieldName];
-			if (reqClosed && !fileIsBeingUploaded) {
+			if (reqClosed) {    // && !fileIsBeingUploaded) {
 				log('Creating a NoopStream to represent `'+fieldName+'`');
 				return new NoopStream();
 			}
@@ -113,6 +110,7 @@ module.exports = function(options) {
 			// Instantiate stream if it doesn't exist already
 			// Save reference to fieldName (for use in logging)
 			if (!req.files._watchedFields[fieldName]) {
+				log('Creating a new UploadStream to represent `'+fieldName+'`');
 				req.files._watchedFields[fieldName] = new UploadStream(fieldName);
 				req.files._watchedFields[fieldName].fieldName = fieldName;
 			}
@@ -144,7 +142,7 @@ module.exports = function(options) {
 			// (using underlying Connect bodyParser)
 			// and continue to next middleware
 			if ( !anyFilesDetected ) {
-				log('Timed out after waiting for files for ' + options.maxWaitTime + 'ms...');
+				log('*** Timed out after waiting for files for ' + options.maxWaitTime + 'ms...');
 				return passControl();
 			}
 

@@ -1,14 +1,21 @@
-module.exports = function(options) {
-	var log = require('./logger')(options);
-
 	/**
 	 * Module dependencies
 	 */
 
 	var inherits = require('util').inherits,
 		Stream = require('stream'),
-		Resumeable = require('./Resumable'),
+		util = require('util');
 		_ = require('lodash');
+
+module.exports = function(options) {
+	var log = require('./logger')(options);
+
+
+	// Require Resumeable inside of wrapper function
+	// to guarantee there are no memory collisions.
+	// This should be replaced with proper node stream
+	// buffering when formidable is compatible  (or we replace it...)
+	var Resumeable = require('./Resumable');
 
 
 	// TODO: 
@@ -20,14 +27,23 @@ module.exports = function(options) {
 	/**
 	 * UploadStream
 	 *
-	 * A stream of signal events, each of which contains
-	 * a paused multipart stream from Formidable.
+	 * A stream of signal events, where each signal event contains
+	 * a paused multipart "fileStream" from Formidable.
 	 *
-	 * Paused on initiatialization (resume with `instance.resume()`)
-	 * Resumed automatically by any compatible streaming binary adapter
-	 * in Sails.
+	 * Examples of uploadstreams:
+	 * + req.file('foo')
+	 * + req.files
+	 * + req.file('bar')
 	 *
-	 * NOTE: UploadStreams are paused upon instantiation
+	 * NOTE: UploadStreams are paused upon instantiation!
+	 * (resume with `instance.resume()`)
+	 * Resumed automatically by any compatible streaming
+	 * binary adapter in Sails.
+	 *
+	 * This can be made more versatile in the future.
+	 * Currently, it is using a custom pause/resume implementation
+	 * because formidable is not compatible with the latest Node streams
+	 * implementation.
 	 *
 	 * @implements Writable
 	 * @implements Resumeable
@@ -57,8 +73,8 @@ module.exports = function(options) {
 		Resumeable(this);
 
 		// Default options
-		this.maxBytes = 1000 * 1000 * 5; // 5MB
-		this.maxBytesPerFile = 1000 * 1000 * 5; // 5MB
+		this.maxBytes = 1000 * 1000 * 25; // 25MB
+		this.maxBytesPerFile = 1000 * 1000 * 25; // 25MB
 
 	}
 
@@ -142,6 +158,12 @@ module.exports = function(options) {
 	 */
 
 	UploadStream.prototype.end = function(err) {
+		log();
+		log(' * `end()` was called on an UploadStream ::');
+		if (this.fieldName) log('     '+this.fieldName);
+		if (err) log('     ERROR:',err);
+		log('     files :: '+_.pluck(this.files, 'filename') );
+		log('     bytes received :: '+this._bytesWritten);
 		this.emit('end', err);
 	};
 
@@ -169,9 +191,8 @@ module.exports = function(options) {
 	UploadStream.prototype.enforceMaxBytes = function(totalBytesWritten, fileStream) {
 
 		// Enforce combined file upload limit
-		log.verbose('Enforcing ' + this.maxBytes + 'B upload limit...');
-
 		if (totalBytesWritten > this.maxBytes) {
+			// log('Enforcing ' + this.maxBytes + 'B upload limit..!  Quota exceeded!');
 
 			// Build error object
 			var bytesExceeded = totalBytesWritten - this.maxBytes;
@@ -183,11 +204,13 @@ module.exports = function(options) {
 				bytesExceeded: bytesExceeded
 			};
 
-			// log.error(this.maxBytes + 'B upload limit exceeded!');
+			log.error(this.maxBytes + 'B upload limit exceeded!');
 
 			// Trigger the `end` of the upload stream, so that no more files show up,
 			// passing along a descriptive error argument
 			this.end(quotaExceededError);
+
+
 
 			// This DOES NOT, however, trigger the end of the current field/part stream.
 			// But is that even what we want to do?  Yes, and here's why:
@@ -201,7 +224,31 @@ module.exports = function(options) {
 			// Let's say we're listening through `req.files` to a file upload sent with the form-data
 			// field name "foo".  If the file violates a constraint, it will be rejected not only
 			// on `req.files`, but also on `req.file('foo')`
+
+			// This line prevents incoming data events from continuing to write to this stream.
 			fileStream.removeAllListeners('data');
+
+
+			log(fileStream);
+
+			// Now we've prevented more incoming data from hitting us, and we know that this stream
+			// is essentially dead.  If this is the universal stream, do nothing.
+			// TODO: do something smarter and make the universal stream still work.
+			if ( !fileStream.fieldName ) {
+				var doSomethingSmarter;
+				log('Universal file upload stream was halted because it exceeded `maxBytes`.');
+				return;
+			}
+
+			// If this is the stream for a specific file listener, subtract the bytes of the
+			// stream from the totalBytesWritten that we're tracking.  Since that will be garbage-collected
+			// anyway, this allows us to ignore the big file and continue to upload other files, since we may
+			// still be able to upload them without exceeding maxBytes.
+			else {
+				log('File upload stream for '+fileStream.fieldName+' was halted because `maxBytes` was exceeded.');
+				// this._bytesWritten -= 
+				
+			}
 		}
 	};
 

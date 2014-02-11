@@ -16,7 +16,7 @@ module.exports = function Logger (options) {
 	var log = getLogger('log');
 	log.info = getLogger('log');
 	log.debug = getLogger('log');
-	log.verbose = function() {};
+	log.verbose = function() {}; //getLogger('log');
 	log.warn = getLogger('warn');
 	log.error = getLogger('error');
 

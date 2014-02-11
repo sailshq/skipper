@@ -15,18 +15,18 @@ module.exports = {
 	// Still, we should make sure and handle this case-- so... TODO (Mike): patch file-parser
 	upload: function(req, res) {
 
-		var PARAM_TO_INSPECT_FOR_FILES = 'file';
+		var PARAM_TO_INSPECT_FOR_FILES = 'hm';
 
 		sails.log('Check out all these params!', req.params.all());
 
 		var incomingFileStream = req.file(PARAM_TO_INSPECT_FOR_FILES);
-		var streamOfAllIncomingFiles = req.files;
+		// var streamOfAllIncomingFiles = req.files;
 
 		// Create File of type `binary`
 		File.write(incomingFileStream, {
 
 			// 25MB max upload at a time
-			maxBytes: 55 * 1000 * 1000,
+			maxBytes: 25 * 1000 * 1000,
 
 			// Optional map function for generating the name of the file when it is stored in the adapter
 			// (nonsense-ified mutation of the original filename, i.e. `downloadName`)
@@ -47,6 +47,11 @@ module.exports = {
 			// will return a NoopStream:
 			// req.file('foobar');
 
+			var kb = _.reduce(files, function (b, file) {
+				return b+file.size;
+			}, 0);
+			kb /= 1000;
+			sails.log('Sending response-- uploaded ~'+kb+'KB...');
 			res.json({
 				message: _.keys(files).length + ' files uploaded!',
 				files: files
