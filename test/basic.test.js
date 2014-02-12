@@ -24,8 +24,7 @@ describe('basic usage', function() {
 
 
 
-	it('bind a file upload action', function () {
-
+	it('bind a file uploader action', function () {
 		suite.app.post('/upload', actionFixtures.uploadAvatar);
 	});
 
@@ -36,13 +35,7 @@ describe('basic usage', function() {
 		// Builds an HTTP request
 		var httpRequest = Uploader({
 			baseurl: 'http://localhost:3000'
-		}, function onResponse (err, res, body) {
-			if (err) return done(err);
-			if (res.statusCode >= 300) {
-				return done(new Error(util.format('Server responded with %s :: %s', res.statusCode, body)));
-			}
-			done();
-		});
+		}, toValidateTheHTTPResponse(done));
 
 		// Attaches a multi-part form upload to the HTTP request:
 		var form = httpRequest.form();
@@ -59,4 +52,26 @@ describe('basic usage', function() {
 	});
 
 });
+
+
+
+
+
+
+/**
+ * toValidateTheHTTPResponse
+ * 
+ * @param  {Function} done [description]
+ * @return {Function} callback for HTTP request- checks that response is ok
+ */
+
+function toValidateTheHTTPResponse (done) {
+	return function validateHTTPResponse (err, res, body) {
+		if (err) return done(err);
+		if (res.statusCode >= 300) {
+			return done(new Error(util.format('Server responded with %s :: %s', res.statusCode, body)));
+		}
+		done();
+	};
+}
 
