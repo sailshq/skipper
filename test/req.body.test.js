@@ -8,7 +8,7 @@ var Lifecycle = require('./helpers/lifecycle')
 	, util = require('util')
 	, assert = require('assert')
 	, toValidateTheHTTPResponse = require('./helpers/toValidateTheHTTPResponse')
-	, newReceiverStream = require('../helpers/receiver').newReceiverStream
+	, newReceiverStream = require('./helpers/receiver').newReceiverStream
 	, fsx = require('fs-extra');
 
 
