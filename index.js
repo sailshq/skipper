@@ -2,36 +2,72 @@
  * Module dependencies
  */
 
-var _ = require('lodash');
+var _ = require('lodash')
+	, applyDefaultOptions = require('./lib/defaults');
 
 
 
+/**
+ * file-parser
+ *
+ * 
+ * 
+ * @param  {Object|nil} options
+ * @return {Middleware}
+ */
+module.exports = function configure (options) {
+	options = applyDefaultOptions(options);
 
-module.exports = function (options) {
+	return function middleware (req, res, next) {
 
-		// Apply defaults
-		options = options || {};
-		_.defaults(options, {
-			
-			// maxWaitTime is the maximum # of ms to wait for the first file
-			maxWaitTime: 50, 
+		// Expose `req.file(...)` method
+		req.file = acquireUploadStream;
 
-			// maxBufferTime is the maximum # of ms to wait for an UploadStream
-			// to be plugged in to something (i.e. buffering the incoming bytes)
-			// before dropping it.
-			maxBufferTime: 250
-
-		});
-
-
-		return function (req, res, next) {
-			next();
-		};
+		next();
+	};
 };
 
 
 
 
+
+/**
+ * Given an EventEmitter which emits incoming file streams
+ * as they are detected, return a readable stream that
+ * can be reconstituted using Substack's emitStream
+ * (https://github.com/substack/emit-stream#example)
+ * 
+ * @param  {EventEmitter} emitter
+ * @return {Stream}
+ */
+function UploadStream ( emitter ) {
+	var Readable = require('stream').Readable;
+	var rs = new Readable();
+	rs.push('um');
+	rs.push(null);
+	return rs;
+
+	// todo: make it actually do things
+}
+
+
+
+/**
+ * Find the uploadStream with `fieldName`, or
+ * create it for the first time if necessary.
+ * 
+ * @param  {[type]} fieldName [description]
+ * @return {[type]}           [description]
+ */
+var uploadStreams = [];
+function acquireUploadStream ( fieldName ) {
+	var existingStream = _.find(uploadStreams, {
+		fieldName: fieldName
+	});
+	if (existingStream) return existingStream;
+	
+	return new UploadStream();
+}
 
 
 
