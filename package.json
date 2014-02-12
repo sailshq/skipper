@@ -27,6 +27,9 @@
   },
   "devDependencies": {
     "fs-extra": "~0.8.1",
-    "temporary": "0.0.8"
+    "temporary": "0.0.8",
+    "express": "~3.4.8",
+    "request": "~2.33.0",
+    "concat-stream": "~1.4.1"
   }
 }
