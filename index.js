@@ -32,7 +32,7 @@ module.exports = function(options) {
 	// Instantiate logger
 	var log = Logger(options);
 
-	// Pass logger down to dependencies that need it
+	// Pass options down to dependencies that need it
 	UploadStream = UploadStream(options);
 
 
@@ -116,15 +116,18 @@ module.exports = function(options) {
 
 
 			// log('Here\'s what I have for that field stream currently:', _watchedFields[fieldName]);
-			// If the request has already ended, return a noop stream
+			
+			// If the request has already been completely parsed,
+			// and the file is not currently being uploaded,
+			// return a noop stream.
 			var fileIsBeingUploaded = _watchedFields[fieldName];
 			if (reqClosed && !fileIsBeingUploaded) {
 				log('Creating a NoopStream to represent `'+fieldName+'`');
 				return new NoopStream();
 			}
 
-			// Instantiate stream if it doesn't exist already
-			// Save reference to fieldName (for use in logging)
+			// Instantiate UploadStream if it doesn't exist already
+			// Save reference to fieldName to identify the UploadStream.
 			if (!_watchedFields[fieldName]) {
 				log('Creating a new UploadStream to represent `'+fieldName+'`');
 				_watchedFields[fieldName] = new UploadStream(fieldName);
@@ -172,12 +175,12 @@ module.exports = function(options) {
 		var form = new formidable.IncomingForm();
 
 		// Subscribe listener to receive each formidable
-		// FieldStream as it becomes available
-		form.onPart = receiveFieldStream;
+		// partstream as it becomes available.
+		form.onPart = receivePartStream;
 
 		// Tell Formidable to start parsing the the upload stream
 		// `requestComplete` (Formidable's callback) is triggered 
-		// when all FieldStreams have ended
+		// when all PartStreams have ended
 		form.parse(req, requestComplete);
 
 
@@ -251,12 +254,12 @@ module.exports = function(options) {
 
 		/**
 		 * Triggered when formidable is finished parsing/uploading
-		 * (all FieldStreams have ended).  Main purpose here is to end
+		 * (all PartStreams have ended).  Main purpose here is to end
 		 * the UploadStream, which communicates completion to other users downstream.
 		 *
 		 * The `fields` and `files` arguments which you might expect to find as the 2nd and 3rd
-		 * arguments are actually useless, since we're manually overriding formidable's `onPart`
-		 * handler.
+		 * arguments from formidable are actually not present, since we're manually overriding
+		 * formidable's `onPart` handler.
 		 *
 		 * @param {Error} err
 		 */
@@ -273,6 +276,8 @@ module.exports = function(options) {
 			// Notify global upload stream (`end`)
 			// req.files.end(err);
 
+			// TODO: remove this!  We can't end the streams!
+			// What if they haven't finished persisting to the adapter yet?
 			// Notify any existing field upload streams (`end`)
 			_.each(_watchedFields, function(stream) {
 				stream.end(err);
@@ -295,43 +300,44 @@ module.exports = function(options) {
 
 
 		/**
-		 * Triggered when a new FieldStream is first detected in the UploadStream
+		 * Triggered when a new PartStream is first detected in the UploadStream
 		 *
-		 * @param {Stream} fieldStream
+		 * @param {Stream} partStream
 		 */
 
-		function receiveFieldStream(fieldStream) {
+		function receivePartStream( partStream ) {
 
-			var fieldName = fieldStream.name,
-				isFile = !! fieldStream.filename;
+			var fieldName = partStream.name,
+				isFile = !! partStream.filename;
 
 
 			// Handle file streams manually
+			// (now we know that this PartStream is actually a FileStream)
 			if (isFile) {
-				receiveFile(fieldStream);
+				receiveFile(partStream);
 				return;
 			}
 
 			// If the parameter is not a file, then it is a text param
-			receiveTextParameter(fieldStream);
+			receiveTextParameter(partStream);
 		}
 
 
 
 		/**
-		 * Triggered when a FieldStream is first identified as a semantic parameter
-		 * (i.e. not a file)
+		 * Triggered when a PartStream is first identified as a semantic
+		 * (text) parameter (i.e. not a file)
 		 *
-		 * @param {Stream} fieldStream
+		 * @param {Stream} partStream
 		 */
 
-		function receiveTextParameter (fieldStream) {
+		function receiveTextParameter (partStream) {
 
-			var fieldName = fieldStream.name,
+			var fieldName = partStream.name,
 				value = '',
 				decoder = new StringDecoder(form.encoding);
 
-			fieldStream.on('data', function(buffer) {
+			partStream.on('data', function(buffer) {
 				form._fieldsSize += buffer.length;
 				if (form._fieldsSize > form.maxFieldsSize) {
 					form._error(new Error('maxFieldsSize exceeded, received ' + form._fieldsSize + ' bytes of field data'));
@@ -340,7 +346,7 @@ module.exports = function(options) {
 				value += decoder.write(buffer);
 			});
 
-			fieldStream.on('end', function() {
+			partStream.on('end', function() {
 				
 				log('!!!!! Saving text parameter (' + fieldName + ')...');
 
@@ -365,35 +371,37 @@ module.exports = function(options) {
 
 
 		/**
-		 * Triggered when a FieldStream is first definitively identified as a multi-part
-		 * file upload ( i.e. has `filename` property )
+		 * Triggered when a FileStream is received on a field.
+		 * ( i.e. a formidable partstream that has the `filename` property )
 		 *
-		 * @param {Stream} fieldStream
+		 * @param {Stream} fileStream
 		 */
 
-		function receiveFile(fieldStream) {
-			var fieldName = fieldStream.name,
-				filename = fieldStream.filename,
+		function receiveFile (fileStream) {
+			var fieldName = fileStream.name,
+				filename = fileStream.filename,
 				logPrefix = ' * ',
 				logSuffix = ':: file :: ' + fieldName + ', filename :: ' + filename;
 
-			log('Identified file in `' + fieldName + '`');
+			console.log('\nIdentified a file `'+filename+'` in field: `' + fieldName + '`');
 
-			// Generate unique id for fieldStream 
+			// Generate unique id for fileStream 
 			// then increment the _nextFileId auto-increment key
-			fieldStream._id = _nextFileId;
+			fileStream._id = _nextFileId;
 			_nextFileId++;
 
 			// Implements Resumable interface on stream-- pausing it immediately
-			// (i.e. start a buffer and send data there instead of emitting `data` events)
-			Resumable(fieldStream);
+			// (i.e. start a buffer and send data there instead of emitting `data`
+			// events) This must happen BEFORE pausing the UploadStream, so we
+			// don't miss any data events.
+			Resumable(fileStream);
 
-			log('Paused file in `' + fieldName + '`');
+			// console.log('Paused file ('+filename+') in UploadStream: `' + fieldName + '`');
 
-			// Announce the new file on the global listener stream
-			// req.files.write(fieldStream);
+			// Announce the new file on the global UploadStream
+			// req.files.write(fileStream);
 
-			// Find or create a listener stream for this particular field
+			// Find or create an UploadStream to listen for this particular field
 			var specificUploadStream = req.file(fieldName);
 
 			// Then announce the new file on it either way, since UploadStreams are
@@ -403,7 +411,7 @@ module.exports = function(options) {
 			//		any writes we do now will be replayed when the UploadStream
 			//		is resumed by the adapter.
 			//
-			specificUploadStream.write(fieldStream);
+			specificUploadStream.write(fileStream);
 
 
 			// If this is the first file field we've discovered, declare the semantic

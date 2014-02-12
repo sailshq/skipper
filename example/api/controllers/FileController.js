@@ -14,7 +14,7 @@ module.exports = {
 	// finish before the end of the request stream, since the request is sending lots of binary data 
 	// Still, we should make sure and handle this case-- so... TODO (Mike): patch file-parser
 	upload: function(req, res) {
-		sails.log('Text body params available when the request reaches the controller:\n', req.body);
+		sails.log('Request reached the controller.  `req.body` ===', req.body);
 
 		var PARAM_TO_INSPECT_FOR_FILES = 'hm';
 		var uploadStream = req.file(PARAM_TO_INSPECT_FOR_FILES);
@@ -23,7 +23,7 @@ module.exports = {
 		var stream = File.write(uploadStream, {
 
 			// Cumulative bytes allowed per request on this uploadstream
-			maxBytes: 20 * 1000,
+			maxBytes: 20 * 1000 * 1000 * 1000,
 
 			// Optional map function for generating the name of the file when it is stored in the adapter
 			// (nonsense-ified mutation of the original filename, i.e. `downloadName`)
@@ -31,17 +31,38 @@ module.exports = {
 
 		}, function allUploadsComplete(err, files) {
 
-			sails.log(
-				require('util').format(
-					'File adapter triggered callback with %s and %s.',
-					Object.keys(files).length + ' files',
-					err ? 'an error: '+err : 'no error.'
-				)
-			);
+			if (!err && typeof files === 'object') {
+				sails.log(
+					require('util').format(
+						'File adapter triggered callback with %s and %s.',
+						Object.keys(files).length + ' files',
+						err ? 'an error: '+err : 'no error.'
+					)
+				);
+			}
+			else {
+				sails.log.error(
+					require('util').format(
+						'File adapter triggered callback with an error: '+err
+					)
+				);
+				return res.serverError(err);
+			}
+
+			var megabytes = _.reduce(files, function (b, file) {
+				return b+file.size;
+			}, 0);
+			megabytes /= 1000000;
+			sails.log('Uploaded ~'+megabytes+' MB across '+Object.keys(files).length+' different files...');
+
+			console.log();
+			console.log();
+			console.log();
+			sails.log('Now waiting for 2000ms on purpose...');
 
 			setTimeout(function waitAWhileToBeEvenMoreOrnery () {
-
 				if (err) return res.serverError(err);
+
 				if (!files || !_.keys(files).length) {
 					return res.badRequest([{
 						message: 'No files were uploaded to the `'+PARAM_TO_INSPECT_FOR_FILES+'` parameter.',
@@ -49,11 +70,7 @@ module.exports = {
 					}]);
 				}
 
-				var kb = _.reduce(files, function (b, file) {
-					return b+file.size;
-				}, 0);
-				kb /= 1000;
-				sails.log('Sending response-- uploaded ~'+kb+'KB...');
+				sails.log('Done!');
 				res.json({
 					message: _.keys(files).length + ' files uploaded!',
 					files: files
