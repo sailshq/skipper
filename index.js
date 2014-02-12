@@ -6,7 +6,6 @@ var _ = require('lodash')
 	, applyDefaultOptions = require('./lib/defaults');
 
 
-
 /**
  * file-parser
  *
@@ -18,13 +17,39 @@ var _ = require('lodash')
 module.exports = function configure (options) {
 	options = applyDefaultOptions(options);
 
+
 	return function middleware (req, res, next) {
 
+		// Namespace a property on `req` for file-parser to use.
+		req._fileparser = {
+			upstreams: []  // Track upstreams in play
+		};
+
 		// Expose `req.file(...)` method
-		req.file = acquireUploadStream;
+		req.file = toAcquireUploadStream(req);
 
 		next();
 	};
+
+
+	function toAcquireUploadStream (req) {
+
+		/**
+		 * Find the uploadStream with `fieldName`, or
+		 * create it for the first time if necessary.
+		 * 
+		 * @param  {[type]} fieldName [description]
+		 * @return {[type]}           [description]
+		 */
+		return function acquireUploadStream ( fieldName ) {
+			var existingStream = _.find(req._fileparser.upstreams, {
+				fieldName: fieldName
+			});
+			if (existingStream) return existingStream;
+			
+			return newUpstream();
+		};
+	}
 };
 
 
@@ -32,6 +57,7 @@ module.exports = function configure (options) {
 
 
 /**
+ * Possible future implementation of UploadStream:
  * Given an EventEmitter which emits incoming file streams
  * as they are detected, return a readable stream that
  * can be reconstituted using Substack's emitStream
@@ -40,34 +66,54 @@ module.exports = function configure (options) {
  * @param  {EventEmitter} emitter
  * @return {Stream}
  */
-function UploadStream ( emitter ) {
-	var Readable = require('stream').Readable;
-	var rs = new Readable();
-	rs.push('um');
-	rs.push(null);
-	return rs;
-
-	// todo: make it actually do things
-}
-
 
 
 /**
- * Find the uploadStream with `fieldName`, or
- * create it for the first time if necessary.
- * 
- * @param  {[type]} fieldName [description]
- * @return {[type]}           [description]
+ * For now: factory
+ * @return {stream.Readable}
  */
-var uploadStreams = [];
-function acquireUploadStream ( fieldName ) {
-	var existingStream = _.find(uploadStreams, {
-		fieldName: fieldName
-	});
-	if (existingStream) return existingStream;
-	
-	return new UploadStream();
+function newUpstream ( emitter ) {
+	var Readable = require('stream').Readable;
+	var __rs = new Readable({objectMode: true});
+	__rs._read = function onNewDataRequested ( numBytesRequested ) {
+		// Don't really need to do anything in here--
+		// we'll write to the stream when we're ready.
+	};
+
+	// Add the `upload` method for convenience
+	__rs.upload = function ( receiver__, cb ) {
+		receiver__.on('finish', function allFilesUploaded (files) {
+			cb(null, files);
+		});
+		receiver__.on('error', function unableToUpload (err) {
+			cb(err);
+		});
+		this.pipe( receiver__ );
+	};
+
+
+	//
+	// Source wrapper
+	// 
+	function onFile (file) {
+		// console.log('on incoming file');
+		__rs.push(file || {});
+	}
+	function onNoMoreFiles () {
+		// console.log('on incoming end');
+		__rs.push(null);
+	}
+
+	// todo: make it actually do things instead of just using timeouts
+	setTimeout(onFile, 15);
+	setTimeout(onNoMoreFiles, 35);
+
+	return __rs;
 }
+
+
+
+
 
 
 
