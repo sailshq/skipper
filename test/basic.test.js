@@ -11,6 +11,10 @@ var Lifecycle = require('./helpers/lifecycle')
 	, fsx = require('fs-extra');
 
 
+// Fixtures
+var routeFixtures = {
+	uploadAvatar: require('./fixtures/uploadAvatar')
+};
 
 
 describe('basic usage', function() {
@@ -22,20 +26,7 @@ describe('basic usage', function() {
 
 	it('sets up a file upload route', function () {
 
-		suite.app.post('/upload', function (req, res) {
-
-			var outgoingFiles__ = buildTransportStream();
-
-			req.file('320x480').pipe( outgoingFiles__ );
-			
-			outgoingFiles__.on('finish', function allFilesUploaded () {
-				res.send(200);
-			});
-			outgoingFiles__.on('error', function unableToUpload (err) {
-				res.send(500, err);
-			});
-
-		});
+		suite.app.post('/upload', routeFixtures.uploadAvatar);
 	});
 
 
@@ -56,7 +47,7 @@ describe('basic usage', function() {
 		// Attaches a multi-part form upload to the HTTP request:
 		var form = httpRequest.form();
 		var pathToSmallFile = suite.srcFiles[0].path;
-		form.append('320x480', fsx.createReadStream(pathToSmallFile));
+		form.append('avatar', fsx.createReadStream(pathToSmallFile));
 
 	});
 
