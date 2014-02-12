@@ -20,6 +20,7 @@ describe('basic usage', function() {
 
 	it('sets up a file upload route', function () {
 		suite.app.post('/upload', function (req, res) {
+			// req.file();
 			res.send('ok!');
 		});
 	});

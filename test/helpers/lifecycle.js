@@ -11,6 +11,9 @@ var fsx = require('fs-extra')
 	, http = require('http');
 
 
+var FileParser = require('../../');
+
+
 
 module.exports = function () {
 	
@@ -31,7 +34,7 @@ module.exports = function () {
 		setup: function(done) {
 
 			// Write nonsense bytes to our file fixtures.
-			for (var bytes=10; bytes<10000000; bytes*=10) {
+			for (var bytes=10; bytes < 10000000; bytes*=10) {
 				var f = new tmp.File();
 				f.writeFileSync(crypto.pseudoRandomBytes(bytes));
 				f.size = bytes;
@@ -41,6 +44,9 @@ module.exports = function () {
 			// Bootstrap a little express app that uses file-parser
 			// to upload files to our outputDir
 			public.app = Express();
+
+			// Use file-parser middleware
+			public.app.use( FileParser() );
 			
 			// Lift Express server on 3000
 			public.server =
