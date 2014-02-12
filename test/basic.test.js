@@ -12,8 +12,8 @@ var Lifecycle = require('./helpers/lifecycle')
 
 
 // Fixtures
-var routeFixtures = {
-	uploadAvatar: require('./fixtures/uploadAvatar')
+var actionFixtures = {
+	uploadAvatar: require('./fixtures/uploadAvatar.action')
 };
 
 
@@ -24,9 +24,9 @@ describe('basic usage', function() {
 
 
 
-	it('sets up a file upload route', function () {
+	it('bind a file upload action', function () {
 
-		suite.app.post('/upload', routeFixtures.uploadAvatar);
+		suite.app.post('/upload', actionFixtures.uploadAvatar);
 	});
 
 
@@ -59,32 +59,4 @@ describe('basic usage', function() {
 	});
 
 });
-
-
-
-
-
-
-/**
- * Build a simple writable stream that handles incoming files.
- *
- * 
- * @return {Stream.Writable}
- */
- 
-function buildTransportStream () {
-	var Transform = require('stream').Transform;
-	var outgoingFiles__ = Transform({objectMode: true});
-
-	outgoingFiles__._write = function(newFile, enc, next) {
-		
-		// TODO: actually write `newFile` somewhere
-		setTimeout(function () {
-			console.log('Got new file!');
-			next();
-		}, 250);
-	};
-
-	return outgoingFiles__;
-}
 
