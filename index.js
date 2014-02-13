@@ -41,11 +41,13 @@ module.exports = function toParseHTTPBody (options) {
 					if (err) return next(err);
 
 					// If we were able to parse something at this point
-					// (req.body isn't empty) or the content-type is JSON,
+					// (req.body isn't empty or there are upstreams)
+					// or the content-type is JSON,
 					// original body parse must have worked.
 					var reqBodyNotEmpty = !_.isEqual(req.body, {});
+					var hasUpstreams = req._fileparser && req._fileparser.upstreams.length;
 					var contentTypeIsJSON = (backupContentType === 'application/json');
-					if (contentTypeIsJSON || reqBodyNotEmpty) {
+					if (contentTypeIsJSON || reqBodyNotEmpty || hasUpstreams) {
 						return next();
 					}
 

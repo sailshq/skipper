@@ -1,11 +1,11 @@
 {
   "name": "file-parser",
-  "version": "0.0.3",
-  "description": "Opinionated variant of the Connect body parser with support for streaming monolithic file uploads to a compatible Waterline adapter",
+  "version": "0.10.0",
+  "description": "Bodyparser for Express/Sails. Exposes simple API for streaming multiple files to disk, S3, etc. without buffering to a .tmp directory.",
   "main": "index.js",
   "directories": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -14,16 +14,16 @@
   "keywords": [
     "bodyparser",
     "upload",
-    "streaming",
+    "express",
+    "connect",
     "sails",
+    "streaming",
     "file-upload"
   ],
   "author": "Mike McNeil",
   "license": "MIT",
   "dependencies": {
     "lodash": "1.3.1",
-    "formidable": "1.0.14",
-    "connect": "~2.9.0",
     "express": "~3.4.8"
   },
   "devDependencies": {
