@@ -17,7 +17,7 @@ var actionFixtures = {
 };
 
 
-describe('basic usage', function() {
+describe('req.file(...).pipe(...) ::', function() {
 	var suite = Lifecycle();
 	before(suite.setup);
 	after(suite.teardown);
