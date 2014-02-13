@@ -6,10 +6,22 @@ var _ = require('lodash')
 	, toParseMultipartHTTPRequest = require('./lib/multipart')
 	, express = require('express');
 
+//
+// TODO: make this module lighter-weight by grabbing
+// JSON and URLEncoded bodyparsers separately.
+//
+// (this allows us to drop the Express dep-- which probably doesn't matter
+// actually, because you almost certainly have Express installed already w/
+// Sails, but still would be cleaner....)
+//
+
 
 
 /**
  * file-parser
+ * 
+ * @param  {Object} options [description]
+ * @return {Function}
  */
 
 module.exports = function toParseHTTPBody (options) {
@@ -19,6 +31,14 @@ module.exports = function toParseHTTPBody (options) {
 	var MultipartBodyParser = toParseMultipartHTTPRequest(options);
 	var JSONBodyParser = express.json(options);
 
+
+	/**
+	 * Express/Sails-compatible middleware.
+	 * 
+	 * @param  {Request}   req  [description]
+	 * @param  {Response}   res  [description]
+	 * @param  {Function} next [description]
+	 */
 
 	return function _parseHTTPBody(req, res, next) {
 
