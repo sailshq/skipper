@@ -20,7 +20,7 @@ module.exports = {
 	 * @return {Stream.Writable}
 	 */
 	
-	newReceiverStream: function newReceiverStream () {
+	newReceiverStream: function newReceiverStream (options) {
 
 		// Keep track of files we've written
 		var files = [];

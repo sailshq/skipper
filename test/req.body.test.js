@@ -27,10 +27,10 @@ describe('req.body ::', function() {
 			bodyParamsThatWereAccessible = _.cloneDeep(req.body);
 
 			req.file('avatar')
-			.upload(newReceiverStream(), function (err, files) {
-				if (err) res.send(500, err);
-				res.send(200);
-			});
+				.upload(newReceiverStream(), function (err, files) {
+					if (err) res.send(500, err);
+					res.send(200);
+				});
 		});
 	});
 
