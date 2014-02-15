@@ -36,7 +36,8 @@ module.exports = function () {
 			// Write nonsense bytes to our file fixtures.
 			for (var bytes=10; bytes < 10000000; bytes*=10) {
 				var f = new tmp.File();
-				f.writeFileSync(crypto.pseudoRandomBytes(bytes));
+				var EOF = '\x04';
+				f.writeFileSync(crypto.pseudoRandomBytes(bytes)+EOF);
 				f.size = bytes;
 				fileFixtures.push(f);
 			}

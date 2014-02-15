@@ -45,11 +45,11 @@ describe('req.body ::', function() {
 
 		// Attaches a multi-part form upload to the HTTP request.,
 		var form = httpRequest.form();
-		var smallFile = suite.srcFiles[5];
+		var smallFile = suite.srcFiles[0];
 		var pathToSmallFile = smallFile.path;
 		form.append('foo', 'hello');
 		form.append('bar', 'there');
-		form.append('avatar1', fsx.createReadStream(pathToSmallFile));
+		form.append('avatar', fsx.createReadStream(pathToSmallFile));
 
 	});
 
