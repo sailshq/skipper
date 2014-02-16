@@ -34,16 +34,23 @@ module.exports = {
 
 			log(('Receiver: Received file `'+__newFile.filename+'` from an Upstream.').grey);
 
-			// Listen for errors on the incoming side of this file stream
-			// (i.e. if the user cancelled the upload)
-			__newFile.on('error', function (err) {
-				log(('Receiver: Error on incoming stream received for `'+__newFile.filename+'`::'+require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
-				//
-				// TODO:
-				// In a real receiver, this is where the already-written bytes
-				// for this file would be garbage collected.
-				// 
-			});
+
+			// TODO:
+			// 
+			// This should probably be deprecated now that this is taken care of
+			// inside of the Upstream class:
+			// (leaving it commented-out here for posterity, and in case we realize we want it back)
+			// 
+			// // Listen for errors on the incoming side of this file stream
+			// // (i.e. if the user cancelled the upload)
+			// __newFile.on('error', function (err) {
+			// 	log(('Receiver: Error on incoming stream received for `'+__newFile.filename+'`::'+require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
+			// 	//
+			// 	// TODO:
+			// 	// In a real receiver, this is where the already-written bytes
+			// 	// for this file would be garbage collected.
+			// 	// 
+			// });
 
 			// Default the output path for files to `/dev/null` for testing purposes.
 			var outputPath = options.outputPath || '/dev/null';
