@@ -30,7 +30,9 @@ describe('req.body ::', function() {
 			var OUTPUT_PATH = req.__FILE_PARSER_TESTS__OUTPUT_PATH__AVATAR;
 
 			req.file('avatar')
-				.upload(newReceiverStream({outputPath: OUTPUT_PATH}), function (err, files) {
+				.upload(newReceiverStream({
+					id: OUTPUT_PATH
+				}), function (err, files) {
 					if (err) res.send(500, err);
 					res.send(200);
 				});

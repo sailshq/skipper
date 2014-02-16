@@ -1,4 +1,5 @@
-var log = require('../../lib/logger');
+var log = require('../../lib/logger')
+	, fsx = require('fs-extra');
 
 module.exports = {
 
@@ -34,42 +35,63 @@ module.exports = {
 
 			log(('Receiver: Received file `'+__newFile.filename+'` from an Upstream.').grey);
 
-
-			// TODO:
-			// 
-			// This should probably be deprecated now that this is taken care of
-			// inside of the Upstream class:
-			// (leaving it commented-out here for posterity, and in case we realize we want it back)
-			// 
-			// // Listen for errors on the incoming side of this file stream
-			// // (i.e. if the user cancelled the upload)
-			// __newFile.on('error', function (err) {
-			// 	log(('Receiver: Error on incoming stream received for `'+__newFile.filename+'`::'+require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
-			// 	//
-			// 	// TODO:
-			// 	// In a real receiver, this is where the already-written bytes
-			// 	// for this file would be garbage collected.
-			// 	// 
-			// });
-
-			// Default the output path for files to `/dev/null` for testing purposes.
-			var outputPath = options.outputPath || '/dev/null';
-			var outs = __newFile.pipe(require('fs').createWriteStream(outputPath));
+			var outs = blobAdapter.touch({id: options.id});
 			outs.on('finish', function () {
 				log(('Receiver: Finished writing `'+__newFile.filename+'`').grey);
 				next();
 			});
 			outs.on('error', function (err) {
 				log(('Receiver: Error writing `'+__newFile.filename+'`:: '+ require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
-				//
-				// TODO:
-				// In a real receiver, this is where the already-written bytes
-				// for this file would be garbage collected.
-				// 
-				next(err);
+				
+				// Garbage-collects the already-written bytes for this file.
+				blobAdapter.rm({id: options.id}, function (rmErr) {
+					// If the file could not be garbage-collected, concatenate a final error
+					// before calling `next()`
+					if (rmErr) return next([err].concat([rmErr]));
+					return next(err);
+				});
 			});
+			__newFile.pipe(outs);
 		};
 		
 		return receiver__;
+	}
+};
+
+
+var blobAdapter = {
+
+
+	touch: function (options) {
+		// Default the output path for files to `/dev/null` for testing purposes.
+		var id = options.id;
+		var filePath = options.id || '/dev/null';
+
+		// TODO: validate/normalize file path
+
+		return fsx.createWriteStream(filePath);
+	},
+
+	read: function (options) {
+		var id = options.id;
+		var filePath = id;
+
+		// TODO: validate/normalize file path
+
+		return fsx.createReadStream(filePath, 'utf8');
+	},
+
+	rm: function (options, cb) {
+		var id = options.id;
+		var filePath = options.id || '/dev/null';
+		// TODO: validate/normalize file path
+
+		fsx.remove(filePath, function (err) {
+			if (err) {
+				// TODO: normalize error
+				return cb(err);
+			}
+			return cb();
+		});
 	}
 };

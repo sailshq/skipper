@@ -33,7 +33,6 @@ module.exports = function newReceiverStream (options) {
 		outs.on('error', function (err) {
 			console.log(('Receiver: Error writing `'+__newFile.filename+'`:: '+ require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
 			//
-			// TODO:
 			// In a real receiver, this is where the already-written bytes
 			// for this file would be garbage collected.
 			// 

@@ -26,9 +26,11 @@ module.exports = function (req, res) {
 
 	var OUTPUT_PATH = req.__FILE_PARSER_TESTS__OUTPUT_PATH__AVATAR;
 	var MAX_UPLOAD_SIZE_IN_BYTES = 5 * 1000 * 1000;
+
+	
 	var receiver__ = newReceiverStream({
 		maxBytes: MAX_UPLOAD_SIZE_IN_BYTES,
-		outputPath: OUTPUT_PATH
+		id: OUTPUT_PATH
 	});
 	
 	req.file('avatar').pipe( receiver__ );
