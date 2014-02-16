@@ -1,3 +1,5 @@
+var log = require('../../lib/logger');
+
 module.exports = {
 
 
@@ -30,12 +32,12 @@ module.exports = {
 
 		receiver__._write = function onFile (__newFile, encoding, next) {
 
-			console.log('Receiver: Received file `'+__newFile.filename+'` from an Upstream.');
+			log(('Receiver: Received file `'+__newFile.filename+'` from an Upstream.').grey);
 
 			// Listen for errors on the incoming side of this file stream
 			// (i.e. if the user cancelled the upload)
 			__newFile.on('error', function (err) {
-				console.error('Receiver: Error on incoming stream received for `'+__newFile.filename+'`::', err, ' :: Cancelling upload and cleaning up already-written bytes...');
+				log(('Receiver: Error on incoming stream received for `'+__newFile.filename+'`::'+require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
 				//
 				// TODO:
 				// In a real receiver, this is where the already-written bytes
@@ -45,11 +47,11 @@ module.exports = {
 
 			var outs = __newFile.pipe(require('fs').createWriteStream('/dev/null'));
 			outs.on('finish', function () {
-				console.log('Receiver: Finished writing `'+__newFile.filename+'`');
+				log(('Receiver: Finished writing `'+__newFile.filename+'`').grey);
 				next();
 			});
 			outs.on('error', function (err) {
-				console.error('Receiver: Error writing `'+__newFile.filename+'`::', err, ' :: Cancelling upload and cleaning up already-written bytes...');
+				log(('Receiver: Error writing `'+__newFile.filename+'`:: '+ require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
 				//
 				// TODO:
 				// In a real receiver, this is where the already-written bytes

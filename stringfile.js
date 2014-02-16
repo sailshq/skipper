@@ -19,12 +19,19 @@ var STRINGFILE = {
 		'Make sure you always send text params first, then your files.\n'+
 		'(In an HTML form, it\'s as easy as making sure your text inputs are listed before your file inputs.'
 
+	},
+
+	parser: {
+		form: {
+			onClose: 'Form: emitted `close`'
+		}
 	}
 };
 
 
 module.exports = {
 	get: function (keypath, args) {
+		args = (args && args.length )|| [];
 		return util.format.apply(util, [deep.get(STRINGFILE, keypath)].concat(args));
 	}
 };

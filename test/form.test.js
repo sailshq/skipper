@@ -7,6 +7,7 @@ var fsx = require('fs-extra')
 	, assert = require('assert')
 	, tmp = require('temporary')
 	, crypto = require('crypto')
+	, log = require('../lib/logger')
 	, async = require('async')
 	, path = require('path')
 	, Express = require('express')
@@ -26,10 +27,6 @@ var fsx = require('fs-extra')
 /// 
 //////////////////////////////////////////
 
-
-// To enable/disable log messages:
-var LOGGER_ENABLED = false;
-
 // Size of file to use in simulated upload
 // (# of psuedo-random bytes to generate)
 var BYTES = 100000;
@@ -37,12 +34,6 @@ var BYTES = 100000;
 //////////////////////////////////////////
 //////////////////////////////////////////
 
-
-
-
-
-
-var log = LOGGER_ENABLED ? console.error : function () {};
 
 
 describe('multipart form upload', function () {
@@ -102,7 +93,7 @@ describe('multipart form upload', function () {
 			async.auto({
 				formClosed: function (cb) {
 					form.on('close', function () {
-						log('Form: emitted `close`');
+						log('Form: emitted `close`'.bold.grey);
 						cb();
 					});
 				},
@@ -114,7 +105,7 @@ describe('multipart form upload', function () {
 						var size = part.byteCount - part.byteOffset;
 						var name = part.filename;
 
-						log(':::received part:', name, size);
+						log(('Form: received part: '+ name+ ' with '+ size +' bytes').grey);
 
 						// Add '*' event to part stream to allow us to tap in
 						// and watch all events. (for testing only)
@@ -134,14 +125,14 @@ describe('multipart form upload', function () {
 
 							// Simulate a delayed write
 							setTimeout(function () {
-								log('Wrote chunk');
+								log('Wrote chunk'.grey);
 								next();
 							}, 150);
 						};
 						part.pipe(box);
 
 						box.on('finish', function () {
-							log('File written successfully.');
+							log('File written successfully.'.grey);
 							cb();
 						});
 
@@ -167,7 +158,7 @@ describe('multipart form upload', function () {
 			}, function allDone (err) {
 				if (err) res.send(500,err);
 				res.send(200);
-				log('All files uploaded.');
+				log('All files uploaded.'.grey);
 			});
 
 			form.parse(req);
