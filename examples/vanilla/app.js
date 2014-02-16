@@ -9,13 +9,17 @@ require('colors');
 var app = Express();
 app.use( FileParser() );
 app.post('/upload', function uploadAction (req, res) {
-	req.file('avatar').upload( Receiver() , function (err, files) {
-		if (err) return res.send(500, err);
-		return res.json({
-			message: files.length + ' file(s) uploaded successfully!',
-			files: files
-		});
-	});
+
+	res.send(200, 'yup');
+
+	// req.file('avatar').upload( Receiver() , function (err, files) {
+	// 	if (err) return res.send(500, err);
+		
+	// 	res.json({
+	// 		message: files.length + ' file(s) uploaded successfully!',
+	// 		files: files
+	// 	});
+	// });
 });
 app.listen(3000)
 	.on('listening', function (err) {

@@ -38,15 +38,28 @@ module.exports = function newReceiverStream (options) {
 		var outs = fs.createWriteStream(outputPath, encoding);
 		__newFile.pipe(outs);
 		
-		outs.on('finish', function successfullyWroteFile () { cb(); });
 
-		outs.on('error', function failedToWriteFile (err) {
-			// Garbage-collect the bytes that were already-written for this file.
+		// Garbage-collect the bytes that were already written for this file.
+		// (called when a read or write error occurs)
+		function gc (err) {
+			console.log('************** Garbage collecting file `'+outs.filename+'`...');
 			fs.unlink(filePath, function (gcErr) {
 				if (gcErr) return cb([err].concat([gcErr]));
 				return cb(err);
 			});
+		}
+
+		__newFile.on('error', function failedToReadFile (err) {
+			gc(err);
 		});
+		outs.on('error', function failedToWriteFile (err) {
+			gc(err);
+		});
+
+		outs.on('finish', function successfullyWroteFile () {
+			cb();
+		});
+
 	};
 	
 	return receiver__;
