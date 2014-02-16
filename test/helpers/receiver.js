@@ -25,9 +25,6 @@ module.exports = {
 	
 	newReceiverStream: function newReceiverStream (options) {
 
-		// Keep track of files we've written
-		var files = [];
-
 		var Writable = require('stream').Writable;
 		var receiver__ = Writable({objectMode: true});
 

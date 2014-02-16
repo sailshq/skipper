@@ -25,6 +25,7 @@ var _ = require('lodash')
  */
 
 module.exports = function toParseHTTPBody (options) {
+	options = options || {};
 
 	// Configure body parser components
 	var URLEncodedBodyParser = express.urlencoded(options);
@@ -60,19 +61,6 @@ module.exports = function toParseHTTPBody (options) {
 				MultipartBodyParser(req, res, function(err) {
 					if (err) return next(err);
 
-					// If we were able to parse something at this point
-					// (req.body isn't empty or there are upstreams)
-					// or the content-type is JSON,
-					// original body parse must have worked.
-					var reqBodyNotEmpty = !_.isEqual(req.body, {});
-					var hasUpstreams = req._fileparser && req._fileparser.upstreams.length;
-					var contentTypeIsJSON = (backupContentType === 'application/json');
-					if (contentTypeIsJSON || reqBodyNotEmpty || hasUpstreams) {
-						return next();
-					}
-
-
-
 					/**
 					 * OK, here's how the re-run of the JSON bodyparser works:
 					 * ========================================================
@@ -83,16 +71,31 @@ module.exports = function toParseHTTPBody (options) {
 					 * (which is pretty much every time, I think.)
 					 */
 
-					// Otherwise, set an explicit JSON content-type and try again.
+					// If we were able to parse something at this point (req.body isn't empty)
+					// or files are/were being uploaded/ignored (req._fileparser.upstreams isn't empty)
+					// or the content-type is JSON,
+					var reqBodyNotEmpty = !_.isEqual(req.body, {});
+					var hasUpstreams = req._fileparser && req._fileparser.upstreams.length;
+					var contentTypeIsJSON = (backupContentType === 'application/json');
+					// ...then the original parsing must have worked.
+					// In that case, we'll skip the JSON retry stuff.
+					if (contentTypeIsJSON || reqBodyNotEmpty || hasUpstreams) {
+						return next();
+					}
+
+					// Otherwise, set an explicit JSON content-type
+					// and try parsing the request body again.
 					var backupContentType = req.headers['content-type'];
 					req.headers['content-type'] = 'application/json';
 					JSONBodyParser(req, res, function(err) {
 
-						// Revert content-type
+						// Revert content-type to what it originally was.
+						// This is so we don't inadvertently corrupt `req.headers`--
+						// our apps' actions might be looking for 'em.
 						req.headers['content-type'] = backupContentType;
 
 						// If an error occurred in the retry, it's not actually an error
-						// (we can't assume this was intended to be JSON)
+						// (we can't assume EVERY requeset was intended to be JSON)
 						if (err) {
 							// log.verbose('Attempted to retry bodyParse as JSON.  But no luck.', err);
 						}
