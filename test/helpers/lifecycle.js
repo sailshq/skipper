@@ -14,7 +14,15 @@ var fsx = require('fs-extra')
 var FileParser = require('../../');
 
 
-
+/**
+ * [exports description]
+ * @return {
+ *   setup     {Function}
+ *   teardown  {Function}
+ *   outputDir {String}
+ *   srcFiles  {Array}
+ * }
+ */
 module.exports = function () {
 	
 	// Create an array of file fixtures.
