@@ -18,7 +18,7 @@ var actionFixtures = {
 };
 
 
-describe('req.file(...).pipe(...) ::', function() {
+describe('Ignoring :: req.file("foo"), when a file upload is sent to the "bar" field ::', function() {
 	var suite = Lifecycle();
 	before(suite.setup);
 	after(suite.teardown);
@@ -30,8 +30,7 @@ describe('req.file(...).pipe(...) ::', function() {
 	});
 
 
-
-	it('sends a multi-part file upload request', function(done) {		
+	it('sends a multi-part file upload request to an UNWATCHED FIELD', function(done) {		
 		
 		// Builds an HTTP request
 		var httpRequest = Uploader({
@@ -40,24 +39,16 @@ describe('req.file(...).pipe(...) ::', function() {
 
 		// Attaches a multi-part form upload to the HTTP request.,
 		var form = httpRequest.form();
-		var pathToSmallFile = suite.srcFiles[0].path;
-		form.append('avatar', fsx.createReadStream(pathToSmallFile));
+		var pathToSmallFile = suite.srcFiles[1].path;
+		form.append('something_we_dont_care_about', fsx.createReadStream(pathToSmallFile));
 
 	});
 
+	it('should NOT have uploaded the file to `suite.outputDir`', function () {
 
-
-	it('should have uploaded a file to `suite.outputDir`', function () {
-
-		// Check that a file landed
+		// Check that nothing was uploaded
 		var filesUploaded = fsx.readdirSync(suite.outputDir.path);
-		assert(filesUploaded.length === 1);
-
-		// Check that its contents are correct
-		var uploadedFileContents = fsx.readFileSync(path.join(suite.outputDir.path, filesUploaded[0]));
-		var srcFileContents = fsx.readFileSync(suite.srcFiles[0].path);
-		assert( uploadedFileContents.toString() === srcFileContents.toString() );
+		assert(filesUploaded.length === 0);
 	});
-
 
 });
