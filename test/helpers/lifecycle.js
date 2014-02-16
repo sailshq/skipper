@@ -56,6 +56,14 @@ module.exports = function () {
 
 			// Use file-parser middleware
 			public.app.use( FileParser() );
+
+			// Provide a default outputPath for testing purposes
+			// (gets used by the test receiver to write the test file to disk in each suite)
+			public.app.use(function (req, res, next) {
+				req.__FILE_PARSER_TESTS__OUTPUT_PATH__AVATAR = path.join(outputDir.path, 'avatar.jpg');
+				next();
+			});
+
 			
 			// Lift Express server on 3000
 			public.server =

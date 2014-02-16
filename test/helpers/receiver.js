@@ -45,7 +45,9 @@ module.exports = {
 				// 
 			});
 
-			var outs = __newFile.pipe(require('fs').createWriteStream('/dev/null'));
+			// Default the output path for files to `/dev/null` for testing purposes.
+			var outputPath = options.outputPath || '/dev/null';
+			var outs = __newFile.pipe(require('fs').createWriteStream(outputPath));
 			outs.on('finish', function () {
 				log(('Receiver: Finished writing `'+__newFile.filename+'`').grey);
 				next();

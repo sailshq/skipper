@@ -6,6 +6,7 @@ var Lifecycle = require('./helpers/lifecycle')
 	, Uploader = require('./helpers/uploader')
 	, _ = require('lodash')
 	, util = require('util')
+	, path = require('path')
 	, assert = require('assert')
 	, toValidateTheHTTPResponse = require('./helpers/toValidateTheHTTPResponse')
 	, fsx = require('fs-extra');
@@ -45,8 +46,15 @@ describe('req.file(...).upload(...) ::', function() {
 
 
 	it('should have uploaded a file to `suite.outputDir`', function () {
+
+		// Check that a file landed
 		var filesUploaded = fsx.readdirSync(suite.outputDir.path);
-		// assert(filesUploaded.length === 1);
+		assert(filesUploaded.length === 1);
+
+		// Check that its contents are correct
+		var uploadedFileContents = fsx.readFileSync(path.join(suite.outputDir.path, filesUploaded[0]));
+		var srcFileContents = fsx.readFileSync(suite.srcFiles[0].path);
+		assert( uploadedFileContents.toString() === srcFileContents.toString() );
 	});
 
 });
