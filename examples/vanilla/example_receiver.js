@@ -37,7 +37,6 @@ module.exports = function newReceiverStream (options) {
 
 		var outs = fs.createWriteStream(filePath, encoding);
 		__newFile.pipe(outs);
-		
 
 		// Garbage-collect the bytes that were already written for this file.
 		// (called when a read or write error occurs)
