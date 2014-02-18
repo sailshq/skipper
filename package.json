@@ -1,6 +1,6 @@
 {
   "name": "file-parser",
-  "version": "0.10.0",
+  "version": "0.10.0-rc1",
   "description": "Bodyparser for Express/Sails. Exposes simple API for streaming multiple files to disk, S3, etc. without buffering to a .tmp directory.",
   "main": "index.js",
   "directories": {},
@@ -23,13 +23,13 @@
   "author": "Mike McNeil",
   "license": "MIT",
   "dependencies": {
-    "lodash": "1.3.1",
     "express": "~3.4.8",
     "multiparty": "~3.2.2",
     "async": "~0.2.10",
     "dot-access": "0.0.3",
     "string_decoder": "~0.10.25-1",
-    "colors": "~0.6.2"
+    "colors": "~0.6.2",
+    "lodash": "~2.4.1"
   },
   "devDependencies": {
     "fs-extra": "~0.8.1",
