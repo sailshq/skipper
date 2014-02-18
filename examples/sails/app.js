@@ -21,7 +21,7 @@
 // Ensure a "sails" can be located:
 var sails;
 try {
-	sails = require('sails');
+	var Sails = require('sails/lib/app');
 }
 catch (e) {
 	console.error('To run an app using `node app.js`, you usually need to have a version of `sails` installed in the same directory as your app.');
@@ -32,6 +32,9 @@ catch (e) {
 	console.error('but if it doesn\'t, the app will run with the global sails instead!');
 	return;
 }
+
+// Instantiate sails
+sails = Sails();
 
 // Start server
 sails.lift();
