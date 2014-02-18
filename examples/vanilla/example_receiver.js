@@ -34,7 +34,6 @@ module.exports = function newReceiverStream (options) {
 	// from the Readable stream (Upstream) which is pumping filestreams
 	// into this receiver.  (filename === `__newFile.filename`).
 	receiver__._write = function onFile (__newFile, encoding, done) {
-
 		var outs = fs.createWriteStream(filePath, encoding);
 		__newFile.pipe(outs);
 
@@ -49,6 +48,9 @@ module.exports = function newReceiverStream (options) {
 		}
 
 
+		__newFile.on('error', function (err) {
+			console.log('***** READ error on file '+__newFile.filename, '::',err);
+		});
 		outs.on('error', function failedToWriteFile (err) {
 			gc(err);
 		});
