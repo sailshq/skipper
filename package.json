@@ -28,7 +28,8 @@
     "multiparty": "~3.2.2",
     "async": "~0.2.10",
     "dot-access": "0.0.3",
-    "string_decoder": "~0.10.25-1"
+    "string_decoder": "~0.10.25-1",
+    "colors": "~0.6.2"
   },
   "devDependencies": {
     "fs-extra": "~0.8.1",
