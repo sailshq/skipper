@@ -1,6 +1,6 @@
 {
   "name": "file-parser",
-  "version": "0.10.0-rc1",
+  "version": "0.10.0-rc2",
   "description": "Bodyparser for Express/Sails. Exposes simple API for streaming multiple files to disk, S3, etc. without buffering to a .tmp directory.",
   "main": "index.js",
   "directories": {},
@@ -28,8 +28,8 @@
     "async": "~0.2.10",
     "dot-access": "0.0.3",
     "string_decoder": "~0.10.25-1",
-    "colors": "~0.6.2",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "colors": "~0.6.2"
   },
   "devDependencies": {
     "fs-extra": "~0.8.1",
