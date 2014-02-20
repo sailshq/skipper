@@ -31,7 +31,7 @@ var STRINGFILE = {
 
 module.exports = {
 	get: function (keypath, args) {
-		args = (args && args.length )|| [];
+		args = (args && args.length) ? args : [];
 		return util.format.apply(util, [deep.get(STRINGFILE, keypath)].concat(args));
 	}
 };
