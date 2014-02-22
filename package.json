@@ -1,6 +1,6 @@
 {
-  "name": "file-parser",
-  "version": "0.10.0-rc3",
+  "name": "skipper",
+  "version": "0.1.0-rc1",
   "description": "Bodyparser for Express/Sails. Exposes simple API for streaming multiple files to disk, S3, etc. without buffering to a .tmp directory.",
   "main": "index.js",
   "directories": {},
@@ -21,6 +21,7 @@
     "file-upload"
   ],
   "author": "Mike McNeil",
+  "contributors" [{ "name": "Scott Gress" }],
   "license": "MIT",
   "dependencies": {
     "express": "~3.4.8",
