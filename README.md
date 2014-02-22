@@ -1,12 +1,18 @@
-file-parser
+skipper ![](http://i.imgur.com/RfxxWzT.png)
 ===========
 
-Opinionated variant of Connect's multipart body parser designed to support streaming upload of monolithic files to a compatible Waterline adapter, while still allowing application code to run in a timely manner; without writing .tmp files to disk.
+##### streaming multipart file upload parser
 
-Currently under active development.
+
+Opinionated variant of Connect's body parser designed to support streaming upload of monolithic files to a compatible Waterline adapter, while still allowing application code to run in a timely manner; without writing .tmp files to disk.
+
 
 This module may or may not be included as a part of the stable release of Sails v0.10-- need more documentation, examples, and "receivers" (currently receivers for S3 and local disk exist.)
 
+
+#### Status
+
+Currently, this project is in an openly released alpha stage, but under active development.
 
 
 #### More Resources
