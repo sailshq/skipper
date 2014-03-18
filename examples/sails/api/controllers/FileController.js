@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var Receiver = require('../exampleReceiver');
+var Receiver = require('../../../exampleReceiver');
 
 
 
@@ -24,7 +24,7 @@ module.exports = {
 	upload: function(req, res) {
 
 		req.file('avatar').upload( Receiver() , function (err, files) {
-			if (err) return res.send(500, err);
+			if (err) return res.serverError(err);
 		
 			res.json({
 				message: files.length + ' file(s) uploaded successfully!',
