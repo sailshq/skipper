@@ -1,10 +1,12 @@
 skipper ![](http://i.imgur.com/RfxxWzT.png)
 ===========
 
-##### streaming multipart file upload parser
+### Streaming Multipart File Upload Parsing !!
 
 
-Opinionated variant of Connect's body parser designed to support streaming upload of monolithic files to a compatible blob receiver, while still allowing application code to run in a timely manner; without writing .tmp files to disk.
+#### What is it?
+
+Skipper is an pinionated variant of Connect's body parser designed to support streaming upload of monolithic files to a compatible blob receiver, while still allowing application code to run in a timely manner; without writing .tmp files to disk.
 
 
 This module may or may not be included as a part of the stable release of Sails v0.10-- need more documentation, examples, and "receivers" (currently receivers for S3 and local disk exist.)
