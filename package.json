@@ -41,6 +41,7 @@
     "temporary": "0.0.8",
     "request": "~2.33.0",
     "concat-stream": "~1.4.1",
-    "sails": "~0.10.0"
+    "sails": "~0.10.0",
+    "mocha": "~1.18.2"
   }
 }
