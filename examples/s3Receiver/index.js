@@ -23,6 +23,11 @@ var UUIDGenerator = require('node-uuid');
 
 module.exports = function newReceiverStream(options) {
 
+  // These credentials can be fetched from options:
+  var S3_API_KEY = options.apiKey;
+  var S3_API_SECRET = options.apiSecret;
+  var S3_BUCKET = options.bucket;
+
   var log = console.log;
 
   var Writable = require('stream').Writable;
@@ -30,9 +35,9 @@ module.exports = function newReceiverStream(options) {
     objectMode: true
   });
   var client = knox.createClient({
-    key: sails.config.connections.s3.apiKey,
-    secret: sails.config.connections.s3.apiSecret,
-    bucket: sails.config.connections.s3.bucket
+    key: S3_API_KEY,
+    secret: S3_API_SECRET,
+    bucket: S3_BUCKET
   });
 
   receiver__._write = function onFile(__newFile, encoding, next) {
