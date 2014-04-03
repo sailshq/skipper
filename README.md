@@ -1,5 +1,8 @@
 # [![Skipper](http://i.imgur.com/P6gptnI.png)](https://github.com/balderdashy/skipper)
 
+[![NPM version](https://badge.fury.io/js/sails.png)](http://badge.fury.io/js/sails) &nbsp; &nbsp;
+[![Build Status](https://travis-ci.org/balderdashy/skipper.svg?branch=master)](https://travis-ci.org/balderdashy/skipper)
+
 ### Streaming Multipart File Upload Parsing 
 
 Skipper is an opinionated variant of Connect's body parser designed to support streaming upload of monolithic files to a compatible blob receiver, while still allowing application code to run in a timely manner; without writing .tmp files to disk.
