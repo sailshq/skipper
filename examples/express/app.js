@@ -9,7 +9,6 @@ require('colors');
 var app = Express();
 app.use( FileParser() );
 app.post('/upload', function uploadAction (req, res) {
-	console.log('CONTROL!!!');
 	
 	// setTimeout(function () {
 	// 	console.log('sending response');

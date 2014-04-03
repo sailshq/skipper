@@ -83,6 +83,10 @@ module.exports = function toParseHTTPBody (options) {
 						return next();
 					}
 
+					// If the content type is explicitly set to "multipart/form-data",
+					// we should not try to rerun the JSON bodyparser- it may hang forever.
+					if (req.is('multipart/form-data')) return next();
+
 					// Otherwise, set an explicit JSON content-type
 					// and try parsing the request body again.
 					var backupContentType = req.headers['content-type'];
