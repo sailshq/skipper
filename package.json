@@ -21,9 +21,11 @@
     "file-upload"
   ],
   "author": "Mike McNeil",
-  "contributors": [{
-    "name": "Scott Gress"
-  }],
+  "contributors": [
+    {
+      "name": "Scott Gress"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "express": "~3.4.8",
@@ -38,6 +40,7 @@
     "fs-extra": "~0.8.1",
     "temporary": "0.0.8",
     "request": "~2.33.0",
-    "concat-stream": "~1.4.1"
+    "concat-stream": "~1.4.1",
+    "sails": "~0.10.0"
   }
 }

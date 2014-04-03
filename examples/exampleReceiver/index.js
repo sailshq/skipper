@@ -52,6 +52,7 @@ module.exports = function newReceiverStream (options) {
 			console.log('***** READ error on file '+__newFile.filename, '::',err);
 		});
 		outs.on('error', function failedToWriteFile (err) {
+			console.log('Error on output stream- garbage collecting unfinished uploads...');
 			gc(err);
 		});
 
