@@ -1,6 +1,6 @@
 # [![Skipper](http://i.imgur.com/P6gptnI.png)](https://github.com/balderdashy/skipper)
 
-[![NPM version](https://badge.fury.io/js/sails.png)](http://badge.fury.io/js/sails) &nbsp; &nbsp;
+[![NPM version](https://badge.fury.io/js/skipper.png)](http://badge.fury.io/js/skipper) &nbsp; &nbsp;
 [![Build Status](https://travis-ci.org/balderdashy/skipper.svg?branch=master)](https://travis-ci.org/balderdashy/skipper)
 
 ### Streaming Multipart File Upload Parsing 
@@ -215,7 +215,7 @@ Currently, this project is in an openly released alpha stage, but under active d
 &copy; 2014
 [Mike McNeil](http://michaelmcneil.com), [Scott Gress](https://github.com/sgress454), [Balderdash](http://balderdash.co) & contributors
 
-[Sails](http://sailsjs.org) is free and open-source under the [MIT License](http://sails.mit-license.org/).
+This module is part of the [Sails framework](http://sailsjs.org), and is free and open-source under the [MIT License](http://sails.mit-license.org/).
 
 
 ![image_squidhome@2x.png](http://i.imgur.com/RIvu9.png) 
