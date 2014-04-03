@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var Receiver = require('../../../exampleReceiver');
+var Receiver = require('../../../diskReceiver');
 
 
 

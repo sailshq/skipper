@@ -1,6 +1,6 @@
 var Express = require('express')
 	, path = require('path')
-	, Receiver = require('../exampleReceiver')
+	, Receiver = require('../diskReceiver')
 	, FileParser = require('../..');
 require('colors');
 
