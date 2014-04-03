@@ -1,5 +1,4 @@
-[![Skipper](http://i.imgur.com/jwWrBji.png)](https://github.com/balderdashy/skipper)
-===========
+# [![Skipper](http://i.imgur.com/jwWrBji.png)](https://github.com/balderdashy/skipper)
 
 ### Streaming Multipart File Upload Parsing 
 
