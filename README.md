@@ -9,19 +9,20 @@ Skipper is an opinionated variant of Connect's body parser designed to support s
 
 > This module may or may not be included as a part of the stable release of Sails v0.10-- we need more documentation, examples, and "receivers" (currently receivers for S3 and local disk exist.)
 
-### With Sails
 
-
-#### Installation
-
-First, install this module in your project.
+### Installation
 
 ```sh
 npm install skipper --save
 ```
 
+### Setup
 
-This module is a drop-in replacement for the Connect bodyParser which is currently used by default in Sails and Express.  Therefore, we need to disable the default and hook up Skipper instead in `config/express.js`:
+This module is a drop-in replacement for the Connect bodyParser which is currently used by default in Sails and Express.  Therefore, we need to disable the default and hook up Skipper instead.
+
+#### With Sails
+
+In `config/express.js`:
 
 ```javascript
   // ...
@@ -29,13 +30,54 @@ This module is a drop-in replacement for the Connect bodyParser which is current
   // ...
 ```
 
-#### Basic Usage
+#### With Express
+
+In the file where you set up your middleware:
+
+```javascript
+// ...
+app.use(require('skipper')());
+// ...
+```
 
 
+### Usage
 
+`req.file(foo)` returns a stream of binary streams- one for each file that was uploaded to the specified parameter (`foo`) via an HTTP multipart file upload.  As is true with most middleware, the usage is identical between Sails and Express.
 
+#### With Sails
 
+In one of your controller actions:
 
+```javascript
+  // ...
+  upload: function  (req, res) {
+    var SomeReceiver = require('../receivers/someReceiver');
+    req.file('avatar').upload( SomeReceiver() , function (err, files) {
+      if (err) return res.serverError(err);
+      return res.json({
+        message: files.length + ' file(s) uploaded successfully!',
+        files: files
+      });
+    });
+  }
+  // ...
+```
+
+#### With Express
+
+```javascript
+app.post('/upload', function uploadAction (req, res) {
+  var SomeReceiver = require('./receivers/someReceiver');
+  req.file('avatar').upload( SomeReceiver() , function (err, files) {
+    if (err) return res.send(500, err);
+    return res.json({
+      message: files.length + ' file(s) uploaded successfully!',
+      files: files
+    });
+  });
+});
+```
 
 ### Status
 
