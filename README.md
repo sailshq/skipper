@@ -14,11 +14,11 @@ This module may or may not be included as a part of the stable release of Sails 
 
 ##### With Sails
 
-Install it with npm using the `--save` flag.  This will automatically add it to your app's package.json file. 
+The `--save` flag will automatically add it to your app's package.json file. 
 
 ```sh
 
-npm install --save
+npm install skipper --save
 
 ```
 
