@@ -1,0 +1,4 @@
+--reporter spec
+--recursive
+--slow 8000
+--timeout 10000
