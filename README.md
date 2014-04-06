@@ -7,7 +7,8 @@
 
 Skipper is an opinionated variant of Connect's body parser designed to support streaming upload of monolithic files to a compatible blob receiver, while still allowing application code to run in a timely manner; without writing .tmp files to disk.
 
-> This module ~~may~~ will be included as a part of the stable release of Sails v0.10.  However we need help with documentation, examples, and writing additional receivers (currently receivers for S3 and local disk exist.)  The decision to include skipper in v0.10 is a result of the improved quality of the streams2 rewrite, as well as the spotty/fragmented/confusing state of file uploads in the community.  We hope this module will help clear up the confusion.
+> This module ~~may~~ **will** be included as a part of the stable release of Sails v0.10.  However we need help with documentation, examples, and writing additional receivers (currently receivers for S3 and local disk exist.)
+> The decision to include skipper in v0.10 was tough-- it has stalled our release.  However, it was a consequence of rewriting this module to use streams2, as well as the spotty/fragmented/confusing state of file uploads around the community.  We hope this module helps clear things up for everypony.
 
 
 ### Installation
