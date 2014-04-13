@@ -45,6 +45,12 @@ module.exports = function toParseHTTPBody (options) {
 
 		// Optimization: skip bodyParser for GET requests.
 		if (req.method.toLowerCase() === 'get') {
+
+			// But stub out a `req.file()` method with a usage error:
+			req.file = function () {
+				throw new Error('`req.file()` cannot be used with an HTTP GET request.');
+			};
+
 			return next();
 		}
 		
