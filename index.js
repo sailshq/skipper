@@ -6,6 +6,14 @@ var _ = require('lodash')
 	, toParseMultipartHTTPRequest = require('./lib/multipart')
 	, express = require('express');
 
+// Double-check that a valid Node version with support for streams2
+// is being used
+if (!require('semver').satisfies(process.version, '>=0.10.0')) {
+	console.error('`skipper` (bodyParser) requires node version >= 0.10.0.');
+	console.error('Please upgrade Node at http://nodejs.org/ or with `nvm`');
+	process.exit(1);
+}
+
 //
 // TODO: make this module lighter-weight by grabbing
 // JSON and URLEncoded bodyparsers separately.
