@@ -18,7 +18,7 @@ This module is a drop-in replacement for the Connect bodyParser which is current
 
 #### With Sails (v0.10.0)
 
-As of v0.10.0-rc6, skipper is included as the default request body parser in Sails.
+As of v0.10.0-rc6, skipper is installed as the default request body parser in Sails- it works out of the box.
 
 
 #### With Sails (v0.9.x)
