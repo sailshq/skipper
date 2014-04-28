@@ -14,32 +14,31 @@ Skipper is an opinionated variant of Connect's body parser designed to support s
 
 ### Installation
 
-This module is a drop-in replacement for the Connect bodyParser which is currently used by default in Sails and Express.  Therefore, we need to disable the default and hook up Skipper instead.
+```sh
+npm install skipper --save
+```
+
 
 #### With Sails (v0.10.0)
 
-As of v0.10.0-rc6, skipper is installed as the default request body parser in Sails- it works out of the box.
+As of v0.10.0-rc6, skipper is installed as the default request body parser in Sails- you don't need to install it again.
 
 
 #### With Sails (v0.9.x)
 
-To use skipper with an existing v0.9.x Sails app, you'll need to install skipper:
-
-```sh
-npm install skipper --save
-```
- 
-Then modify `config/express.js`:
+To use skipper with an existing v0.9.x Sails app, you'll need to install skipper, then modify `config/express.js`:
 
 ```javascript
-// ...
-bodyParser: require('skipper')
-// ...
+module.exports.express = {
+  bodyParser: require('skipper')
+};
 ```
 
-#### With Express
+#### With Express/Connect
 
-In the file where you set up your middleware:
+This module is a drop-in replacement for the default Connect bodyParser, so if you're already using that bodyParser (`app.use(express.bodyParser)`), you'll need to replace it and hook up skipper instead.
+
+e.g. in the module where you set up your middleware:
 
 ```javascript
 // ...
