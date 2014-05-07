@@ -17,9 +17,9 @@
   "keywords": [
     "bodyparser",
     "upload",
+    "sails",
     "express",
     "connect",
-    "sails",
     "streaming",
     "file-upload"
   ],
@@ -31,14 +31,14 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "express": "~3.4.8",
     "multiparty": "~3.2.2",
     "async": "~0.2.10",
     "dot-access": "0.0.3",
     "string_decoder": "~0.10.25-1",
     "lodash": "~2.4.1",
     "colors": "~0.6.2",
-    "semver": "~2.2.1"
+    "semver": "~2.2.1",
+    "connect": "~2.15.0"
   },
   "devDependencies": {
     "fs-extra": "~0.8.1",
@@ -46,6 +46,7 @@
     "request": "~2.33.0",
     "concat-stream": "~1.4.1",
     "sails": "~0.10.0",
-    "mocha": "~1.18.2"
+    "mocha": "~1.18.2",
+    "express": "~4.1.1"
   }
 }

@@ -4,7 +4,7 @@
 
 var _ = require('lodash')
 	, toParseMultipartHTTPRequest = require('./lib/multipart')
-	, express = require('express');
+	, connect = require('connect');
 
 // Double-check that a valid Node version with support for streams2
 // is being used
@@ -15,11 +15,10 @@ if (!require('semver').satisfies(process.version, '>=0.10.0')) {
 }
 
 //
-// TODO: make this module lighter-weight by grabbing
-// JSON and URLEncoded bodyparsers separately.
+// TODO: make this module lighter-weight by grabbing JSON and URLEncoded bodyparsers separately.
 //
-// (this allows us to drop the Express dep-- which probably doesn't matter
-// actually, because you almost certainly have Express installed already w/
+// (this allows us to drop the Connect dep-- which probably doesn't matter
+// actually, because you almost certainly have Connect installed already w/
 // Sails, but still would be cleaner....)
 //
 
@@ -27,7 +26,7 @@ if (!require('semver').satisfies(process.version, '>=0.10.0')) {
 
 /**
  * file-parser
- * 
+ *
  * @param  {Object} options [description]
  * @return {Function}
  */
@@ -36,14 +35,14 @@ module.exports = function toParseHTTPBody (options) {
 	options = options || {};
 
 	// Configure body parser components
-	var URLEncodedBodyParser = express.urlencoded(options);
+	var URLEncodedBodyParser = connect.urlencoded(options);
 	var MultipartBodyParser = toParseMultipartHTTPRequest(options);
-	var JSONBodyParser = express.json(options);
+	var JSONBodyParser = connect.json(options);
 
 
 	/**
-	 * Express/Sails-compatible middleware.
-	 * 
+	 * Connet/Express/Sails-compatible middleware.
+	 *
 	 * @param  {Request}   req  [description]
 	 * @param  {Response}   res  [description]
 	 * @param  {Function} next [description]
@@ -61,11 +60,11 @@ module.exports = function toParseHTTPBody (options) {
 
 			return next();
 		}
-		
+
 		// TODO: Optimization: skip bodyParser for other HTTP requests w/o a body.
-		
+
 		// TODO: Optimization: only run bodyParser if this is a known route
-		
+
 		// log.verbose('Running request ('+req.method+' ' + req.url + ') through bodyParser...');
 
 		JSONBodyParser(req, res, function(err) {
