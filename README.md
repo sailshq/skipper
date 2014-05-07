@@ -58,14 +58,6 @@ return req.file('foobar').upload(configuredReceiver, function onUploadComplete (
 ```
 
 
-To receive files from a **file parameter** (e.g. `avatar`), then stream them to disk:
-
-```js
-req.file('foobar').;
-```
-
-
-
 
 #### With Sails (v0.10.0)
 
