@@ -18,6 +18,46 @@ Skipper is an opinionated variant of Connect's body parser designed to support s
 npm install skipper --save
 ```
 
+> Skipper is installed in Sails automatically.  To install it into another Connect-based app (i.e. Express):
+>
+> ```js
+> app.use(require('skipper')());
+> ```
+
+
+### Quick Start
+
+> ##### Important
+>
+> Skipper is able to transparently stream your app's file uploads to any of its compatible receivers thanks to a crucial, > simplifying assumption: that all **text parameters** will be sent _before_ any **file parameters**.
+
+
+#### Stream a file to disk
+
+The following example receives a file from a **file parameter** named `avatar`, then streams it `.tmp/test.jpg` on the server's local disk:
+
+```js
+// ...
+return req.file('foobar').upload('./.tmp/test.jpg', function onUploadComplete (err, uploadedFiles) {
+  
+});
+```
+
+
+#### Stream a file somewhere else
+
+Alternatively, to upload the file with any receiver other than the default [`skipper-disk`](http://github.com/balderdashy/skipper-disk):
+
+```js
+// ...
+var SomeReceiver = require('skipper-somereceiver');
+var configuredReceiver = SomeReceiver({ id: './tmp/test.jpg' });
+return req.file('foobar').upload(configuredReceiver, function onUploadComplete (err, uploadedFiles) {
+  // ...
+});
+```
+
+
 
 #### With Sails (v0.10.0)
 
