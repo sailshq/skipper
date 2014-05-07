@@ -25,7 +25,7 @@ if (!require('semver').satisfies(process.version, '>=0.10.0')) {
 
 
 /**
- * file-parser
+ * Skipper
  *
  * @param  {Object} options [description]
  * @return {Function}
