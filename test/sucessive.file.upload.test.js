@@ -142,25 +142,4 @@ describe('Sucessive file uploads should not fail ::', function() {
     }
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 });
