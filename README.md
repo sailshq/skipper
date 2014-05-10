@@ -5,7 +5,7 @@
 
 ### Streaming Multipart File Upload Parsing 
 
-Skipper is an opinionated variant of Connect's body parser designed to support streaming upload of monolithic files to a compatible blob receiver, while still allowing application code to run in a timely manner; without writing .tmp files to disk.
+Skipper is an opinionated variant of Connect's body parser designed to support the streaming upload of monolithic files to a compatible blob receiver, while still allowing application code to run in a timely manner.  It allows you to access textual metadata in the request body of multipart HTTP requests (ie. JSON/XML/urlencoded request body parameters) but still get streaming access to incoming files without writing .tmp files to disk.
 
 > This module ~~may~~ **will** be included as a part of the stable release of Sails v0.10.  However we need help with documentation, examples, and writing additional receivers (currently receivers for S3 and local disk exist.)
 > The decision to include skipper in v0.10 was tough-- it has stalled our release.  However, it was a consequence of rewriting this module to use streams2, as well as the spotty/fragmented/confusing state of file uploads around the community.  We hope this module helps clear things up for everybody.
@@ -32,27 +32,36 @@ npm install skipper --save
 > Skipper is able to transparently stream your app's file uploads to any of its compatible receivers thanks to a crucial, > simplifying assumption: that all **text parameters** will be sent _before_ any **file parameters**.
 
 
-#### Stream a file to disk
+#### Stream file(s) to disk
 
 The following example receives a file from a **file parameter** named `avatar`, then streams it `.tmp/test.jpg` on the server's local disk:
 
 ```js
 // ...
 return req.file('foobar').upload('./.tmp/test.jpg', function onUploadComplete (err, uploadedFiles) {
-  
+  // ...
+});
+```
+
+To use dynamic filenames (i.e. whatever the name of the original file was), and still contain files within a particular directory (defaults to `.tmp/uploads/` relative to the current working directory):
+
+```js
+// ...
+return req.file('foobar').upload(function onUploadComplete (err, uploadedFiles) {
+  // ...
 });
 ```
 
 
-#### Stream a file somewhere else
+#### Stream file(s) somewhere else
 
 Alternatively, to upload the file with any receiver other than the default [`skipper-disk`](http://github.com/balderdashy/skipper-disk):
 
 ```js
 // ...
-var SomeReceiver = require('skipper-somereceiver');
-var configuredReceiver = SomeReceiver({ id: './tmp/test.jpg' });
-return req.file('foobar').upload(configuredReceiver, function onUploadComplete (err, uploadedFiles) {
+var SkipperS3 = require('skipper-s3')({ key: '...', secret: '...', bucket: '...' });
+var receiving = SkipperS3.receive();
+return req.file('foobar').upload(receiving, function onUploadComplete (err, uploadedFiles) {
   // ...
 });
 ```
@@ -98,8 +107,7 @@ In one of your controller actions:
 ```javascript
   // ...
   upload: function  (req, res) {
-    var SomeReceiver = require('../receivers/someReceiver');
-    req.file('avatar').upload( SomeReceiver() , function (err, files) {
+    req.file('avatar').upload(function (err, files) {
       if (err) return res.serverError(err);
       return res.json({
         message: files.length + ' file(s) uploaded successfully!',
@@ -114,8 +122,7 @@ In one of your controller actions:
 
 ```javascript
 app.post('/upload', function uploadAction (req, res) {
-  var SomeReceiver = require('./receivers/someReceiver');
-  req.file('avatar').upload( SomeReceiver() , function (err, files) {
+  req.file('avatar').upload( function (err, files) {
     if (err) return res.send(500, err);
     return res.json({
       message: files.length + ' file(s) uploaded successfully!',
@@ -127,7 +134,7 @@ app.post('/upload', function uploadAction (req, res) {
 
 ### Status
 
-Currently, this project is in beta, and openly released on npm.  Development takes place on the `master` branch.
+This module is published on npm.  Development takes place on the `master` branch.
 
 
 ### More Resources
