@@ -27,6 +27,9 @@ module.exports = function () {
 	
 	// Create an array of file fixtures.
 	var fileFixtures = [];
+
+	// Making a seperate group of larger files.
+	var bigFileFixtures = [];
 	
 	// Create a tmp directory for our uploads to live in.
 	var outputDir = new tmp.Dir();
@@ -36,6 +39,8 @@ module.exports = function () {
 	var public = {
 
 		srcFiles: fileFixtures,
+
+		bigSrcFiles: bigFileFixtures,
 
 		outputDir: outputDir,
 
@@ -50,6 +55,17 @@ module.exports = function () {
 				fileFixtures.push(f);
 			}
 
+			//5 MB?
+			var bigFileSize = 7  * 1000 * 1000
+
+			for (var i = 0; i < 1; i++){
+				var f = new tmp.File();
+				var EOF = '\x04';
+				f.writeFileSync(crypto.pseudoRandomBytes(bigFileSize)+EOF);
+				f.size = bigFileSize;
+				bigFileFixtures.push(f);
+			}
+
 			// Bootstrap a little express app that uses file-parser
 			// to upload files to our outputDir
 			public.app = Express();
@@ -61,6 +77,7 @@ module.exports = function () {
 			// (gets used by the test receiver to write the test file to disk in each suite)
 			public.app.use(function (req, res, next) {
 				req.__FILE_PARSER_TESTS__OUTPUT_PATH__AVATAR = path.join(outputDir.path, 'avatar.jpg');
+				req.__FILE_PARSER_TESTS__OUTPUT_PATH = outputDir.path;
 				next();
 			});
 
