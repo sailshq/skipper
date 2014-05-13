@@ -29,10 +29,14 @@ describe('Sucessive file uploads should not fail ::', function() {
     suite.app.post('/upload', function (req, res) {
       bodyParamsThatWereAccessible = _.cloneDeep(req.body);
 
-      var OUTPUT_PATH = req.__FILE_PARSER_TESTS__OUTPUT_PATH + "/" + guid.raw() + ".jpg";
+      // var OUTPUT_PATH = req.__FILE_PARSER_TESTS__OUTPUT_PATH + "/" + guid.raw() + ".jpg";
 
       req.file('avatar')
-        .upload(OUTPUT_PATH, function (err, files) {
+        .upload({
+          maxBytes: 150000000, // 150MB
+          dirname: req.__FILE_PARSER_TESTS__OUTPUT_PATH,
+          filename: guid.raw()+'.jpg'
+        }, function (err, files) {
           if (err) res.send(500, err);
           res.send(200);
         });
