@@ -5,7 +5,7 @@
   "main": "index.js",
   "directories": {},
   "scripts": {
-    "test": "mocha"
+    "test": "mocha && node -e \"require('skipper-adapter-tests')({module: require('skipper-disk')});\""
   },
   "repository": {
     "type": "git",
@@ -49,6 +49,7 @@
     "concat-stream": "~1.4.1",
     "sails": "~0.10.0",
     "mocha": "~1.18.2",
-    "express": "~4.1.1"
+    "express": "~4.1.1",
+    "skipper-adapter-tests": "~1.1.5"
   }
 }
