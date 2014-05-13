@@ -118,12 +118,12 @@ describe('Sucessive file uploads should not fail ::', function() {
 
           // Attaches a multi-part form upload to the HTTP request.,
           var form = httpRequest.form();
-          var pathToSmallFile = suite.srcFiles[0].path;
+          var pathToSmallFile = suite.bigSrcFiles[0].path;
           form.append('avatar', fsx.createReadStream(pathToSmallFile));
         }
       ], function(err, result){
         done();
-      })
+      });
 
   });
 
@@ -138,7 +138,7 @@ describe('Sucessive file uploads should not fail ::', function() {
       // Check that its contents are correct
       var uploadedFileContents = fsx.readFileSync(path.join(suite.outputDir.path, filesUploaded[i]));
       var srcFileContents = fsx.readFileSync(suite.bigSrcFiles[0].path);
-      assert(uploadedFileContents.toString() === srcFileContents.toString())
+      assert(uploadedFileContents.toString() === srcFileContents.toString());
     }
   });
 
