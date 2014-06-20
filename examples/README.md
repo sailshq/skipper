@@ -1,5 +1,5 @@
 # File Uploads with Skipper
-### Example
+### Example for Sails.js
 
 #### Generate an `api` 
 First we need to generate a new `api` for serving/storing files.  Do this using the sails command line tool.
