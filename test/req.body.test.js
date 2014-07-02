@@ -41,8 +41,8 @@ describe('req.body ::', function() {
 
 
 
-	it('sends a multi-part file upload request', function(done) {		
-		
+	it('sends a multi-part file upload request', function(done) {
+
 		// Builds an HTTP request
 		var httpRequest = Uploader({
 			baseurl: 'http://localhost:3000'
@@ -69,7 +69,7 @@ describe('req.body ::', function() {
 
 		// Check that a file landed
 		var filesUploaded = fsx.readdirSync(suite.outputDir.path);
-		assert(filesUploaded.length === 1);
+		assert.equal(filesUploaded.length, 1);
 
 		// Check that its contents are correct
 		var uploadedFileContents = fsx.readFileSync(path.join(suite.outputDir.path, filesUploaded[0]));
