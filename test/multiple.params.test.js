@@ -79,9 +79,12 @@ describe('multiple params ::', function() {
   });
 
   it('should have been able to access ALL of the body parameters passed in the upload request', function () {
-    // assert(bodyParamsThatWereAccessible);
-    // assert(bodyParamsThatWereAccessible['options[]']);
-    // assert(_.isArray(bodyParamsThatWereAccessible['options[]']));
+    assert(bodyParamsThatWereAccessible);
+    assert(bodyParamsThatWereAccessible['options[]']);
+    assert(_.isArray(bodyParamsThatWereAccessible['options[]']), util.format('`options[]` param should be an array- intead it was === %s', bodyParamsThatWereAccessible['options[]']));
+    assert.equal(bodyParamsThatWereAccessible['options[]'].length, 2);
+    assert.equal(bodyParamsThatWereAccessible['options[]'][0], 'hello');
+    assert.equal(bodyParamsThatWereAccessible['options[]'][1], 'there');
   });
 
   it('should have uploaded a file to `suite.outputDir`', function () {
