@@ -6,6 +6,9 @@
 Skipper makes it easy to implement streaming file uploads to disk, S3, or any of its supported file adapters.
 
 
+============================================
+
+
 ### Installation
 
 Skipper is installed in [Sails](http://beta.sailsjs.org) automatically (see https://github.com/sails101/file-uploads for a sample Sails app that handles file uploads).
@@ -20,7 +23,7 @@ npm install skipper --save
 app.use(require('skipper')());
 ```
 
-
+============================================
 
 ### Quick Start
 
@@ -30,6 +33,7 @@ The following example receives one or more files from a **file parameter** named
 req.file('avatar').upload();
 ```
 
+============================================
 
 ### Detailed Usage
 
@@ -67,6 +71,8 @@ function (req, res) {
 ### Options
 
 > TODO: merge over stuff from adapters
+
+============================================
 
 
 ### Background
@@ -193,11 +199,13 @@ return req.file('foobar').upload(function onUploadComplete (err, uploadedFiles) 
 
 -->
 
+============================================
 
 ### Status
 
 This module is published on npm.  Development takes place on the `master` branch.
 
+============================================
 
 ### More Resources
 
@@ -209,6 +217,7 @@ This module is published on npm.  Development takes place on the `master` branch
 - [Waterline (ORM)](http://github.com/balderdashy/waterline)
 - <a href="http://sailsjs.org" target="_blank" title="Node.js framework for building realtime APIs."><img src="https://github-camo.global.ssl.fastly.net/9e49073459ed4e0e2687b80eaf515d87b0da4a6b/687474703a2f2f62616c64657264617368792e6769746875622e696f2f7361696c732f696d616765732f6c6f676f2e706e67" width=60 alt="Sails.js logo (small)"/></a>
 
+============================================
 
 ### License
 
