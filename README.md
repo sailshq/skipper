@@ -70,7 +70,7 @@ req.file('avatar').upload(function (err, uploadedFiles) {
 
 ##### Uploading files to disk
 
-`skipper-disk` is a file adapter that uploads files to the local hard drive on the server.  It is bundled with Skipper, so if an `adapter` option is not specified (as in the [Quick Start]() example above) it is used by default.
+[skipper-disk](https://github.com/balderdashy/skipper-disk) is a file adapter that uploads files to the local hard drive on the server.  It is bundled with Skipper, so if an `adapter` option is not specified (as in the [Quick Start]() example above) it is used by default.
 
 ```js
 req.file('avatar').upload({
@@ -80,13 +80,19 @@ req.file('avatar').upload({
 
 ##### Uploading files to S3
 
+```shell
+$ npm install skipper-s3 --save
+```
 
-[skipper-s3]() is a filesystem adapter which enables Skipper to stream file uploads directly to Amazon S3.
+[skipper-s3](https://github.com/balderdashy/skipper-s3) is a filesystem adapter which enables Skipper to stream file uploads directly to Amazon S3.
 
 ```js
 req.file('avatar').upload({
   // ...any other options here...
-  adapter: require('skipper-s3')
+  adapter: require('skipper-s3'),
+  key: 'YOUR_S3_API_KEY',
+  secret: 'YOUR_S3_API_SECRET',
+  bucket: 'YOUR_S3_BUCKET'
 }, ...);
 ```
 
@@ -101,12 +107,17 @@ It exposes the following adapter-specific options:
 
 ##### Uploading files to gridfs
 
-[skipper-gridfs]() is a filesystem adapter which enables Skipper to stream file uploads directly to MongoDB's GridFS.
+```shell
+$ npm install skipper-gridfs --save
+```
+
+[skipper-gridfs](https://github.com/willhuang85/skipper-gridfs) is a filesystem adapter which enables Skipper to stream file uploads directly to MongoDB's GridFS.
 
 ```js
 req.file('avatar').upload({
   // ...any other options here...
-  adapter: require('skipper-gridfs')
+  adapter: require('skipper-gridfs'),
+  uri: 'YOUR_MONGO_URI(includes host, port, user, password, and database name'
 }, ...);
 ```
 
@@ -125,16 +136,19 @@ It exposes the following adapter-specific options:
 
 > TODO
 
-##### Restricting file type
-
-> TODO
 
 <!--
+##### Preventing/allowing uploads of a certain file type
+> TODO
+
 ##### Compressing uploaded files
+> TODO
 
 ##### Encrypting uploaded files
+> TODO
 
 ##### Creating thumbnails for uploaded images
+> TODO
 -->
 
 ============================================
