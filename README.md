@@ -11,7 +11,7 @@ Skipper makes it easy to implement streaming file uploads to disk, S3, or any of
 
 The following example assumes skipper is already installed as the body parser in your Express or Sails app. It receives one or more files from a **file parameter** named `avatar` using the default, built-in file adapter (skipper-disk).  This streams the file(s) to the default upload directory `.tmp/uploads/` on the server's local disk.
 
-```js
+```javascript
 req.file('avatar').upload(function (err, uploadedFiles){
   if (err) return res.send(500, err);
   return res.send(200, uploadedFiles);
@@ -37,64 +37,95 @@ app.use(require('skipper')());
 ============================================
 
 
-### `req.file()`
+### req.file()
+
+As is true with most methods on `req` once installed, usage is identical between Sails (in a controller) and Express (in a route).
+
+```javascript
+req.file('avatar').upload(function (err, uploadedFiles) {
+  if (err) return res.send(500, err);
+  return res.json({
+    message: uploadedFiles.length + ' file(s) uploaded successfully!',
+    files: uploadedFiles
+  });
+});
+```
 
 ##### Options
 
- Option  | Type                             | Description
- ------- | -------------------------------- | --------------
- dirname | ((string))                       | todo
- saveAs  | ((string)) -or- ((function))     | todo
+ Option    | Type                             | Description
+ --------- | -------------------------------- | --------------
+ dirname   | ((string))                       | todo
+ saveAs    | ((string)) -or- ((function))     | todo
+ maxBytes  | ((integer))                      | todo
 
 
-> TODO: merge over stuff from adapters
+> TODO: merge content from individual adapter readmes
 
 ============================================
 
 
 ### Use Cases
 
-As is true with most middleware once installed, usage is identical between Sails and Express; you just have to put the code in the right place.  In Sails, use `req.file()` in any controller action where you want to receive files.  In Express, put it in a route.
-
-
-```javascript
-function (req, res) {
-
-  req.file('avatar').upload(function (err, uploadedFiles) {
-    if (err) return res.send(500, err);
-
-    return res.json({
-      message: uploadedFiles.length + ' file(s) uploaded successfully!',
-      files: uploadedFiles
-    });
-  });
-
-}
-```
-
 
 ##### Uploading files to disk
 
 `skipper-disk` is a file adapter that uploads files to the local hard drive on the server.  It is bundled with Skipper, so if an `adapter` option is not specified (as in the [Quick Start]() example above) it is used by default.
 
-To specify
-
 ```js
 req.file('avatar').upload({
-
+  // ...any other options here...
 }, ...);
 ```
 
-##### Upload files to S3
+##### Uploading files to S3
 
-> TODO: document
 
-##### Upload files to gridfs
+[skipper-s3]() is a filesystem adapter which enables Skipper to stream file uploads directly to Amazon S3.
 
-> TODO: document
+```js
+req.file('avatar').upload({
+  // ...any other options here...
+  adapter: require('skipper-s3')
+}, ...);
+```
+
+It exposes the following adapter-specific options:
+
+ Option    | Type                             | Description
+ --------- | -------------------------------- | --------------
+ key       | ((string))                       | todo
+ secret    | ((string))                       | todo
+ bucket    | ((string))                       | todo
+
+
+##### Uploading files to gridfs
+
+[skipper-gridfs]() is a filesystem adapter which enables Skipper to stream file uploads directly to MongoDB's GridFS.
+
+```js
+req.file('avatar').upload({
+  // ...any other options here...
+  adapter: require('skipper-gridfs')
+}, ...);
+```
+
+It exposes the following adapter-specific options:
+
+ Option    | Type                             | Description
+ --------- | -------------------------------- | --------------
+ uri       | ((string))                       | todo
 
 
 ##### Customizing at-rest filenames for uploads
+
+> TODO
+
+##### Restricting file size
+
+> TODO
+
+##### Restricting file type
 
 > TODO
 
