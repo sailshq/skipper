@@ -157,7 +157,7 @@ This module is published on npm.  Development takes place on the `master` branch
 This module is part of the [Sails framework](http://sailsjs.org), and is free and open-source under the [MIT License](http://sails.mit-license.org/).
 
 
-![image_squidhome@2x.png](http://i.imgur.com/RIvu9.png) 
+![bkgd_seaScene.png](http://i.imgur.com/JpaJ8qw.png) 
  
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/a22d3919de208c90c898986619efaa85 "githalytics.com")](http://githalytics.com/balderdashy/file-parser)
