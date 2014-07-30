@@ -24,26 +24,14 @@ app.use(require('skipper')());
 
 ### Quick Start
 
-The following example receives a file from a **file parameter** named `avatar`, then streams it `.tmp/test.jpg` on the server's local disk:
+The following example receives one or more files from a **file parameter** named `avatar` using the default, built-in file adapter (skipper-disk).  This streams the file(s) to the default upload directory `.tmp/uploads/` on the server's local disk.
 
 ```js
-// ...
-return req.file('foobar').upload('./.tmp/test.jpg', function onUploadComplete (err, uploadedFiles) {
-  // ...
-});
-```
-
-To use dynamic filenames (i.e. whatever the name of the original file was), and still contain files within a particular directory (defaults to `.tmp/uploads/` relative to the current working directory):
-
-```js
-// ...
-return req.file('foobar').upload(function onUploadComplete (err, uploadedFiles) {
-  // ...
-});
+req.file('avatar').upload();
 ```
 
 
-### Usage
+### Detailed Usage
 
 As is true with most middleware once installed, usage is identical between Sails and Express; you just have to put the code in the right place.  In Sails, use `req.file()` in any controller action where you want to receive files.  In Express, do it in the route definition.
 
@@ -183,6 +171,24 @@ e.g. in the module where you set up your middleware:
 // ...
 app.use(require('skipper')());
 // ...
+```
+
+
+
+```js
+// ...
+return req.file('foobar').upload('./.tmp/test.jpg', function onUploadComplete (err, uploadedFiles) {
+  // ...
+});
+```
+
+To use dynamic filenames (i.e. whatever the name of the original file was), and still contain files within a particular directory (defaults to `.tmp/uploads/` relative to the current working directory):
+
+```js
+// ...
+return req.file('foobar').upload(function onUploadComplete (err, uploadedFiles) {
+  // ...
+});
 ```
 
 -->
