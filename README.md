@@ -6,6 +6,18 @@
 Skipper makes it easy to implement streaming file uploads to disk, S3, or any of its supported file adapters.
 
 
+### Quick Start
+
+The following example assumes skipper is already installed as the body parser in your Express or Sails app. It receives one or more files from a **file parameter** named `avatar` using the default, built-in file adapter (skipper-disk).  This streams the file(s) to the default upload directory `.tmp/uploads/` on the server's local disk.
+
+```js
+req.file('avatar').upload(function (err, uploadedFiles){
+  if (err) return res.send(500, err);
+  return res.send(200, uploadedFiles);
+});
+```
+
+
 ### Installation
 
 Skipper is installed in [Sails](http://beta.sailsjs.org) automatically (see https://github.com/sails101/file-uploads for a sample Sails app that handles file uploads).
@@ -22,18 +34,9 @@ app.use(require('skipper')());
 
 
 
-### Quick Start
+### Usage
 
-The following example receives one or more files from a **file parameter** named `avatar` using the default, built-in file adapter (skipper-disk).  This streams the file(s) to the default upload directory `.tmp/uploads/` on the server's local disk.
-
-```js
-req.file('avatar').upload();
-```
-
-
-### Detailed Usage
-
-As is true with most middleware once installed, usage is identical between Sails and Express; you just have to put the code in the right place.  In Sails, use `req.file()` in any controller action where you want to receive files.  In Express, do it in the route definition.
+As is true with most middleware once installed, usage is identical between Sails and Express; you just have to put the code in the right place.  In Sails, use `req.file()` in any controller action where you want to receive files.  In Express, put it in a route.
 
 ```javascript
 function (req, res) {
@@ -51,9 +54,17 @@ function (req, res) {
 ```
 
 
-##### Upload files to disk
+##### Uploading files to disk
 
-> TODO: document
+`skipper-disk` is a file adapter that uploads files to the local hard drive on the server.  It is bundled with Skipper, so if an `adapter` option is not specified (as in the [Quick Start]() example above) it is used by default.
+
+To specify
+
+```js
+req.file('avatar').upload({
+
+}, ...);
+```
 
 ##### Upload files to S3
 
@@ -64,7 +75,29 @@ function (req, res) {
 > TODO: document
 
 
-### Options
+##### Customizing at-rest filenames for uploads
+
+> TODO
+
+<!--
+##### Compressing uploaded files
+
+##### Encrypting uploaded files
+
+##### Creating thumbnails for uploaded images
+-->
+
+
+
+### `req.file()`
+
+##### Options
+
+ Option  | Type                             | Description
+ ------- | -------------------------------- | --------------
+ dirname | ((string))                       | todo
+ saveAs  | ((string)) -or- ((function))     | todo
+
 
 > TODO: merge over stuff from adapters
 
