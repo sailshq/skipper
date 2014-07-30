@@ -5,6 +5,7 @@
 
 Skipper makes it easy to implement streaming file uploads to disk, S3, or any of its supported file adapters.
 
+============================================
 
 ### Quick Start
 
@@ -16,6 +17,7 @@ req.file('avatar').upload(function (err, uploadedFiles){
   return res.send(200, uploadedFiles);
 });
 ```
+============================================
 
 
 ### Installation
@@ -32,11 +34,28 @@ npm install skipper --save
 app.use(require('skipper')());
 ```
 
+============================================
 
 
-### Usage
+### `req.file()`
+
+##### Options
+
+ Option  | Type                             | Description
+ ------- | -------------------------------- | --------------
+ dirname | ((string))                       | todo
+ saveAs  | ((string)) -or- ((function))     | todo
+
+
+> TODO: merge over stuff from adapters
+
+============================================
+
+
+### Use Cases
 
 As is true with most middleware once installed, usage is identical between Sails and Express; you just have to put the code in the right place.  In Sails, use `req.file()` in any controller action where you want to receive files.  In Express, put it in a route.
+
 
 ```javascript
 function (req, res) {
@@ -87,19 +106,7 @@ req.file('avatar').upload({
 ##### Creating thumbnails for uploaded images
 -->
 
-
-
-### `req.file()`
-
-##### Options
-
- Option  | Type                             | Description
- ------- | -------------------------------- | --------------
- dirname | ((string))                       | todo
- saveAs  | ((string)) -or- ((function))     | todo
-
-
-> TODO: merge over stuff from adapters
+============================================
 
 
 ### Background
@@ -226,11 +233,13 @@ return req.file('foobar').upload(function onUploadComplete (err, uploadedFiles) 
 
 -->
 
+============================================
 
 ### Status
 
 This module is published on npm.  Development takes place on the `master` branch.
 
+============================================
 
 ### More Resources
 
@@ -242,6 +251,7 @@ This module is published on npm.  Development takes place on the `master` branch
 - [Waterline (ORM)](http://github.com/balderdashy/waterline)
 - <a href="http://sailsjs.org" target="_blank" title="Node.js framework for building realtime APIs."><img src="https://github-camo.global.ssl.fastly.net/9e49073459ed4e0e2687b80eaf515d87b0da4a6b/687474703a2f2f62616c64657264617368792e6769746875622e696f2f7361696c732f696d616765732f6c6f676f2e706e67" width=60 alt="Sails.js logo (small)"/></a>
 
+============================================
 
 ### License
 
