@@ -134,7 +134,7 @@ describe('Sucessive file uploads should not fail ::', function() {
 
     // Check that a file landed
     var filesUploaded = fsx.readdirSync(suite.outputDir.path);
-    console.log('CHECKING IN ',suite.outputDir.path);
+    // console.log('CHECKING IN ',suite.outputDir.path);
     assert.equal(filesUploaded.length, 6);
 
     for(var i = 0; i < 6; i++){
