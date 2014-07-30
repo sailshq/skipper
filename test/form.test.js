@@ -2,21 +2,21 @@
  * Module dependencies
  */
 
-var fsx = require('fs-extra')
-	, _ = require('lodash')
-	, assert = require('assert')
-	, tmp = require('temporary')
-	, crypto = require('crypto')
-	, log = require('../lib/logger')
-	, async = require('async')
-	, path = require('path')
-	, Express = require('express')
-	, Uploader = require('./helpers/uploader')
-	, http = require('http')
-	, toValidateTheHTTPResponse = require('./helpers/toValidateTheHTTPResponse')
-	, newReceiverStream = require('./helpers/receiver').newReceiverStream
-	, Form = require('../lib/Parser/form')
-	;
+var fsx = require('fs-extra');
+var _ = require('lodash');
+var assert = require('assert');
+var tmp = require('temporary');
+var crypto = require('crypto');
+var log = require('../lib/logger');
+var async = require('async');
+var path = require('path');
+var Express = require('express');
+var Uploader = require('./helpers/uploader');
+var http = require('http');
+var toValidateTheHTTPResponse = require('./helpers/toValidateTheHTTPResponse');
+var newReceiverStream = require('./helpers/receiver').newReceiverStream;
+var Form = require('multiparty').Form;
+
 
 
 //////////////////////////////////////////
@@ -24,7 +24,7 @@ var fsx = require('fs-extra')
 ///
 ///
 /// TEST CONFIG
-/// 
+///
 //////////////////////////////////////////
 
 // Size of file to use in simulated upload
@@ -36,153 +36,153 @@ var BYTES = 100000;
 
 
 
-describe('multipart form upload', function () {
+describe('multipart form upload', function() {
 
-	//
-	// Basic sanity check on multipart form parser's
-	// functionality.  Check that part streams are valid
-	// and that our other base expectations hold.
-	//
-
-
-	// Write nonsense bytes to a file fixture.
-	var EOF = '\x04';
-	var fileFixture = new tmp.File();
-	fileFixture.writeFileSync(crypto.pseudoRandomBytes(BYTES)+EOF);
-	fileFixture.size = BYTES;
-
-	// Create a tmp directory for our uploads to live in.
-	var outputDir = new tmp.Dir();
+  //
+  // Basic sanity check on multipart form parser's
+  // functionality.  Check that part streams are valid
+  // and that our other base expectations hold.
+  //
 
 
-	// Lift express server.
-	var app = Express();
-	var server;
-	before(function(done) {
-		server = http.createServer(app)
-			.listen(3000)
-			.on('listening', done);
-	});
+  // Write nonsense bytes to a file fixture.
+  var EOF = '\x04';
+  var fileFixture = new tmp.File();
+  fileFixture.writeFileSync(crypto.pseudoRandomBytes(BYTES) + EOF);
+  fileFixture.size = BYTES;
 
-	after(function (){
-
-		// Lower express server.
-		server.close();
-
-		// Clean up file fixture.
-		fileFixture.unlinkSync();
-
-		// Clean up directory w/ test output.
-		fsx.removeSync(outputDir.path);
-	});
+  // Create a tmp directory for our uploads to live in.
+  var outputDir = new tmp.Dir();
 
 
-	it('uses the multipart form parsing middleware', function () {
-		app.use(function (req, res, next) {
-			next();
-		});
-	});
+  // Lift express server.
+  var app = Express();
+  var server;
+  before(function(done) {
+    server = http.createServer(app)
+      .listen(3000)
+      .on('listening', done);
+  });
+
+  after(function() {
+
+    // Lower express server.
+    server.close();
+
+    // Clean up file fixture.
+    fileFixture.unlinkSync();
+
+    // Clean up directory w/ test output.
+    fsx.removeSync(outputDir.path);
+  });
 
 
-	it('binds an action that will upload our test file', function () {
-		app.post('/upload', function (req, res) {
-			
-
-			var form = Form();
-
-			async.auto({
-				formClosed: function (cb) {
-					form.on('close', function () {
-						log('Form: emitted `close`'.bold.grey);
-						cb();
-					});
-				},
-				allPartsWritten: function (cb) {
-
-					var q = async.queue(function (task, cb) {
-						var part = task;
-
-						var size = part.byteCount - part.byteOffset;
-						var name = part.filename;
-
-						log(('Form: received part: '+ name+ ' with '+ size +' bytes').grey);
-
-						// Add '*' event to part stream to allow us to tap in
-						// and watch all events. (for testing only)
-						// ((function wildcardify(emitter, websocket) {
-						// 	var oldEmit = emitter.emit;
-						// 	emitter.emit = function() {
-						// 		var restOfArgs = Array.prototype.slice.call(arguments);
-						// 		log(':::DEBUG:::     partstream `'+name+'` emitted :', arguments);
-						// 		oldEmit.apply(emitter, restOfArgs);
-						// 	};
-						// 	return emitter;
-						// })(part));
-
-						// Pipe the file someplace
-						var box = new (require('stream').Writable)();
-						box._write = function(chunk, encoding, next){
-
-							// Simulate a delayed write
-							setTimeout(function () {
-								log('Wrote chunk'.grey);
-								next();
-							}, 150);
-						};
-						part.pipe(box);
-
-						box.on('finish', function () {
-							log('File written successfully.'.grey);
-							cb();
-						});
+  it('uses the multipart form parsing middleware', function() {
+    app.use(function(req, res, next) {
+      next();
+    });
+  });
 
 
-						// Just for diagnostics:
-						// part.on('readable', function () {
-						// 	var chunk = this.read();
-						// 	if (!chunk) return log('done with part');
-						// 	return log('got chunk');
-						// });
-					}, 2);
-
-					q.drain = function () {
-						// done w/ form
-						cb();
-					};
-
-					form.on('part', function whenNewPartStreamIsReceived (part) {
-						if (!part.filename) return;
-						q.push(part, function optional(err) {});
-					});
-				}
-			}, function allDone (err) {
-				if (err) res.send(500,err);
-				res.send(200);
-				log('All files uploaded.'.grey);
-			});
-
-			form.parse(req);
-
-		});
-	});
+  it('binds an action that will upload our test file', function() {
+    app.post('/upload', function(req, res) {
 
 
-	it('should upload the file when after the request is sent', function (done) {
+      var form = new Form();
 
-		// Builds an HTTP request
-		var httpRequest = Uploader({
-			baseurl: 'http://localhost:3000'
-		}, toValidateTheHTTPResponse(done));
+      async.auto({
+        formClosed: function(cb) {
+          form.on('close', function() {
+            log('Form: emitted `close`'.bold.grey);
+            cb();
+          });
+        },
+        allPartsWritten: function(cb) {
 
-		// Attaches a multi-part form upload to the HTTP request.
-		var form = httpRequest.form();
-		var file = fileFixture;
-		var pathToFile = fileFixture.path;
-		form.append('foo', 'hello');
-		form.append('bar', 'there');
-		form.append('avatar', fsx.createReadStream( pathToFile ));
-		form.append('avatar', fsx.createReadStream( pathToFile ));
-	});
+          var q = async.queue(function(task, cb) {
+            var part = task;
+
+            var size = part.byteCount - part.byteOffset;
+            var name = part.filename;
+
+            log(('Form: received part: ' + name + ' with ' + size + ' bytes').grey);
+
+            // Add '*' event to part stream to allow us to tap in
+            // and watch all events. (for testing only)
+            // ((function wildcardify(emitter, websocket) {
+            // 	var oldEmit = emitter.emit;
+            // 	emitter.emit = function() {
+            // 		var restOfArgs = Array.prototype.slice.call(arguments);
+            // 		log(':::DEBUG:::     partstream `'+name+'` emitted :', arguments);
+            // 		oldEmit.apply(emitter, restOfArgs);
+            // 	};
+            // 	return emitter;
+            // })(part));
+
+            // Pipe the file someplace
+            var box = new(require('stream').Writable)();
+            box._write = function(chunk, encoding, next) {
+
+              // Simulate a delayed write
+              setTimeout(function() {
+                log('Wrote chunk'.grey);
+                next();
+              }, 150);
+            };
+            part.pipe(box);
+
+            box.on('finish', function() {
+              log('File written successfully.'.grey);
+              cb();
+            });
+
+
+            // Just for diagnostics:
+            // part.on('readable', function () {
+            // 	var chunk = this.read();
+            // 	if (!chunk) return log('done with part');
+            // 	return log('got chunk');
+            // });
+          }, 2);
+
+          q.drain = function() {
+            // done w/ form
+            cb();
+          };
+
+          form.on('part', function whenNewPartStreamIsReceived(part) {
+            if (!part.filename) return;
+            q.push(part, function optional(err) {});
+          });
+        }
+      }, function allDone(err) {
+        if (err) res.send(500, err);
+        res.send(200);
+        log('All files uploaded.'.grey);
+      });
+
+      form.parse(req);
+
+    });
+  });
+
+
+  it('should upload the file when after the request is sent', function(done) {
+
+    // Builds an HTTP request
+    var httpRequest = Uploader({
+      baseurl: 'http://localhost:3000'
+    }, toValidateTheHTTPResponse(done));
+
+    // Attaches a multi-part form upload to the HTTP request.
+    var form = httpRequest.form();
+    var file = fileFixture;
+    var pathToFile = fileFixture.path;
+    form.append('foo', 'hello');
+    form.append('bar', 'there');
+    form.append('avatar', fsx.createReadStream(pathToFile));
+    form.append('avatar', fsx.createReadStream(pathToFile));
+  });
 
 
 });
