@@ -56,7 +56,7 @@ module.exports = function () {
 			}
 
 			//5 MB?
-			var bigFileSize = 7  * 1000 * 1000
+			var bigFileSize = 7  * 1000 * 1000;
 
 			for (var i = 0; i < 1; i++){
 				var f = new tmp.File();
