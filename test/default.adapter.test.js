@@ -18,7 +18,7 @@ var actionFixtures = {
 };
 
 
-describe('req.upload defaults to skipper-disk adapter when passed a string or `options` object ::', function() {
+describe('req.file(...).upload() defaults to skipper-disk adapter when passed a string or `options` object ::', function() {
   var suite = Lifecycle();
   before(suite.setup);
   after(suite.teardown);
@@ -31,7 +31,20 @@ describe('req.upload defaults to skipper-disk adapter when passed a string or `o
 
       req.file('avatar')
         .upload(OUTPUT_PATH, function (err, files) {
-          if (err) res.send(500, err);
+          if (err) {
+            try {
+              if (err instanceof Error) {
+                return res.json(500, {
+                  message: err.message,
+                  name: err.name,
+                  code: err.code,
+                  status: err.status,
+                  stack: err.stack
+                });
+              }
+            } catch (e) {}
+            return res.json(500, err);
+          }
           res.send(200);
         });
     });
