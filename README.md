@@ -53,14 +53,13 @@ req.file('avatar').upload(function (err, uploadedFiles) {
 
 ##### Options
 
- Option    | Type                             | Description
- --------- | -------------------------------- | --------------
- dirname   | ((string))                       | todo
- saveAs    | ((string)) -or- ((function))     | todo
- maxBytes  | ((integer))                      | todo
+ Option      | Type                             | Description
+ ----------- | -------------------------------- | --------------
+ dirname     | ((string))                       | todo
+ saveAs      | ((string)) -or- ((function))     | todo
+ maxBytes    | ((integer))                      | todo
 
 
-> TODO: merge content from individual adapter readmes
 
 ============================================
 
@@ -77,6 +76,13 @@ req.file('avatar').upload({
   // ...any other options here...
 }, ...);
 ```
+
+It exposes the following adapter-specific options:
+
+ Option     | Type                             | Description
+ ---------- | -------------------------------- | --------------
+ onProgress | ((function))                     | todo
+
 
 ##### Uploading files to S3
 
@@ -98,11 +104,12 @@ req.file('avatar').upload({
 
 It exposes the following adapter-specific options:
 
- Option    | Type                             | Description
- --------- | -------------------------------- | --------------
- key       | ((string))                       | todo
- secret    | ((string))                       | todo
- bucket    | ((string))                       | todo
+ Option     | Type                             | Description
+ ---------- | -------------------------------- | --------------
+ key        | ((string))                       | todo
+ secret     | ((string))                       | todo
+ bucket     | ((string))                       | todo
+ onProgress | ((function))                     | todo
 
 
 ##### Uploading files to gridfs
@@ -117,7 +124,7 @@ $ npm install skipper-gridfs --save
 req.file('avatar').upload({
   // ...any other options here...
   adapter: require('skipper-gridfs'),
-  uri: 'YOUR_MONGO_URI(includes host, port, user, password, and database name'
+  uri: 'mongodb://[username:password@]host1[:port1][/[database[.bucket]]'
 }, ...);
 ```
 
@@ -125,16 +132,16 @@ It exposes the following adapter-specific options:
 
  Option    | Type                             | Description
  --------- | -------------------------------- | --------------
- uri       | ((string))                       | todo
+ uri       | ((string))                       | the MongoDB database where uploaded files should be stored (using [mongo client URI syntax](http://api.mongodb.org/java/current/com/mongodb/MongoClientURI.html)) <br/> e.g. `mongodb://jimmy@j1mtr0n1xx@mongo.jimmy.com:27017/coolapp.avatar_uploads`
 
 
 ##### Customizing at-rest filenames for uploads
 
-> TODO
+> TODO: document `saveAs`
 
 ##### Restricting file size
 
-> TODO
+> TODO: document `maxBytes`
 
 
 <!--
@@ -180,17 +187,6 @@ Not only do you get access to incoming file uploads as raw streams, Skipper allo
 > It is important to realize that the benefit above **relies on a crucial, simplifying assumption**: that user agents send any **text parameters** _before_ the first **file parameter** in the multipart HTTP request body.  For instance, in an HTML form that means putting all of your `<input type="file"/>` tags **after** the other inputs.  If you don't want to lay your form out that way, you'll want to use AJAX to submit it instead (see [jQuery File Upload](https://github.com/blueimp/jQuery-File-Upload) / [Angular File Upload](https://github.com/danialfarid/angular-file-upload)) or listen for the form's "submit" event to reorder the inputs before submitting the form to the server.
 
 
-##### How It Works
-
-1. Skipper waits _just long enough_ to identify the first file being uploaded in a request, then gathers up all the text parameters it's seen _so far_ and **runs** your application code (i.e. calls `next()`).
-
-2. In your application code, you call `req.file('foo')` to listen for file uploads sent as the "foo" parameter.  This returns an "upstream"-- a stream of binary file streams; one for each file that was uploaded to the specified parameter ("foo") via an HTTP multipart file upload.  At that point, if Skipper has already seen files come in as "foo", it will start uploading to the file adapter.  This involves replaying the first buffered bytes its received of "foo" file uploads so far and "pumping" those streams so they start sending more bytes; i.e. relieving TCP backpressure.  If Skipper has NOT already received any files as "foo", it will start listening for them.
-
-3. When the request ends, or a significant (configurable) period of time has passed since a new file upload has shown up on "foo", the upstream is considered to be complete.  If you're using `req.file('foo').upload(function(err,uploadedFiles){ ... })`, the callback will be triggered with `uploadedFiles` as an array of metadata objects describing the files that were uploaded (including the at-rest file descriptor.)   If an error occured, the callback will be triggered with `err` instead.  (Note that, if you're using the raw upstream directly, you can listen for the "finish" and "error" events to achieve the same effect.)
-
-4. In general, when possible, you should put `req.file()` outside of asynchronous callbacks in your code.  However this isn't always possible-- Skipper tolerates this case "holding on" to unrecognized file streams (e.g. "bar") for a configurable period of time. If you don't use `req.file("bar")` right away in your code, Skipper will "hold on" to any files received on that parameter ("bar").  However it __won't pump bytes from those files__ until you use `req.file('bar')` in your code.  It does this without buffering to disk/memory by properly implementing Node's streams2 interface, which applies TCP backpressure and _actually slows down_, or even pauses, the upload.  If you __never__ use `req.file('bar')` in your code, any unused pending file streams received on "bar" will be discarded when the request ends.
-
-
 ##### Scenarios
 
 I realize there's a lot going on in here, so for sanity/confidence, let's look at some edge cases and explain how Skipper addresses them:
@@ -212,25 +208,244 @@ This module ~~may~~ **will** be included as a part of the stable release of Sail
 
 
 
+### FAQ
+
+
+##### How Does the Multipart Body Parser Work?
+
+_When a multipart request is received..._
+
+1. Skipper waits _just long enough_ to identify the first file being uploaded in a request, then gathers up all the text parameters it's seen _so far_ and **runs** your application code (i.e. calls `next()`).
+
+2. In your application code, you call `req.file('foo')` to listen for file uploads sent as the "foo" parameter.  This returns an "upstream"-- a stream of binary file streams; one for each file that was uploaded to the specified parameter ("foo") via an HTTP multipart file upload.  At that point, if Skipper has already seen files come in as "foo", it will start uploading to the file adapter.  This involves replaying the first buffered bytes its received of "foo" file uploads so far and "pumping" those streams so they start sending more bytes; i.e. relieving TCP backpressure.  If Skipper has NOT already received any files as "foo", it will start listening for them.
+
+3. When the request ends, or a significant (configurable) period of time has passed since a new file upload has shown up on "foo", the upstream is considered to be complete.  If you're using `req.file('foo').upload(function(err,uploadedFiles){ ... })`, the callback will be triggered with `uploadedFiles` as an array of metadata objects describing the files that were uploaded (including the at-rest file descriptor.)   If an error occured, the callback will be triggered with `err` instead.  (Note that, if you're using the raw upstream directly, you can listen for the "finish" and "error" events to achieve the same effect.)
+
+4. In general, when possible, you should put `req.file()` outside of asynchronous callbacks in your code.  However this isn't always possible-- Skipper tolerates this case "holding on" to unrecognized file streams (e.g. "bar") for a configurable period of time. If you don't use `req.file("bar")` right away in your code, Skipper will "hold on" to any files received on that parameter ("bar").  However it __won't pump bytes from those files__ until you use `req.file('bar')` in your code.  It does this without buffering to disk/memory by properly implementing Node's streams2 interface, which applies TCP backpressure and _actually slows down_, or even pauses, the upload.  If you __never__ use `req.file('bar')` in your code, any unused pending file streams received on "bar" will be discarded when the request ends.
 
 
 
-<!--
-#### Stream file(s) somewhere else
+##### What are Upstreams?
 
-Alternatively, to upload the file with any receiver other than the default [`skipper-disk`](http://github.com/balderdashy/skipper-disk):
+An upstream is an [object-mode Readable stream]() of [Readable streams]().  It's purpose is to pump out incoming files.
 
-```js
-// ...
-var SkipperS3 = require('skipper-s3')({ key: '...', secret: '...', bucket: '...' });
-var receiving = SkipperS3.receive();
-return req.file('foobar').upload(receiving, function onUploadComplete (err, uploadedFiles) {
-  // ...
-});
+When you call `req.file('foo')`, the upstream for the "foo" parameter in the current request (`req`) is lazy-initialized and returned (subsequent calls to `req.file('foo')` will return the same upstream, calling `req.file('bar')` will return the upstream for "bar", etc.).
+
+
+```
+•---------------------•
+|   req.file('foo')   |   <------- an upstream
+•----====-------------•
+     |  |
+     |  |
+     |f2|     <------- an incoming file upload stream
+     |  |
+     |  |
+     |f1|     <------- an incoming file upload stream
+     |  |
+     |  |
+     |f0|     <------- an incoming file upload stream
+    _|  |_
+    \    /
+     \  /
+      \/
 ```
 
 
 
+##### What are Upstream Receivers?
+
+
+An **upstream receiver** is an [object-mode Writable stream](http://nodejs.org/api/stream.html#stream_object_mode) of [Writable streams](http://nodejs.org/api/stream.html#stream_class_stream_writable).
+
+It's purpose is to receive incoming files that get pumped out of an upstream.  Whenever a new file shows up, the receiver's `_write()` method gets called, and the receiver writes it to the remote filesystem.
+
+
+```
+•-----------------•
+|  some upstream  |
+•----====---------•
+     |  |
+     |  |
+     |f2|   <------- an incoming file upload stream
+     |  |
+     |  |
+     |f1|   <------- an incoming file upload stream
+     |  |
+     |  |
+     |f0|   <------- an incoming file upload stream
+    _|  |_
+    \    /
+o----ª==ª----o
+|  receiver  |
+o------------o
+```
+
+
+##### What are Filesystem Adapters?
+
+A **filesystem adapter** is a node module which exports an object with the following functions:
+
+ Method      | Description
+ ----------- | ------------------
+ `ls()`      | Get the contents of the specified directory on the remote filesystem (returns an array of string file/folder names)
+ `read()`    | Get a file from the remote filesystem
+ `rm()`      | Remove a file or directory from the remote filesystem
+ `receive()` | Return an "upstream receiver" which will receive files pumped from an upstream and write them to the remote filesystem
+
+At present, the first three methods are actually only used by skipper-adapter-tests to test your module.  That said, it is unlikely that any of one them involves writing more than ~5-20 lines of code, so it's worth it to create them so you can use the generic test suite.  See [skipper-disk](https://github.com/balderdashy/skipper-disk/blob/master/index.js#L27) or [skipper-s3](https://github.com/balderdashy/skipper-s3/blob/master/index.js#L54) for example implementations.
+
+The most important method is `receive()` -- it builds the upstream receiver which is responsible for writing incoming files to the remote filesystem.
+
+
+<!--
+ TODO: simplify the API for building receivers- we could make it so you really only need to define the _write() method
+-->
+
+
+##### Implementing `receive()`
+
+The `receive()` method in a filesystem adapter must build and return a new upstream receiver.
+
+This is the hardest part-- if you implement this, everything else in your adapter is a piece of cake.  Here's a quick walk-through of how you can build and return a upstream receiver instance:
+
+
+```js
+
+function receive() {
+
+  // Build an instance of a writable stream in object mode.
+  var receiver__ = require('stream').Writable({ objectMode: true });
+
+  // This `_write` method is invoked each time a new file is pumped in
+  // from the upstream.  `__newFile` is a readable binary stream.
+  receiver__._write = function onFile(__newFile, _unused, done) {
+
+    // If you are piping to this receiver using Skipper, adapter options like "bucket"
+    // will be available as `__newFile.options` (otherwise it will be an empty object).
+    var options = __newFile.options;
+
+
+    // To determine location where file should be written on remote filesystem,
+    // calculate the output path as follows:
+    var outputPath = require('path').join(__newFile.dirname, __newFile.fd);
+
+
+    // Then ensure necessary parent directories exist
+    // ...
+
+    // Create/acquire a writable stream to the remote filesystem
+    // (this may involve using options like "bucket", "secret", etc. to build an appropriate request)
+    // ...
+    var outs__ = getWriteStreamSomehow(outputPath, encoding);
+
+
+    // Pump bytes from the incoming file (`__newFile`)
+    // to the outgoing stream towards the remote filesystem (`outs__`)
+    __newFile.pipe(outs__);
+
+
+    // Bind `finish` event for when the file has been completely written.
+    outs.once('finish', function () {
+      done();
+    });
+
+
+    // Handle potential error from the outgoing stream
+    outs__.on('error', function (err) {
+
+      // If this is not a fatal error (e.g. certain types of "ECONNRESET"s w/ S3)
+      // don't do anything.
+      if ( ! findOutIfIsFatalSomehow(err) ) return;
+
+      // The handling of this might vary adapter-to-adapter, but at some point, the
+      // `done` callback should be triggered w/ a properly formatted error object.
+      // Since calling `done(err)` will cause an `error` event to be emitted on the receiver,
+      // it is important to format the error in this way (esp. with code===E_WRITE) so it can
+      // be detected and discriminated from other types of errors that might be emitted from a
+      // receiver.
+      return done({
+        incoming: __newFile,
+        outgoing: outs__,
+        code: 'E_WRITE',
+        stack: typeof err === 'object' ? err.stack : new Error(err),
+        name: typeof err === 'object' ? err.name : err,
+        message: typeof err === 'object' ? err.message : err
+      });
+      // If this receiver is being used through Skipper, this event will be intercepted and, if possible
+      // (if the adapter implements the `rm` method) any bytes that were already written for this file
+      // will be garbage-collected.
+    });
+
+  };
+
+  return receiver__;
+}
+```
+
+============================================
+
+### Status
+
+This module is published on npm.  Development takes place on the `master` branch.
+
+============================================
+
+### More Resources
+
+- [Stackoverflow](http://stackoverflow.com/questions/tagged/sails.js)
+- [#sailsjs on Freenode](http://webchat.freenode.net/) (IRC channel)
+- [Twitter](https://twitter.com/sailsjs)
+- [Professional/enterprise](https://github.com/balderdashy/sails-docs/blob/master/FAQ.md#are-there-professional-support-options)
+- [Tutorials](https://github.com/balderdashy/sails-docs/blob/master/FAQ.md#where-do-i-get-help)
+- [Waterline (ORM)](http://github.com/balderdashy/waterline)
+- <a href="http://sailsjs.org" target="_blank" title="Node.js framework for building realtime APIs."><img src="https://github-camo.global.ssl.fastly.net/9e49073459ed4e0e2687b80eaf515d87b0da4a6b/687474703a2f2f62616c64657264617368792e6769746875622e696f2f7361696c732f696d616765732f6c6f676f2e706e67" width=60 alt="Sails.js logo (small)"/></a>
+
+============================================
+
+### License
+
+**[MIT](./LICENSE)**
+&copy; 2014
+[Mike McNeil](http://michaelmcneil.com), [Scott Gress](https://github.com/sgress454), [Balderdash](http://balderdash.co) & contributors
+
+This module is part of the [Sails framework](http://sailsjs.org), and is free and open-source under the [MIT License](http://sails.mit-license.org/).
+
+
+![bkgd_seaScene.png](http://i.imgur.com/JpaJ8qw.png)
+
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/a22d3919de208c90c898986619efaa85 "githalytics.com")](http://githalytics.com/balderdashy/skipper)
+
+
+
+
+
+<!--
+##### Using an upstream receiver
+
+Whether you get it from calling `.receive()` on an adapter, or build a quick custom receiver, the usage is the same:
+
+```js
+req.file('foobar').upload(myReceiver, function onUploadComplete (err, uploadedFiles) {
+  // ...
+});
+```
+
+-or-
+
+```js
+req.file('foobar').pipe(myReceiver)
+.once('error', function (err){
+  // ...
+})
+.once('finish', function (uploadedFiles){
+  // ...
+});
+```
+-->
+
+<!--
 #### With Sails (v0.10.0)
 
 As of v0.10.0-rc6, skipper is installed as the default request body parser in Sails- you don't need to install it again.
@@ -275,39 +490,4 @@ return req.file('foobar').upload(function onUploadComplete (err, uploadedFiles) 
   // ...
 });
 ```
-
 -->
-
-============================================
-
-### Status
-
-This module is published on npm.  Development takes place on the `master` branch.
-
-============================================
-
-### More Resources
-
-- [Stackoverflow](http://stackoverflow.com/questions/tagged/sails.js)
-- [#sailsjs on Freenode](http://webchat.freenode.net/) (IRC channel)
-- [Twitter](https://twitter.com/sailsjs)
-- [Professional/enterprise](https://github.com/balderdashy/sails-docs/blob/master/FAQ.md#are-there-professional-support-options)
-- [Tutorials](https://github.com/balderdashy/sails-docs/blob/master/FAQ.md#where-do-i-get-help)
-- [Waterline (ORM)](http://github.com/balderdashy/waterline)
-- <a href="http://sailsjs.org" target="_blank" title="Node.js framework for building realtime APIs."><img src="https://github-camo.global.ssl.fastly.net/9e49073459ed4e0e2687b80eaf515d87b0da4a6b/687474703a2f2f62616c64657264617368792e6769746875622e696f2f7361696c732f696d616765732f6c6f676f2e706e67" width=60 alt="Sails.js logo (small)"/></a>
-
-============================================
-
-### License
-
-**[MIT](./LICENSE)**
-&copy; 2014
-[Mike McNeil](http://michaelmcneil.com), [Scott Gress](https://github.com/sgress454), [Balderdash](http://balderdash.co) & contributors
-
-This module is part of the [Sails framework](http://sailsjs.org), and is free and open-source under the [MIT License](http://sails.mit-license.org/).
-
-
-![bkgd_seaScene.png](http://i.imgur.com/JpaJ8qw.png)
-
-
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/a22d3919de208c90c898986619efaa85 "githalytics.com")](http://githalytics.com/balderdashy/skipper)
