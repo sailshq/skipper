@@ -7,7 +7,7 @@ Skipper makes it easy to implement streaming file uploads to disk, S3, or any of
 
 ============================================
 
-### Quick Start
+## Quick Start
 
 The following example assumes skipper is already installed as the body parser in your Express or Sails app. It receives one or more files from a **file parameter** named `avatar` using the default, built-in file adapter (skipper-disk).  This streams the file(s) to the default upload directory `.tmp/uploads/` on the server's local disk.
 
@@ -20,7 +20,7 @@ req.file('avatar').upload(function (err, uploadedFiles){
 ============================================
 
 
-### Installation
+## Installation
 
 Skipper is installed in [Sails](http://beta.sailsjs.org) automatically (see https://github.com/sails101/file-uploads for a sample Sails app that handles file uploads).
 
@@ -37,7 +37,7 @@ app.use(require('skipper')());
 ============================================
 
 
-### req.file()
+## Using req.file()
 
 As is true with most methods on `req` once installed, usage is identical between Sails (in a controller) and Express (in a route).
 
@@ -51,7 +51,7 @@ req.file('avatar').upload(function (err, uploadedFiles) {
 });
 ```
 
-##### Options
+#### Options
 
  Option      | Type                             | Description
  ----------- | -------------------------------- | --------------
@@ -64,10 +64,10 @@ req.file('avatar').upload(function (err, uploadedFiles) {
 ============================================
 
 
-### Use Cases
+## Use Cases
 
 
-##### Uploading files to disk
+#### Uploading files to disk
 
 [skipper-disk](https://github.com/balderdashy/skipper-disk) is a file adapter that uploads files to the local hard drive on the server.  It is bundled with Skipper, so if an `adapter` option is not specified (as in the [Quick Start]() example above) it is used by default.
 
@@ -84,7 +84,7 @@ It exposes the following adapter-specific options:
  onProgress | ((function))                     | todo: document
 
 
-##### Uploading files to S3
+#### Uploading files to S3
 
 ```shell
 $ npm install skipper-s3 --save
@@ -113,7 +113,7 @@ It exposes the following adapter-specific options:
 
 
 
-##### Uploading files to gridfs
+#### Uploading files to gridfs
 
 ```shell
 $ npm install skipper-gridfs --save
@@ -136,72 +136,72 @@ It exposes the following adapter-specific options:
  uri       | ((string))                       | the MongoDB database where uploaded files should be stored (using [mongo client URI syntax](http://api.mongodb.org/java/current/com/mongodb/MongoClientURI.html)) <br/> e.g. `mongodb://jimmy@j1mtr0n1xx@mongo.jimmy.com:27017/coolapp.avatar_uploads`
 
 
-##### Customizing at-rest filenames for uploads
+#### Customizing at-rest filenames for uploads
 
 > TODO: document `saveAs`
 
-##### Restricting file size
+#### Restricting file size
 
 > TODO: document `maxBytes`
 
 
 <!--
-##### Preventing/allowing uploads of a certain file type
+  #### Preventing/allowing uploads of a certain file type
 > TODO
 
-##### Compressing uploaded files
+#### Compressing uploaded files
 > TODO
 
-##### Encrypting uploaded files
+#### Encrypting uploaded files
 > TODO
 
-##### Creating thumbnails for uploaded images
+#### Creating thumbnails for uploaded images
 > TODO
 -->
 
 ============================================
 
 
-### Background
+## Background
 
 Skipper extends the [HTTP body parser in Express/Sails](https://github.com/expressjs/body-parser).
 
 It parses multipart requests (file uploads) using [andrewrk/node-multiparty](https://github.com/andrewrk/node-multiparty), but instead of buffering to a `tmp` directory on disk, it exposes uploaded files as streams.  This allows Skipper to run your application code _before the file uploads are saved_ affording a number of benefits.  Additionally, Skipper implements a file adapter specification that can be used to connect "upstreams" with various APIs (Box.net, imgur, whatever) with minimal integration effort.
 
 
-##### File Adapters
+#### File Adapters
 
 The upstreams you get from `req.file()` can be hooked up to any compatible skipper adapter (e.g. local filesystem, S3, grid-fs).  File upload adapters maintain a consistent specification for certain options/features; things like specifying the at-rest filename for a file upload or indicating the maximum upload size for a particular request.  However some file adapters may provide additional functionality/options which are not part of the specification-- that's ok too!  When possible, new features/options introduced by individual adapters will be standardized and pulled into the core spec, where they can be uniformly tested (in an adapter-agnostic way) using the skipper-adapter-tests module (inspired by the approach taken in [waterline-adapter-tests](https://github.com/balderdashy/waterline-adapter-tests))
 
-##### Stream Processing
+#### Stream Processing
 
 Working with upstreams means you can process file uploads in flight-- _before_ they land on your server.  This makes features like terrabyte file uploads (or ∞-byte, for that matter) a possibility by allowing you to restrict/limit uploads without receiving the entire thing.  You can even tap into the raw file streams to peform streaming encryption, compression, or even image thumbnailing (although currently this requires implementing your own stream processing logic.  Simple, one-line configuration to opt into those features is on the roadmap.)
 
-##### Lazy Stream Initialization
+#### Lazy Stream Initialization
 
 Skipper only examines/processes any given file upload for as long as it takes to determine whether it is _actually used_ by your app.  For instance, if you don't code `req.file('fake')` in your app code, the stream will be ignored, whether it contains a 25KB image or a 30TB binary payload. This conserves valuable system resources and reducing the effectiveness of would-be DDoS attacks.
 
-##### Text Parameters
+#### Text Parameters
 
 Not only do you get access to incoming file uploads as raw streams, Skipper allows you to access the other _non-file_ metadata parameters (e.g "photoCaption" or "commentId") in the conventional way.  That includes url/JSON-encoded HTTP body parameters (`req.body`), querystring parameters (`req.query`), or "route" parameters (`req.params`); in other words, all the standard stuff sent in standard AJAX uploads or HTML form submissions.  And helper methods like `req.param()` and `req.allParams()` work too.
 
 > It is important to realize that the benefit above **relies on a crucial, simplifying assumption**: that user agents send any **text parameters** _before_ the first **file parameter** in the multipart HTTP request body.  For instance, in an HTML form that means putting all of your `<input type="file"/>` tags **after** the other inputs.  If you don't want to lay your form out that way, you'll want to use AJAX to submit it instead (see [jQuery File Upload](https://github.com/blueimp/jQuery-File-Upload) / [Angular File Upload](https://github.com/danialfarid/angular-file-upload)) or listen for the form's "submit" event to reorder the inputs before submitting the form to the server.
 
 
-##### Scenarios
+#### Scenarios
 
 I realize there's a lot going on in here, so for sanity/confidence, let's look at some edge cases and explain how Skipper addresses them:
 
-##### EMAXBUFFER
+#### EMAXBUFFER
 > TODO: document
 
-##### ETIMEOUT
+#### ETIMEOUT
 > TODO: document
 
 ....others...
 
 
-##### History
+#### History
 
 This module ~~may~~ **will** be included as a part of the stable release of Sails v0.10.  However we need help with documentation, examples, and writing additional receivers (currently receivers for S3 and local disk exist.)
 
@@ -209,10 +209,10 @@ This module ~~may~~ **will** be included as a part of the stable release of Sail
 
 
 
-### FAQ
+## FAQ
 
 
-##### How Does the Multipart Body Parser Work?
+#### How Does the Multipart Body Parser Work?
 
 _When a multipart request is received..._
 
@@ -226,7 +226,7 @@ _When a multipart request is received..._
 
 
 
-##### What are Upstreams?
+#### What are Upstreams?
 
 An upstream is an [object-mode Readable stream]() of [Readable streams]().  It's purpose is to pump out incoming files.
 
@@ -254,7 +254,7 @@ When you call `req.file('foo')`, the upstream for the "foo" parameter in the cur
 
 
 
-##### What are Upstream Receivers?
+#### What are Upstream Receivers?
 
 
 An **upstream receiver** is an [object-mode Writable stream](http://nodejs.org/api/stream.html#stream_object_mode) of [Writable streams](http://nodejs.org/api/stream.html#stream_class_stream_writable).
@@ -283,7 +283,7 @@ o------------o
 ```
 
 
-##### What are Filesystem Adapters?
+#### What are Filesystem Adapters?
 
 A **filesystem adapter** is a node module which exports an object with the following functions:
 
@@ -304,7 +304,7 @@ The most important method is `receive()` -- it builds the upstream receiver whic
 -->
 
 
-##### Implementing `receive()`
+#### Implementing `receive()`
 
 The `receive()` method in a filesystem adapter must build and return a new upstream receiver.
 
@@ -387,13 +387,13 @@ function receive() {
 
 ============================================
 
-### Status
+## Status
 
 This module is published on npm.  Development takes place on the `master` branch.
 
 ============================================
 
-### More Resources
+## More Resources
 
 - [Stackoverflow](http://stackoverflow.com/questions/tagged/sails.js)
 - [#sailsjs on Freenode](http://webchat.freenode.net/) (IRC channel)
@@ -405,7 +405,7 @@ This module is published on npm.  Development takes place on the `master` branch
 
 ============================================
 
-### License
+## License
 
 **[MIT](./LICENSE)**
 &copy; 2014
@@ -424,7 +424,7 @@ This module is part of the [Sails framework](http://sailsjs.org), and is free an
 
 
 <!--
-##### Using an upstream receiver
+  #### Using an upstream receiver
 
 Whether you get it from calling `.receive()` on an adapter, or build a quick custom receiver, the usage is the same:
 
