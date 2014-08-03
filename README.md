@@ -188,6 +188,14 @@ Not only do you get access to incoming file uploads as raw streams, Skipper allo
 > It is important to realize that the benefit above **relies on a crucial, simplifying assumption**: that user agents send any **text parameters** _before_ the first **file parameter** in the multipart HTTP request body.  For instance, in an HTML form that means putting all of your `<input type="file"/>` tags **after** the other inputs.  If you don't want to lay your form out that way, you'll want to use AJAX to submit it instead (see [jQuery File Upload](https://github.com/blueimp/jQuery-File-Upload) / [Angular File Upload](https://github.com/danialfarid/angular-file-upload)) or listen for the form's "submit" event to reorder the inputs before submitting the form to the server.
 
 
+#### The Big Assumption: Field Order
+
+After a lot of research, @zolmeister, @sgress454 and I came to understand a critical fact about multipart form data: that fields are sent _in order_ by browsers.  This is true even as far back as IE6!
+
++ http://stackoverflow.com/a/7450170/486547
++ http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4
++ https://github.com/jnicklas/capybara/issues/670#issue-3711585
+
 #### Scenarios
 
 I realize there's a lot going on in here, so for sanity/confidence, let's look at some edge cases and explain how Skipper addresses them:
