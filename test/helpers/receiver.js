@@ -1,5 +1,11 @@
-var log = require('../../lib/logger')
-	, fsx = require('fs-extra');
+/**
+ * Module dependencies
+ */
+
+var fsx = require('fs-extra');
+var log = require('../../standalone/logger');
+
+
 
 module.exports = {
 
@@ -7,11 +13,11 @@ module.exports = {
 	/**
 	 * Build a mock readable stream that emits incoming files.
 	 * (used for file downloads)
-	 * 
+	 *
 	 * @return {Stream.Readable}
 	 */
 	newEmitterStream: function newEmitterStream () {
-		// TODO: 
+		// TODO:
 	},
 
 
@@ -19,10 +25,10 @@ module.exports = {
 	/**
 	 * Build a mock writable stream that handles incoming files.
 	 * (used for file uploads)
-	 * 
+	 *
 	 * @return {Stream.Writable}
 	 */
-	
+
 	newReceiverStream: function newReceiverStream (options) {
 
 		var Writable = require('stream').Writable;
@@ -39,7 +45,7 @@ module.exports = {
 			});
 			outs.on('error', function (err) {
 				log(('Receiver: Error writing `'+__newFile.filename+'`:: '+ require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
-				
+
 				// Garbage-collects the already-written bytes for this file.
 				blobAdapter.rm({id: options.id}, function (rmErr) {
 					// If the file could not be garbage-collected, concatenate a final error
@@ -50,7 +56,7 @@ module.exports = {
 			});
 			__newFile.pipe(outs);
 		};
-		
+
 		return receiver__;
 	}
 };

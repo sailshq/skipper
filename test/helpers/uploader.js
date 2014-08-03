@@ -2,19 +2,19 @@
  * Module dependencies
  */
 
-var Request = require('request')
-	, _ = require('lodash');
+var Request = require('request');
+var _ = require('lodash');
 
 
 
 /**
- * 
+ *
  * @param  {Object} optionalOptions
  * @param  {Function} optionalCallback
  * @return {HTTPRequest}
  */
 module.exports = function getUploader ( optionalOptions, optionalCallback ) {
-	
+
 	var opts = optionalOptions || {};
 	_.defaults(opts, {
 		baseurl: 'http://localhost:3000',
