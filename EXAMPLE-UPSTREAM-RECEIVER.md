@@ -1,6 +1,6 @@
 # Simplified example
 
-It is helpful to look at a somewhat simplified example of the `receive()` method defined in this adapter:
+It is helpful to look at a somewhat simplified example of the `receive()` method defined in Skipper FSadapters:
 
 ```js
 module.exports = function receive(options) {
