@@ -39,7 +39,7 @@
     "colors": "~0.6.2",
     "semver": "~2.2.1",
     "connect": "~2.15.0",
-    "skipper-disk": "~0.3.1",
+    "skipper-disk": "~0.5.0",
     "guid": "0.0.12",
     "node-uuid": "^1.4.1"
   },
@@ -51,6 +51,6 @@
     "sails": "~0.10.0",
     "mocha": "~1.18.2",
     "express": "~4.1.1",
-    "skipper-adapter-tests": "~1.1.5"
+    "skipper-adapter-tests": "~1.5.0"
   }
 }
