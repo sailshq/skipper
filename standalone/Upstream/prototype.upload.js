@@ -44,7 +44,7 @@ module.exports = function upload (opts, cb) {
   // If first parameter is the callback-function not a `receiver__`
   if (!arguments[1] && typeof arguments[0] === 'function') {
     cb = opts;
-    opts = undefined;
+    opts = {};
   }
 
   // Handle first argument when it's specified as string
