@@ -5,60 +5,13 @@ The current Travis test output, support matrix, medium-term roadmap, and backlog
 
 ## Build Status
 
-
-
 | Release                                                                                                                 | Install Command                                                | Build Status
 |------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | -----------------
 | [![NPM version](https://badge.fury.io/js/skipper.png)](https://github.com/balderdashy/skipper/tree/stable) _(stable)_  | `npm install skipper`                                          | [![Build Status](https://travis-ci.org/balderdashy/skipper.png?branch=stable)](https://travis-ci.org/balderdashy/skipper) |
 | [edge](https://github.com/balderdashy/skipper/tree/master)                                                              | `npm install skipper@git://github.com/balderdashy/skipper.git` | [![Build Status](https://travis-ci.org/balderdashy/skipper.png?branch=master)](https://travis-ci.org/balderdashy/skipper) |
 
 
-## Filesystem Adapters
-
-| Module                       | Build Status (edge)                                                                                                                     | Latest Stable Version
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------
-| [skipper-disk](https://github.com/balderdashy/skipper-disk)                 | [![Build Status](https://travis-ci.org/balderdashy/skipper-disk.png?branch=master)](https://travis-ci.org/balderdashy/skipper-disk)     | [![NPM version](https://badge.fury.io/js/skipper-disk.png)](https://www.npmjs.org/package/skipper-disk)
-| [skipper-s3](https://github.com/balderdashy/skipper-s3)                   | [![Build Status](https://travis-ci.org/balderdashy/skipper-s3.png?branch=master)](https://travis-ci.org/balderdashy/skipper-s3)         | [![NPM version](https://badge.fury.io/js/skipper-s3.png)](https://www.npmjs.org/package/skipper-s3)
-| [skipper-gridfs](https://github.com/willhuang85/skipper-gridfs)               | [![Build Status](https://travis-ci.org/willhuang85/skipper-gridfs.png?branch=master)](https://travis-ci.org/willhuang85/skipper-gridfs) | [![NPM version](https://badge.fury.io/js/skipper-gridfs.png)](https://www.npmjs.org/package/skipper-gridfs)
-
-
 ## Roadmap
-
-Our short-to-medium-term roadmap items, in order of descending priority:
-
-_(feel free to suggest things)_
-
- Feature                                                  | Owner                                                                            | Details     
- :------------------------------------------------------- | :------------------------------------------------------------------------------- | :------
- normalized upload progress events in core                | [@mikermcneil](https://github.com/mikermcneil)                                   | remove the progress stream stuff from skipper-disk and include it in core (pipe to it, like the renamer pump)
- support for maxBytes quota enforcement in core           | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | on-the-fly maxBytes enforcement on a per-upstream basis
- expose a static Upstream factory on the skipper module   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | useful for streaming from one fsadapter to another (i.e. not just for file uploads)
- expose a static Downstream factory on the skipper module | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | useful for multi-file download from fsadapters
- expose an API for building Downstream reducer pumps      | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | i.e. so you can coallesce a multi-file download into a zip archive
-
-
-#### Backlog
-
-The backlog consists of features which are not currently in the immediate-term roadmap above, but are useful.  We would exuberantly accept a pull request implementing any of the items below, so long as it was accompanied with reasonable tests that prove it, and it doesn't break other core functionality.
-
- Feature                                         | Owner                                                                            | Details     
- :---------------------------------------------- | :------------------------------------------------------------------------------- | :------
- streaming compression (zlib)                    | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to compress file uploads on their way to the remote filesystem, and decomopress them on the way out
- streaming encryption (crypto)                   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to encrypt file uploads on their way to the remote filesystem, and decrypt them on the way out
- streaming thumbnail support for image uploads   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to create thumbnails from streaming files on the fly, then also persist those thumbails to the remote filesystem.  Returned metadata needs to provide file descriptors (`fd`s) for each thumbnail.
-
-
-
-> ##### Feature Requests
->
-> We welcome feature requests as pull requests editing the "Backlog" section above.
->
-> Before adding a new item to this list, please ensure the feature you're interested in is not already covered by another row in the table below, or in the roadmap.  In addition to _new_ feature requests, please feel welcome to submit any suggested edits to feature requests or roadmap items.
->
-> BTW- the most helpful feature requests also include a test which fails in the current implementation, and would pass if the requested feature was implemented :)
->
-> Thanks!
-
 
 
 
@@ -131,4 +84,67 @@ Thanks!
 
 -->
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Our short-to-medium-term roadmap items, in order of descending priority:
+
+_(feel free to suggest things)_
+
+ Feature                                                  | Owner                                                                            | Details     
+ :------------------------------------------------------- | :------------------------------------------------------------------------------- | :------
+ normalized upload progress events in core                | [@mikermcneil](https://github.com/mikermcneil)                                   | remove the progress stream stuff from skipper-disk and include it in core (pipe to it, like the renamer pump)
+ support for maxBytes quota enforcement in core           | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | on-the-fly maxBytes enforcement on a per-upstream basis
+ expose a static Upstream factory on the skipper module   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | useful for streaming from one fsadapter to another (i.e. not just for file uploads)
+ expose a static Downstream factory on the skipper module | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | useful for multi-file download from fsadapters
+ expose an API for building Downstream reducer pumps      | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | i.e. so you can coallesce a multi-file download into a zip archive
+
+
+#### Backlog
+
+The backlog consists of features which are not currently in the immediate-term roadmap above, but are useful.  We would exuberantly accept a pull request implementing any of the items below, so long as it was accompanied with reasonable tests that prove it, and it doesn't break other core functionality.
+
+ Feature                                         | Owner                                                                            | Details     
+ :---------------------------------------------- | :------------------------------------------------------------------------------- | :------
+ streaming compression (zlib)                    | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to compress file uploads on their way to the remote filesystem, and decomopress them on the way out
+ streaming encryption (crypto)                   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to encrypt file uploads on their way to the remote filesystem, and decrypt them on the way out
+ streaming thumbnail support for image uploads   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to create thumbnails from streaming files on the fly, then also persist those thumbails to the remote filesystem.  Returned metadata needs to provide file descriptors (`fd`s) for each thumbnail.
+
+
+
+> ##### Feature Requests
+>
+> We welcome feature requests as pull requests editing the "Backlog" section above.
+>
+> Before adding a new item to the backlog or the immediate roadmap, please ensure the feature you're interested in is not already covered by another row in either table.  In addition to _new_ feature requests, please feel welcome to submit any suggested edits to feature requests or roadmap items.
+>
+> BTW- the most helpful feature requests also include a test which fails in the current implementation, and would pass if the requested feature was implemented :)
+>
+> Thanks!
+> ~[@mikermcneil](http://twitter.com/mikermcneil)
+
+
+
+
+## Skipper-Compatible Filesystem Adapters
+
+| Module                       | Build Status (edge)                                                                                                                     | Latest Stable Version
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------
+| [skipper-disk](https://github.com/balderdashy/skipper-disk)                 | [![Build Status](https://travis-ci.org/balderdashy/skipper-disk.png?branch=master)](https://travis-ci.org/balderdashy/skipper-disk)     | [![NPM version](https://badge.fury.io/js/skipper-disk.png)](https://www.npmjs.org/package/skipper-disk)
+| [skipper-s3](https://github.com/balderdashy/skipper-s3)                   | [![Build Status](https://travis-ci.org/balderdashy/skipper-s3.png?branch=master)](https://travis-ci.org/balderdashy/skipper-s3)         | [![NPM version](https://badge.fury.io/js/skipper-s3.png)](https://www.npmjs.org/package/skipper-s3)
+| [skipper-gridfs](https://github.com/willhuang85/skipper-gridfs)               | [![Build Status](https://travis-ci.org/willhuang85/skipper-gridfs.png?branch=master)](https://travis-ci.org/willhuang85/skipper-gridfs) | [![NPM version](https://badge.fury.io/js/skipper-gridfs.png)](https://www.npmjs.org/package/skipper-gridfs)
 
