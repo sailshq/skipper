@@ -27,7 +27,7 @@ module.exports = function buildOrNormalizeReceiver (opts) {
   }
 
   // If the first argument is undefined, treat it as an empty configuration object.
-  else if (typeof receiver__ === 'undefined') {
+  else if (typeof opts === 'undefined') {
     opts = {};
   }
 
@@ -51,16 +51,19 @@ module.exports = function buildOrNormalizeReceiver (opts) {
 
   // Determine the file adapter to use
   // (defaults to `DefaultFileAdapter`, defined above in the module dependencies at the top of this file)
-  var FileSystemAdapter = receiverOpts.adapter || DefaultFileAdapter;
+  console.log('receiverOpts:',receiverOpts);
+  var Adapter = receiverOpts.adapter || DefaultFileAdapter;
 
-  // Support FileSystemAdapter as either a function
+  // Support Adapter as either a function
   // or a verbatim adapter object (pass it in directly)
-  if (_.isFunction(FileSystemAdapter)) {
-    FileSystemAdapter = FileSystemAdapter();
+  if (_.isFunction(Adapter)) {
+    Adapter = Adapter();
   }
 
+  // console.log(Adapter);
+
   // Finally, build a default receiver stream with the specified options
-  receiver__ = FileSystemAdapter.receive(receiverOpts);
+  receiver__ = Adapter.receive(receiverOpts);
 
   // and return it.
   return receiver__;
