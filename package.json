@@ -1,6 +1,6 @@
 {
   "name": "skipper",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Bodyparser for Express/Sails. Exposes simple API for streaming multiple files to disk, S3, etc. without buffering to a .tmp directory.",
   "main": "index.js",
   "directories": {},
