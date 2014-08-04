@@ -19,7 +19,12 @@ var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
  * .upload(receiver, cb)
  * .upload(receiver)
  * .upload(cb)
+ * ```
+ *
+ * Alternate usage:
+ * ```
  * .upload("filename.jpg")
+ * .upload({adapter: {receive: receiver}})
  * ```
  *
  * @param  {stream.Writable}   receiver__
@@ -55,19 +60,17 @@ module.exports = function upload (receiver__, cb) {
     self.emit('progress', milestone);
   });
 
-  // Write stream finished successfully!
+  // The receiver write stream finished successfully!
   receiver__.once('finish', function allFilesUploaded() {
-    log(('A receiver is finished writing files from Upstream `' + self.fieldName + '`.').grey);
-    log('(this doesn\'t necessarily mean any files were actually written...)'.grey);
-
+    log.color('grey')('A receiver is finished writing files from Upstream `' + self.fieldName + '`.');
+    log.color('grey')('(this doesn\'t necessarily mean any files were actually written...)');
     cb(null, self.serializeFiles());
   });
 
   // Write stream encountered a fatal error and had to quit early!
   // (some of the files may still have been successfully written, though)
   receiver__.once('error', function unableToUpload(err) {
-    log(('A receiver handling Upstream `' + self.fieldName + '` encountered a write error :' + util.inspect(err)).red);
-
+    log.color('red')('A receiver handling Upstream `%s` encountered a write error :', self.fieldName, util.inspect(err));
     cb(err, self.serializeFiles());
   });
 
@@ -108,5 +111,5 @@ module.exports = function upload (receiver__, cb) {
   // // ??????????????????????????????????????????????????????????????????????????????????????????
 
   // Chainable
-  return this;
+  return self;
 };
