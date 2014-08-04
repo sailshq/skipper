@@ -55,7 +55,7 @@ module.exports = function buildOrNormalizeReceiver (receiver__) {
 
   // Determine the file adapter to use
   // (defaults to `DefaultFileAdapter`, defined above in the module dependencies at the top of this file)
-  var FileAdapter = receiverOpts.adapter || DefaultFileAdapter;
+  var FileSystemAdapter = receiverOpts.adapter || DefaultFileAdapter;
 
   // Handle `saveAs` when it's specified as string (normalize to fn)
   if (typeof receiverOpts.saveAs === 'string') {
@@ -73,8 +73,14 @@ module.exports = function buildOrNormalizeReceiver (receiver__) {
     };
   }
 
+  // Support FileSystemAdapter as either a function
+  // or a verbatim adapter object (pass it in directly)
+  if (_.isFunction(FileSystemAdapter)) {
+    FileSystemAdapter = FileSystemAdapter();
+  }
+
   // Finally, build a default receiver stream with the specified options
-  receiver__ = FileAdapter().receive(receiverOpts);
+  receiver__ = FileSystemAdapter.receive(receiverOpts);
 
   // and return it.
   return receiver__;
