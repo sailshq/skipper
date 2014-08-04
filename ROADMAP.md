@@ -21,6 +21,9 @@ The current Travis test output, support matrix, medium-term roadmap, and backlog
 | [skipper-s3](https://github.com/balderdashy/skipper-s3)                   | [![Build Status](https://travis-ci.org/balderdashy/skipper-s3.png?branch=master)](https://travis-ci.org/balderdashy/skipper-s3)         | [![NPM version](https://badge.fury.io/js/skipper-s3.png)](https://www.npmjs.org/package/skipper-s3)
 | [skipper-gridfs](https://github.com/willhuang85/skipper-gridfs)               | [![Build Status](https://travis-ci.org/willhuang85/skipper-gridfs.png?branch=master)](https://travis-ci.org/willhuang85/skipper-gridfs) | [![NPM version](https://badge.fury.io/js/skipper-gridfs.png)](https://www.npmjs.org/package/skipper-gridfs)
 
+> Need support for a different remote filesystem, or just interested in writing your own adapter?
+>
+> First read up on [how Skipper works](https://github.com/balderdashy/skipper#background), then check out [the spec](https://github.com/balderdashy/skipper#what-are-filesystem-adapters) to get started making your own adapter.
 
 
 ## Roadmap
