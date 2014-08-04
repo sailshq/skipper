@@ -393,6 +393,10 @@ function receive() {
 }
 ```
 
+#### Advanced Usage
+
+You can `.pipe()` an upstream directly to a custom upstream receiver, just bear in mind that you must first intercept the upstream and attach an `fd` (file descriptor) property to each incoming file stream.
+
 ============================================
 
 ## Status

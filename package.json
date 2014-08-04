@@ -40,7 +40,8 @@
     "semver": "~2.2.1",
     "connect": "~2.15.0",
     "skipper-disk": "~0.3.1",
-    "guid": "0.0.12"
+    "guid": "0.0.12",
+    "node-uuid": "^1.4.1"
   },
   "devDependencies": {
     "fs-extra": "~0.8.1",

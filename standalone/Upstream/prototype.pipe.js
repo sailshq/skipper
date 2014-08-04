@@ -17,7 +17,16 @@ var Readable = require('stream').Readable;
  * @chainable
  */
 
-module.exports = function pipe () {
-  this._connected = true;
-  return Readable.prototype.pipe.apply(this, Array.prototype.slice.call(arguments));
+module.exports = function pipe ( /* destination, [options] */) {
+  var self = this;
+
+  self._connected = true;
+  self._receiver = arguments[0];
+  self.once('end', function (){
+    self._emittedEnd = true;
+  });
+  self.once('error', function (){
+    self._emittedError = true;
+  });
+  return Readable.prototype.pipe.apply(self, Array.prototype.slice.call(arguments));
 };
