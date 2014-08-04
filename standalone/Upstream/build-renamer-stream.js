@@ -43,7 +43,8 @@ module.exports = function buildRenamerStream (options) {
       if (_.isString(options.dirname)) {
         __file.fd = path.join(options.dirname, __file.fd);
       }
-      console.log('RENAMING __file IN RENAMER PUMP ON FIELD '+__file.field,'to:',__file.fd);
+
+      log.color('blue').write('RenamerPump:\n• dirname => %s\n• field => %s\n• fd => %s', __file.dirname, __file.field,__file.fd);
       __renamer__.push(__file);
       next();
     });

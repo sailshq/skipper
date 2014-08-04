@@ -90,7 +90,8 @@ module.exports = function upload (opts, cb) {
   // file.
   var __renamer__ = r_buildRenamerStream({
     saveAs: opts.saveAs,
-    dirname: opts.dirname
+    dirname: opts.dirname,
+    log: log
   });
 
 
