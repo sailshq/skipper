@@ -72,13 +72,11 @@ module.exports = function upload (opts, cb) {
   // Locate, normalize, and/or build a receiver instance using the value passed in
   // as the first argument (`receiver__`)
   var receiver__;
-  console.log('opts: ',opts,'---------------------------\n\n');
   try { receiver__ = buildOrNormalizeReceiver(opts); }
   catch (e) {
     if (typeof cb === 'function') return cb(e);
     throw e; // (perhaps emit an error on the upstream instead?)
   }
-  // console.log('USING RECEIVER: ',receiver__,'---------------------------\n\n');
 
   // For convenience, pump progress events from the receiver
   // to this upstream.  This allows for interchangable, chainable
