@@ -27,7 +27,7 @@ var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
  * .upload({adapter: {receive: receiver}})
  * ```
  *
- * @param  {stream.Writable}   receiver__
+ * @param  {String|Object|stream.Writable}   opts [optional]
  * @param  {Function} cb
  * @return {Upstream}
  * @this {Upstream}
@@ -35,22 +35,23 @@ var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
  * @chainable
  */
 
-module.exports = function upload (receiver__, cb) {
-  var USAGE = '.upload([receiver] [,callback])';
+module.exports = function upload (opts, cb) {
   var self = this;
+  var USAGE = '.upload([receiver] [,callback])';
 
   // If first parameter is the callback-function not a `receiver__`
-  if (!cb && typeof receiver__ === 'function') {
-    cb = receiver__;
-    receiver__ = undefined;
+  if (!arguments[1] && typeof arguments[0] === 'function') {
+    cb = opts;
+    opts = undefined;
   }
 
   // Locate, normalize, and/or build a receiver instance using the value passed in
   // as the first argument (`receiver__`)
-  try { receiver__ = buildOrNormalizeReceiver(receiver__); }
+  var receiver__;
+  try { receiver__ = buildOrNormalizeReceiver(opts); }
   catch (e) {
     if (typeof cb === 'function') return cb(e);
-    throw e;
+    throw e; // (perhaps emit an error on the upstream instead?)
   }
 
   // For convenience, pump progress events from the receiver
@@ -62,15 +63,15 @@ module.exports = function upload (receiver__, cb) {
 
   // The receiver write stream finished successfully!
   receiver__.once('finish', function allFilesUploaded() {
-    log.color('grey')('A receiver is finished writing files from Upstream `' + self.fieldName + '`.');
-    log.color('grey')('(this doesn\'t necessarily mean any files were actually written...)');
+    log.color('grey').write('A receiver is finished writing files from Upstream `' + self.fieldName + '`.');
+    log.color('grey').write('(this doesn\'t necessarily mean any files were actually written...)');
     cb(null, self.serializeFiles());
   });
 
   // Write stream encountered a fatal error and had to quit early!
   // (some of the files may still have been successfully written, though)
   receiver__.once('error', function unableToUpload(err) {
-    log.color('red')('A receiver handling Upstream `%s` encountered a write error :', self.fieldName, util.inspect(err));
+    log.color('red').write('A receiver handling Upstream `%s` encountered a write error :', self.fieldName, util.inspect(err));
     cb(err, self.serializeFiles());
   });
 
