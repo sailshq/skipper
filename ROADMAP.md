@@ -9,7 +9,7 @@ The current Travis test output, support matrix, medium-term roadmap, and backlog
 
 | Release                                                                                                                 | Install Command                                                | Build Status
 |------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | -----------------
-| [![NPM version](https://badge.fury.io/js/skipper.png)](https://github.com/balderdashy/skipper/tree/stabler) _(stable)_  | `npm install skipper`                                          | [![Build Status](https://travis-ci.org/balderdashy/skipper.png?branch=stable)](https://travis-ci.org/balderdashy/skipper) |
+| [![NPM version](https://badge.fury.io/js/skipper.png)](https://github.com/balderdashy/skipper/tree/stable) _(stable)_  | `npm install skipper`                                          | [![Build Status](https://travis-ci.org/balderdashy/skipper.png?branch=stable)](https://travis-ci.org/balderdashy/skipper) |
 | [edge](https://github.com/balderdashy/skipper/tree/master)                                                              | `npm install skipper@git://github.com/balderdashy/skipper.git` | [![Build Status](https://travis-ci.org/balderdashy/skipper.png?branch=master)](https://travis-ci.org/balderdashy/skipper) |
 
 
@@ -17,9 +17,9 @@ The current Travis test output, support matrix, medium-term roadmap, and backlog
 
 | Module                       | Build Status (edge)                                                                                                                     | Latest Stable Version
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------
-| skipper-disk                 | [![Build Status](https://travis-ci.org/balderdashy/skipper-disk.png?branch=master)](https://travis-ci.org/balderdashy/skipper-disk)     | [![NPM version](https://badge.fury.io/js/skipper-disk.png)](https://www.npmjs.org/package/skipper-disk)
-| skipper-s3                   | [![Build Status](https://travis-ci.org/balderdashy/skipper-s3.png?branch=master)](https://travis-ci.org/balderdashy/skipper-s3)         | [![NPM version](https://badge.fury.io/js/skipper-s3.png)](https://www.npmjs.org/package/skipper-s3)
-| skipper-gridfs               | [![Build Status](https://travis-ci.org/willhuang85/skipper-gridfs.png?branch=master)](https://travis-ci.org/willhuang85/skipper-gridfs) | [![NPM version](https://badge.fury.io/js/skipper-gridfs.png)](https://www.npmjs.org/package/skipper-gridfs)
+| [skipper-disk](https://github.com/balderdashy/skipper-disk)                 | [![Build Status](https://travis-ci.org/balderdashy/skipper-disk.png?branch=master)](https://travis-ci.org/balderdashy/skipper-disk)     | [![NPM version](https://badge.fury.io/js/skipper-disk.png)](https://www.npmjs.org/package/skipper-disk)
+| [skipper-s3](https://github.com/balderdashy/skipper-s3)                   | [![Build Status](https://travis-ci.org/balderdashy/skipper-s3.png?branch=master)](https://travis-ci.org/balderdashy/skipper-s3)         | [![NPM version](https://badge.fury.io/js/skipper-s3.png)](https://www.npmjs.org/package/skipper-s3)
+| [skipper-gridfs](https://github.com/willhuang85/skipper-gridfs)               | [![Build Status](https://travis-ci.org/willhuang85/skipper-gridfs.png?branch=master)](https://travis-ci.org/willhuang85/skipper-gridfs) | [![NPM version](https://badge.fury.io/js/skipper-gridfs.png)](https://www.npmjs.org/package/skipper-gridfs)
 
 
 ## Roadmap
