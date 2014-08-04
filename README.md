@@ -164,7 +164,7 @@ It exposes the following adapter-specific options:
 
 ## Background
 
-Skipper extends the [HTTP body parser in Express/Sails](https://github.com/expressjs/body-parser).
+Skipper extends the [HTTP body parser used in Sails and Express](https://github.com/expressjs/body-parser).
 
 It parses multipart requests (file uploads) using [andrewrk/node-multiparty](https://github.com/andrewrk/node-multiparty), but instead of buffering to a `tmp` directory on disk, it exposes uploaded files as streams.  This allows Skipper to run your application code _before the file uploads are saved_ affording a number of benefits.  Additionally, Skipper implements a file adapter specification that can be used to connect "upstreams" with various APIs (Box.net, imgur, whatever) with minimal integration effort.
 
