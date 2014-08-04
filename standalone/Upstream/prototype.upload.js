@@ -3,6 +3,7 @@
  */
 
 var path = require('path');
+var util = require('util');
 var log = require('../logger');
 var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
 var r_buildRenamerStream = require('./build-renamer-stream');
