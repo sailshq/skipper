@@ -1,8 +1,10 @@
+var _ = require('lodash');
+
 // todo rip this out
 
 
 // (set to `true` to display development-only log messages)
-FILE_PARSER_LOGGER_ENABLED = true;
+FILE_PARSER_LOGGER_ENABLED = false;
 
 var logger;
 if (global.FILE_PARSER_LOGGER_ENABLED) {

@@ -2,6 +2,7 @@
  * Module dependencies
  */
 
+var path = require('path');
 var log = require('../logger');
 var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
 var r_buildRenamerStream = require('./build-renamer-stream');
@@ -43,6 +44,28 @@ module.exports = function upload (opts, cb) {
   if (!arguments[1] && typeof arguments[0] === 'function') {
     cb = opts;
     opts = undefined;
+  }
+
+  // Handle first argument when it's specified as string
+  // (save it as the `saveAs` opt)
+  if (typeof opts === 'string') {
+    opts = { saveAs: opts };
+  }
+
+  // Handle `saveAs` when it's specified as string (normalize to fn)
+  if (typeof opts === 'object' && typeof opts.saveAs === 'string') {
+
+    // If the string has a leading `/`, interpret it as an absolute path.
+    // In that case, we'll infer a value for the "dirname" option.
+    if (!!opts.saveAs.match(/^\//)) {
+      opts.dirname = opts.dirname || path.dirname(opts.saveAs);
+      opts.saveAs = path.basename(opts.saveAs);
+    }
+    // And in any case, we'll normalize "saveAs" to a function
+    var desiredFilename = opts.saveAs;
+    opts.saveAs = function (__newFile, cb) {
+      cb(null, desiredFilename);
+    };
   }
 
   // Locate, normalize, and/or build a receiver instance using the value passed in

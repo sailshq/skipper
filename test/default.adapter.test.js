@@ -70,7 +70,7 @@ describe('req.file(...).upload() defaults to skipper-disk adapter when passed a 
 
     // Check that a file landed
     var filesUploaded = fsx.readdirSync(suite.outputDir.path);
-    assert.equal(filesUploaded.length,1, 'Expected `filesUploaded.length` === 1, but it was '+filesUploaded.length+'\nHere is the complete list: \n'+util.inspect(filesUploaded, false, null));
+    assert.equal(filesUploaded.length,1, 'Expected `filesUploaded.length` === 1, but after listing contents of "'+suite.outputDir.path+'", noticed there were '+filesUploaded.length+'\nHere is the complete list: \n'+util.inspect(filesUploaded, false, null));
 
     // Check that its contents are correct
     var uploadedFileContents = fsx.readFileSync(path.join(suite.outputDir.path, filesUploaded[0]));
