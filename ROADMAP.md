@@ -42,7 +42,7 @@ _(feel free to suggest things)_
 The backlog consists of features which are not currently in the immediate-term roadmap above, but are useful.  We would exuberantly accept a pull request implementing any of the items below, so long as it was accompanied with reasonable tests that prove it, and it doesn't break other core functionality.
 
  Feature                                         | Owner                                                                            | Details     
- :---------------------------------------------: | :------------------------------------------------------------------------------- | :------
+ :---------------------------------------------- | :------------------------------------------------------------------------------- | :------
  streaming compression (zlib)                    | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to compress file uploads on their way to the remote filesystem, and decomopress them on the way out
  streaming encryption (crypto)                   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to encrypt file uploads on their way to the remote filesystem, and decrypt them on the way out
  streaming thumbnail support for image uploads   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to create thumbnails from streaming files on the fly, then also persist those thumbails to the remote filesystem.  Returned metadata needs to provide file descriptors (`fd`s) for each thumbnail.
