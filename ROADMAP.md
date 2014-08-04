@@ -24,6 +24,9 @@ The current Travis test output, support matrix, medium-term roadmap, and backlog
 
 ## Roadmap
 
+Our short-to-medium-term roadmap items, in order of descending priority:
+
+_(feel free to suggest things)_
 
  Feature                                                  | Owner                                                                            | Details     
  :------------------------------------------------------- | :------------------------------------------------------------------------------- | :------
@@ -56,9 +59,7 @@ The backlog consists of features which are not currently in the immediate-term r
 >
 > Thanks!
 
-Our short-to-medium-term roadmap items, in order of descending priority:
 
-_(feel free to suggest things)_
 
 
 
