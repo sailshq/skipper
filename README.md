@@ -37,9 +37,9 @@ app.use(require('skipper')());
 ============================================
 
 
-## Using req.file()
+## Using `req.file(...).upload()`
 
-As is true with most methods on `req` once installed, usage is identical between Sails (in a controller) and Express (in a route).
+As is true with most methods on `req`, usage of Skipper's `req.file()` is identical between Sails (in a controller) and Express (in a route).
 
 ```javascript
 req.file('avatar').upload(function (err, uploadedFiles) {
@@ -55,10 +55,10 @@ req.file('avatar').upload(function (err, uploadedFiles) {
 
  Option      | Type                             | Description
  ----------- | -------------------------------- | --------------
- dirname     | ((string))                       | todo
- saveAs      | ((string)) -or- ((function))     | todo
- maxBytes    | ((integer))                      | todo
-
+ dirname     | ((string))                       | Optional. The path to the directory on the remote filesystem where file uploads should be streamed.  May be specified as an absolute path (e.g. `/Users/mikermcneil/foo`) or a relative path.  In the latter case, or if no `dirname` is provided, the configured filesystem adapter will determine a `dirname` using a conventional default (varies adapter to adapter).  If `dirname` is used with `saveAs`- the filename from saveAs will be relative to dirname.
+ saveAs      | ((string)) -or- ((function))     | Optional.  By default, Skipper decides an "at-rest" filename for your uploaded files (called the `fd`) by generating a UUID and combining it with the file's original file extension when it was uploaded ("e.g. 24d5f444-38b4-4dc3-b9c3-74cb7fbbc932.jpg"). <br/>  If `saveAs` is specified as a string, any uploaded file(s) will be saved to that particular path instead (useful for simple single-file uploads).<br/> If `saveAs` is specified as a function, that function will be called each time a file is received, passing it the raw stream and a callback (useful for multi-file uploads). For example: <br/> `function (__newFileStream,cb) { cb(null, 'theUploadedFile.foo'); }` <br/>If a file already exists with the same `fd`, it will be overridden.<br/>The final file descriptor (`fd`) for the upload will be resolved relative from `dirname`.
+ maxBytes    | ((integer))                      | Optional. Max total number of bytes permitted for a given upload, calculated by summing the size of all files in the upstream; e.g. if you created an upstream that watches the "avatar" field (`req.file('avatar')`), and a given request sends 15 file fields with the name "avatar", `maxBytes` will check the total number of bytes in all of the 15 files.  If maxBytes is exceeded, the already-written files will be left untouched, but unfinshed file uploads will be garbage-collected, and not-yet-started uploads will be cancelled.  (Note that `maxBytes` is currently experimental)
+ onProgress  | ((function))                     | Optional. This function will be called again and again as the upstream pumps chunks into the receiver with an object representing the current status of the upload, until the upload completes.  Currently experimental.
 
 
 ============================================
@@ -106,11 +106,12 @@ It exposes the following adapter-specific options:
 
  Option     | Type                             | Description
  ---------- | -------------------------------- | --------------
- key        | ((string))                       | todo: document
- secret     | ((string))                       | todo: document
- bucket     | ((string))                       | todo: document
- onProgress | ((function))                     | todo: document
-
+ key        | ((string))                       | Your AWS "Access Key ID", e.g. `"BZIZIZFFHXR27BFUOZ7"` (_required_)
+ secret     | ((string))                       | Your AWS "Secret Access Key", e.g. `"L8ZN3aP1B9qkUgggUnEZ6KzrQJbJxx4EMjNaWy3n"` (_required_)
+ bucket     | ((string))                       | The bucket to upload your files into, e.g. `"my_cool_file_uploads"` (_required_)
+ endpoint   | ((string))                       | By default all requests will be sent to the global endpoint `s3.amazonaws.com`. But if you want to manually set the endpoint, you can do it with the endpoint option. |
+ region     | ((string))                       | The S3 region where the bucket is located, e.g. `"us-west-2"`. Note: If `endpoint` is defined, `region` will be ignored. Defaults to `"us-standard"` |
+ tmpdir     | ((string))                       | The path to the directory where buffering multipart requests can rest their heads.  Amazon requires "parts" sent to their multipart upload API to be at least 5MB in size, so this directory is used to queue up chunks of data until a big enough payload has accumulated.  Defaults to `.tmp/s3-upload-part-queue` (resolved from the current working directory of the node process- e.g. your app)
 
 
 #### Uploading files to gridfs
@@ -136,6 +137,9 @@ It exposes the following adapter-specific options:
  uri       | ((string))                       | the MongoDB database where uploaded files should be stored (using [mongo client URI syntax](http://api.mongodb.org/java/current/com/mongodb/MongoClientURI.html)) <br/> e.g. `mongodb://jimmy@j1mtr0n1xx@mongo.jimmy.com:27017/coolapp.avatar_uploads`
 
 
+<!--
+============================================
+
 #### Customizing at-rest filenames for uploads
 
 > TODO: document `saveAs`
@@ -145,7 +149,6 @@ It exposes the following adapter-specific options:
 > TODO: document `maxBytes`
 
 
-<!--
   #### Preventing/allowing uploads of a certain file type
 > TODO
 
@@ -312,6 +315,61 @@ The most important method is `receive()` -- it builds the upstream receiver whic
 -->
 
 
+============================================
+
+
+## Low-Level Usage
+
+> **Warning:**
+> You probably shouldn't try doing anything in this section unless you've implemented streams before, and in particular _streams2_ (i.e. "suck", not "spew" streams).
+
+
+
+#### File adapter instances, receivers, upstreams, and binary streams
+
+First instantiate a blob adapter (`blobAdapter`):
+
+```js
+var blobAdapter = require('skipper-disk')();
+```
+
+Build a receiver (`receiving`):
+
+```js
+var receiving = blobAdapter.receive();
+```
+
+Then you can stream file(s) from a particular field (`req.file('foo')`):
+
+```js
+req.file('foo').upload(receiving, function (err, filesUploaded) {
+  // ...
+});
+```
+
+#### `upstream.pipe(receiving)`
+
+As an alternative to the `upload()` method, you can pipe an incoming **upstream** returned from `req.file()` (a Readable stream of Readable binary streams) directly to the **receiver** (a Writable stream for Upstreams.)
+
+
+```js
+req.file('foo').pipe(receiving);
+```
+
+There is no performance benefit to using `.pipe()` instead of `.upload()`-- they both use streams2.  The `.pipe()` method is available merely as a matter of flexibility/chainability.  Be aware that `.upload()` handles the `error` and `finish` events for you; if you choose to use `.pipe()`, you will of course need to listen for these events manually:
+
+```js
+req.file('foo')
+.on('error', function onError() { ... })
+.on('finish', function onSuccess() { ... })
+.pipe(receiving)
+```
+
+Also bear in mind that you must first intercept the upstream and attach an `fd` (file descriptor) property to each incoming file stream.
+
+Generally, you're better off sticking with the standard usage.
+
+
 #### Implementing `receive()`
 
 The `receive()` method in a filesystem adapter must build and return a new upstream receiver.
@@ -393,15 +451,47 @@ function receive() {
 }
 ```
 
-#### Advanced Usage
 
-You can `.pipe()` an upstream directly to a custom upstream receiver, just bear in mind that you must first intercept the upstream and attach an `fd` (file descriptor) property to each incoming file stream.
+========================================
+
+#### Specifying Options
+
+All options may be passed in using any of the following approaches, in ascending priority order (e.g. the 3rd appraoch overrides the 1st)
+
+
+###### 1. In the blob adapter's factory method:
+
+```js
+var blobAdapter = require('skipper-disk')({
+  // These options will be applied unless overridden.
+});
+```
+
+###### 2. In a call to the `.receive()` factory method:
+
+```js
+var receiving = blobAdapter.receive({
+  // Options will be applied only to this particular receiver.
+});
+```
+
+###### 3. Directly into the `.upload()` method of the Upstream returned by `req.file()`:
+
+```js
+var upstream = req.file('foo').upload({
+  // These options will be applied unless overridden.
+});
+```
+
 
 ============================================
+
 
 ## Status
 
 This module is published on npm.  Development takes place on the `master` branch.
+
+See [ROADMAP.md]() for more information on where the project is headed and how you can contribute.
 
 ============================================
 
