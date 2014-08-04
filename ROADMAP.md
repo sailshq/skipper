@@ -26,7 +26,7 @@ The current Travis test output, support matrix, medium-term roadmap, and backlog
 
 
  Feature                                                  | Owner                                                  | Details     
- :------------------------------------------------------: | :----------------------------------------------------- | :------
+ :------------------------------------------------------- | :----------------------------------------------------- | :------
  normalized upload progress events in core                | [@mikermcneil](https://github.com/mikermcneil)         | remove the progress stream stuff from skipper-disk and include it in core (pipe to it, like the renamer pump)
  support for maxBytes quota enforcement in core           | _want to help?_                                        | on-the-fly maxBytes enforcement on a per-upstream basis
  expose a static Upstream factory on the skipper module   | _want to help?_                                        | useful for streaming from one fsadapter to another (i.e. not just for file uploads)
