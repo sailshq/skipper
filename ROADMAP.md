@@ -11,6 +11,18 @@ The current Travis test output, support matrix, medium-term roadmap, and backlog
 | [edge](https://github.com/balderdashy/skipper/tree/master)                                                              | `npm install skipper@git://github.com/balderdashy/skipper.git` | [![Build Status](https://travis-ci.org/balderdashy/skipper.png?branch=master)](https://travis-ci.org/balderdashy/skipper) |
 
 
+
+
+## Skipper-Compatible Filesystem Adapters
+
+| Module                       | Build Status (edge)                                                                                                                     | Latest Stable Version
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------
+| [skipper-disk](https://github.com/balderdashy/skipper-disk)                 | [![Build Status](https://travis-ci.org/balderdashy/skipper-disk.png?branch=master)](https://travis-ci.org/balderdashy/skipper-disk)     | [![NPM version](https://badge.fury.io/js/skipper-disk.png)](https://www.npmjs.org/package/skipper-disk)
+| [skipper-s3](https://github.com/balderdashy/skipper-s3)                   | [![Build Status](https://travis-ci.org/balderdashy/skipper-s3.png?branch=master)](https://travis-ci.org/balderdashy/skipper-s3)         | [![NPM version](https://badge.fury.io/js/skipper-s3.png)](https://www.npmjs.org/package/skipper-s3)
+| [skipper-gridfs](https://github.com/willhuang85/skipper-gridfs)               | [![Build Status](https://travis-ci.org/willhuang85/skipper-gridfs.png?branch=master)](https://travis-ci.org/willhuang85/skipper-gridfs) | [![NPM version](https://badge.fury.io/js/skipper-gridfs.png)](https://www.npmjs.org/package/skipper-gridfs)
+
+
+
 ## Roadmap
 
 
@@ -126,25 +138,14 @@ The backlog consists of features which are not currently in the immediate-term r
 
 
 
-> ##### Feature Requests
->
-> We welcome feature requests as pull requests editing the "Backlog" section above.
->
-> Before adding a new item to the backlog or the immediate roadmap, please ensure the feature you're interested in is not already covered by another row in either table.  In addition to _new_ feature requests, please feel welcome to submit any suggested edits to feature requests or roadmap items.
->
-> BTW- the most helpful feature requests also include a test which fails in the current implementation, and would pass if the requested feature was implemented :)
->
-> Thanks!
-> ~[@mikermcneil](http://twitter.com/mikermcneil)
+#### Feature Requests
 
+We welcome feature requests as pull requests editing the "Backlog" section above.
 
+Before adding a new item to the backlog or the immediate roadmap, please ensure the feature you're interested in is not already covered by another row in either table.  In addition to _new_ feature requests, please feel welcome to submit any suggested edits to feature requests or roadmap items.
 
+BTW- the most helpful feature requests also include a test which fails in the current implementation, and would pass if the requested feature was implemented :)
 
-## Skipper-Compatible Filesystem Adapters
-
-| Module                       | Build Status (edge)                                                                                                                     | Latest Stable Version
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------
-| [skipper-disk](https://github.com/balderdashy/skipper-disk)                 | [![Build Status](https://travis-ci.org/balderdashy/skipper-disk.png?branch=master)](https://travis-ci.org/balderdashy/skipper-disk)     | [![NPM version](https://badge.fury.io/js/skipper-disk.png)](https://www.npmjs.org/package/skipper-disk)
-| [skipper-s3](https://github.com/balderdashy/skipper-s3)                   | [![Build Status](https://travis-ci.org/balderdashy/skipper-s3.png?branch=master)](https://travis-ci.org/balderdashy/skipper-s3)         | [![NPM version](https://badge.fury.io/js/skipper-s3.png)](https://www.npmjs.org/package/skipper-s3)
-| [skipper-gridfs](https://github.com/willhuang85/skipper-gridfs)               | [![Build Status](https://travis-ci.org/willhuang85/skipper-gridfs.png?branch=master)](https://travis-ci.org/willhuang85/skipper-gridfs) | [![NPM version](https://badge.fury.io/js/skipper-gridfs.png)](https://www.npmjs.org/package/skipper-gridfs)
+Thanks!
+~[@mikermcneil](http://twitter.com/mikermcneil)
 
