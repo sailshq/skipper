@@ -25,24 +25,24 @@ The current Travis test output, support matrix, medium-term roadmap, and backlog
 ## Roadmap
 
 
- Feature                                                  | Owner                                                  | Details     
- :------------------------------------------------------- | :----------------------------------------------------- | :------
- normalized upload progress events in core                | [@mikermcneil](https://github.com/mikermcneil)         | remove the progress stream stuff from skipper-disk and include it in core (pipe to it, like the renamer pump)
- support for maxBytes quota enforcement in core           | _want to help?_                                        | on-the-fly maxBytes enforcement on a per-upstream basis
- expose a static Upstream factory on the skipper module   | _want to help?_                                        | useful for streaming from one fsadapter to another (i.e. not just for file uploads)
- expose a static Downstream factory on the skipper module | _want to help?_                                        | useful for multi-file download from fsadapters
- expose an API for building Downstream reducer pumps      | _want to help?_                                        | i.e. so you can coallesce a multi-file download into a zip archive
+ Feature                                                  | Owner                                                                            | Details     
+ :------------------------------------------------------- | :------------------------------------------------------------------------------- | :------
+ normalized upload progress events in core                | [@mikermcneil](https://github.com/mikermcneil)                                   | remove the progress stream stuff from skipper-disk and include it in core (pipe to it, like the renamer pump)
+ support for maxBytes quota enforcement in core           | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | on-the-fly maxBytes enforcement on a per-upstream basis
+ expose a static Upstream factory on the skipper module   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | useful for streaming from one fsadapter to another (i.e. not just for file uploads)
+ expose a static Downstream factory on the skipper module | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | useful for multi-file download from fsadapters
+ expose an API for building Downstream reducer pumps      | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | i.e. so you can coallesce a multi-file download into a zip archive
 
 
 #### Backlog
 
 The backlog consists of features which are not currently in the immediate-term roadmap above, but are useful.  We would exuberantly accept a pull request implementing any of the items below, so long as it was accompanied with reasonable tests that prove it, and it doesn't break other core functionality.
 
- Feature                                         | Owner                                                  | Details     
- :---------------------------------------------: | :----------------------------------------------------- | :------
- streaming compression (zlib)                    | _want to help?_                                        | transport stream to compress file uploads on their way to the remote filesystem, and decomopress them on the way out
- streaming encryption (crypto)                   | _want to help?_                                        | transport stream to encrypt file uploads on their way to the remote filesystem, and decrypt them on the way out
- streaming thumbnail support for image uploads   | _want to help?_                                        | transport stream to create thumbnails from streaming files on the fly, then also persist those thumbails to the remote filesystem.  Returned metadata needs to provide file descriptors (`fd`s) for each thumbnail.
+ Feature                                         | Owner                                                                            | Details     
+ :---------------------------------------------: | :------------------------------------------------------------------------------- | :------
+ streaming compression (zlib)                    | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to compress file uploads on their way to the remote filesystem, and decomopress them on the way out
+ streaming encryption (crypto)                   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to encrypt file uploads on their way to the remote filesystem, and decrypt them on the way out
+ streaming thumbnail support for image uploads   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | transport stream to create thumbnails from streaming files on the fly, then also persist those thumbails to the remote filesystem.  Returned metadata needs to provide file descriptors (`fd`s) for each thumbnail.
 
 
 
