@@ -1,4 +1,4 @@
-# Roadmap, Build Status, and Compatibliity
+# Roadmap, Build Status, and Compatibility
 
 The current Travis test output, support matrix, medium-term roadmap, and backlog (including feature requests) for this repository.
 
@@ -122,11 +122,15 @@ _(feel free to suggest things)_
 
  Feature                                                  | Owner                                                                            | Details     
  :------------------------------------------------------- | :------------------------------------------------------------------------------- | :------
+ proper garbage-collection support in core                | [@mikermcneil](https://github.com/mikermcneil)                                   | garbage-collect failed file uploads using the adapter's rm() method (if one exists- otherwise emit a warning)
+ expose `write` method                | [@mikermcneil](https://github.com/mikermcneil)                                   | replace `receive()` with `write()` in order to simplify adapter development.  This will also make a lot of the other stuff on the list below easier, particularly progress events.
  normalized upload progress events in core                | [@mikermcneil](https://github.com/mikermcneil)                                   | remove the progress stream stuff from skipper-disk and include it in core (pipe to it, like the renamer pump)
  support for maxBytes quota enforcement in core           | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | on-the-fly maxBytes enforcement on a per-upstream basis
+ more documentation for adapter implementors                |                                    | document the method signatures/expected results/etc. for the adapter methods, from an implementation perspective
+ usage documentation for ls(), rm(), read()           |                                    | document the method signatures/expected results/etc. for these methods in userland
  expose a static Upstream factory on the skipper module   | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | useful for streaming from one fsadapter to another (i.e. not just for file uploads)
  expose a static Downstream factory on the skipper module | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | useful for multi-file download from fsadapters
- expose an API for building Downstream reducer pumps      | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | i.e. so you can coallesce a multi-file download into a zip archive
+ expose an API for building Downstream reducer pumps      | [_want to help?_](https://github.com/balderdashy/skipper/edit/master/ROADMAP.md) | i.e. so you can coalesce a multi-file download into a zip archive
 
 
 #### Backlog
