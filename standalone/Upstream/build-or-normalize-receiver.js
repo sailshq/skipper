@@ -58,7 +58,7 @@ module.exports = function buildOrNormalizeReceiver (opts) {
   // Support Adapter as either a function
   // or a verbatim adapter object (pass it in directly)
   if (_.isFunction(Adapter)) {
-    Adapter = Adapter();
+    Adapter = Adapter(opts);
   }
 
   // Finally, build a default receiver stream with the specified options
