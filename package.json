@@ -41,7 +41,7 @@
     "connect": "~2.25.0",
     "skipper-disk": "~0.5.0",
     "guid": "0.0.12",
-    "node-uuid": "^1.4.1"
+    "node-uuid": "~1.4.1"
   },
   "devDependencies": {
     "fs-extra": "~0.8.1",
