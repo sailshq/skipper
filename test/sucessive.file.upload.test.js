@@ -11,7 +11,7 @@ var Lifecycle = require('./helpers/lifecycle')
   , toValidateTheHTTPResponse = require('./helpers/toValidateTheHTTPResponse')
   , fsx = require('fs-extra')
   , async = require('async')
-  , guid = require('guid');
+  , uuid = require('node-uuid');
 
 
 // Fixtures
@@ -33,7 +33,7 @@ describe('Sucessive file uploads should not fail ::', function() {
         .upload({
           maxBytes: 150000000, // 150MB
           dirname: req.__FILE_PARSER_TESTS__OUTPUT_PATH,
-          saveAs: guid.raw()+'.jpg'
+          saveAs: uuid()+'.jpg'
         }, function (err, files) {
           if (err) res.send(500, err);
           res.send(200);
