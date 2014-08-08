@@ -1,12 +1,12 @@
 # Roadmap
 
+The build status, immediate-term plans, and future goals of this repository.
+
+> ###### Feature Requests
+> 
 > We welcome **feature requests** as edits to the "Backlog" section below.
 >
-> Please read [How To Contribute to ROADMAP.md](https://gist.github.com/mikermcneil/bdad2108f3d9a9a5c5ed before contributing) before sending a pull request to this file.
->
-> Before adding a to the backlog, please ensure the feature is not already covered by another row in the tracker.  In addition to _new_ feature requests, please feel welcome to submit any suggested edits to feature requests or roadmap items.
->
-> The most helpful feature requests include a test which fails in the current implementation, but would pass if the requested feature was implemented :)
+> Before editing this file, please check out [How To Contribute to ROADMAP.md](https://gist.github.com/mikermcneil/bdad2108f3d9a9a5c5ed)- it's a quick read :)
 
 
 ## Current Build Status
