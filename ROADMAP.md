@@ -4,7 +4,7 @@ The build status, immediate-term plans, and future goals of this repository.
 
 > ###### Feature Requests
 > 
-> We welcome **feature requests** as edits to the "Backlog" section below.
+> We welcome feature requests as edits to the "Backlog" section below.
 >
 > Before editing this file, please check out [How To Contribute to ROADMAP.md](https://gist.github.com/mikermcneil/bdad2108f3d9a9a5c5ed)- it's a quick read :)
 
