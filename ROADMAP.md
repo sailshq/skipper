@@ -1,4 +1,4 @@
-# Roadmap
+# Dashboard
 
 The build status, immediate-term plans, and future goals of this repository.
 
