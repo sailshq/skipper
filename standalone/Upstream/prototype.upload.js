@@ -73,14 +73,16 @@ module.exports = function upload (opts, _cb) {
 
   // Ensure callback exists and can only be triggered once
   var cbTriggered;
-  var cb = function (err){
+  var cb = function (err, files){
     if (cbTriggered) return;
     cbTriggered = true;
-    if (typeof _cb === 'function') {
-      return _cb(err);
-    }
 
-    throw e; // (perhaps emit an error on the upstream instead?)
+    if (typeof _cb === 'function') {
+      return _cb(err, files);
+    }
+    if (err) {
+      throw err; // (perhaps emit an error on the upstream instead?)
+    }
   };
 
   debug('.upload() called on upstream');
