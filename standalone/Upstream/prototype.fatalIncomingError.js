@@ -54,11 +54,15 @@ module.exports = function fatalIncomingError (err) {
   var self = this;
   _(this._files).each(function(file) {
     file.status = 'cancelled';
-    file.stream.emit('error', (function (){
-      return new Error('on a '+(self._connected?'connected':'disconnected')+' upstream!!!!!!file error on '+file.stream.name+util.inspect(err));
-      // return err;
-    })());
-    debug('Upstream: Emitting read error on incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
+
+    // If upstream is not plugged in to a receiver, we shouldn't emit an error on the file streams,
+    // since there's no way that error could be handled yet.
+    if (!self._connected){
+      debug('Unconnected upstream: Encountered read error on incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
+      return;
+    }
+    debug('Connected upstream: Emitting read error on incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
+    file.stream.emit('error', err);
   });
 
   // Indicate the end of the Upstream (no more files coming)
