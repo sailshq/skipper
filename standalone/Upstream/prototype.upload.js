@@ -30,20 +30,20 @@ var r_buildRenamerStream = require('./build-renamer-stream');
  * ```
  *
  * @param  {String|Object|stream.Writable}   opts [optional]
- * @param  {Function} cb
+ * @param  {Function} _cb
  * @return {Upstream}
  * @this {Upstream}
  * @api public
  * @chainable
  */
 
-module.exports = function upload (opts, cb) {
+module.exports = function upload (opts, _cb) {
   var self = this;
   var USAGE = '.upload([receiver] [,callback])';
 
   // If first parameter is the callback-function not a `receiver__`
   if (!arguments[1] && typeof arguments[0] === 'function') {
-    cb = opts;
+    _cb = opts;
     opts = {};
   }
 
@@ -64,18 +64,43 @@ module.exports = function upload (opts, cb) {
     }
     // And in any case, we'll normalize "saveAs" to a function
     var desiredFilename = opts.saveAs;
-    opts.saveAs = function (__newFile, cb) {
-      cb(null, desiredFilename);
+    opts.saveAs = function (__newFile, next) {
+      next(null, desiredFilename);
     };
   }
+
+  // Ensure callback exists and can only be triggered once
+  var cbTriggered;
+  var cb = function (err){
+    if (cbTriggered) return;
+    cbTriggered = true;
+    if (typeof _cb === 'function') {
+      return _cb(err);
+    }
+
+    throw e; // (perhaps emit an error on the upstream instead?)
+  };
+
+  debug('.upload() called on upstream');
+
+  // If a fatal error occurred on this upstream before upload()
+  // was called, trigger the callback immediately.
+  if (self._fatalErrors.length > 0) {
+    return cb(self._fatalErrors[0]);
+  }
+
+  // If error is emitted on this upstream, trigger the callback
+  self.once('error', function (err){
+    debug('upstream emitted error, forcing us to trigger the callback for .upload() with err: %s',err);
+    return cb(err);
+  });
 
   // Locate, normalize, and/or build a receiver instance using the value passed in
   // as the first argument (`receiver__`)
   var receiver__;
   try { receiver__ = buildOrNormalizeReceiver(opts); }
   catch (e) {
-    if (typeof cb === 'function') return cb(e);
-    throw e; // (perhaps emit an error on the upstream instead?)
+    return cb(e);
   }
 
   // For convenience, pump progress events from the receiver
@@ -96,6 +121,11 @@ module.exports = function upload (opts, cb) {
   // (some of the files may still have been successfully written, though)
   receiver__.once('error', function unableToUpload(err) {
     log.color('red').write('A receiver handling Upstream `%s` encountered a write error :', self.fieldName, util.inspect(err));
+
+    // Forcibly end the incoming stream of files on this upstream
+    self.fatalIncomingError(err);
+
+    // Trigger callback
     cb(err, self.serializeFiles());
   });
 

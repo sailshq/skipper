@@ -41,6 +41,9 @@ function Upstream(opts) {
     maxTimeToBuffer: 4500
   });
 
+  // Track fatal errors.
+  this._fatalErrors = [];
+
   // Allow `noop` to be passed in to force this Upstream to immediately end.
   if (opts.noop) this.isNoop = true;
 
@@ -54,7 +57,7 @@ function Upstream(opts) {
 
   // Enforce the `maxTimeToWaitForFirstFile` option.
   this.timeouts.untilFirstFileTimer = setTimeout(function() {
-    debug('maxTimeToWaitForFirstFile timer fired- as of now there are %d file uploads %s', self._files.length, self._files.length === 0 ? '' : '(so it\'s fine)');
+    debug('maxTimeToWaitForFirstFile timer fired- as of now there are %d file uploads pending %s', self._files.length, self._files.length === 0 ? '' : '(so it\'s fine)');
     if (self._files.length === 0) {
       var e = new Error();
       e.code = 'ETIMEOUT';

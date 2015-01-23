@@ -77,4 +77,8 @@ module.exports = function fatalIncomingError (err) {
   // hasn't handed over control to the app yet.
   this.emit('error', err);
 
+  // Track errors on this upstream in case its NOT connected to a receiver.
+  // This allows us to intercept attemps to .upload() to it.
+  this._fatalErrors.push(err);
+
 };
