@@ -7,6 +7,8 @@ var util = require('util');
 var log = require('../logger');
 var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
 var r_buildRenamerStream = require('./build-renamer-stream');
+var debug = require('debug')('skipper');
+var Writable = require('stream').Writable; // (for the leaky pipe)
 
 
 /**
@@ -86,6 +88,18 @@ module.exports = function upload (opts, _cb) {
   // If a fatal error occurred on this upstream before upload()
   // was called, trigger the callback immediately.
   if (self._fatalErrors.length > 0) {
+    debug('Triggering cb w/ error--upstream already has fatal error: %s', self._fatalErrors[0]);
+    // self.pipe()
+    _(self._files).each(function(file) {
+      var leaky = new Writable();
+      leaky._write = function(chunk, encoding, cb) {
+        cb();
+      };
+      file.stream.unpipe();
+      file.stream.pipe(leaky);
+    });
+    // self.unpipe();
+    // self.unpipe()
     return cb(self._fatalErrors[0]);
   }
 
