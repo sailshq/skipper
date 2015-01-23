@@ -4,7 +4,7 @@ var _ = require('lodash');
 
 
 // (set to `true` to display development-only log messages)
-FILE_PARSER_LOGGER_ENABLED = false;
+FILE_PARSER_LOGGER_ENABLED = true;
 
 var logger;
 if (global.FILE_PARSER_LOGGER_ENABLED) {
