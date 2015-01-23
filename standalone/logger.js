@@ -4,7 +4,7 @@ var _ = require('lodash');
 
 
 // (set to `true` to display development-only log messages)
-FILE_PARSER_LOGGER_ENABLED = (process.env.DEBUG==='skipper');
+FILE_PARSER_LOGGER_ENABLED = (_.isString(process.env.DEBUG) && process.env.DEBUG.match('skipper'));
 
 var logger;
 if (global.FILE_PARSER_LOGGER_ENABLED) {
