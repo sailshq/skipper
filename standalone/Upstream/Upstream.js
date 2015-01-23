@@ -38,7 +38,7 @@ function Upstream(opts) {
     // into a receiver.  highWaterMark isn't quite enough, since we want to be
     // allow significant buffering in-memory (/utilize back-pressure whenever possible),
     // but we also want to timeout when the really silly sort of requests come in.
-    maxTimeToBuffer: 2500
+    maxTimeToBuffer: 4500
   });
 
   // Allow `noop` to be passed in to force this Upstream to immediately end.
