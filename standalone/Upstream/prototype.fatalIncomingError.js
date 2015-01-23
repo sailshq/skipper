@@ -5,6 +5,7 @@
 var _ = require('lodash');
 var util = require('util');
 var log = require('../logger');
+var debug = require('debug')('skipper');
 
 
 /**
@@ -50,10 +51,14 @@ module.exports = function fatalIncomingError (err) {
   // exponential back-off in the case of a "WRITE" error.  But on receiving a "READ" error,
   // it should always immediately stop.  This is because such an error is usually more
   // serious, and might even be an indication of the user trying to cancel a file upload.
+  var self = this;
   _(this._files).each(function(file) {
     file.status = 'cancelled';
-    file.stream.emit('error', err);
-    log.color('red').write('Upstream: "READ" error on incoming file `%s` ::', file.stream.filename, err);
+    file.stream.emit('error', (function (){
+      return new Error('on a '+(self._connected?'connected':'disconnected')+' upstream!!!!!!file error on '+file.stream.name+util.inspect(err));
+      // return err;
+    })());
+    debug('Upstream: Emitting read error on incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
   });
 
   // Indicate the end of the Upstream (no more files coming)

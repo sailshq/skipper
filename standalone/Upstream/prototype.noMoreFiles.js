@@ -4,6 +4,7 @@
 
 var _ = require('lodash');
 var log = require('../logger');
+var debug = require('debug')('skipper');
 
 
 
@@ -17,7 +18,8 @@ var log = require('../logger');
  */
 
 module.exports = function noMoreFiles () {
-  log.color('grey').write('Upstream: No more files will be sent through field `%s`', this.fieldName);
+  // log.color('grey').write('Upstream: No more files will be sent through field `%s`', this.fieldName);
+  debug('Upstream: No more files will be sent through field `%s`- clearing timeouts...', this.fieldName);
   this.push(null);
 
   // Clear all timeouts

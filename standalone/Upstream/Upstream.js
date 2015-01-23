@@ -7,7 +7,7 @@ var path = require('path');
 var Readable = require('stream').Readable;
 var _ = require('lodash');
 var DefaultFileAdapter = require('skipper-disk');
-
+var debug = require('debug')('skipper');
 
 
 // Extend Readable
@@ -54,6 +54,7 @@ function Upstream(opts) {
 
   // Enforce the `maxTimeToWaitForFirstFile` option.
   this.timeouts.untilFirstFileTimer = setTimeout(function() {
+    debug('maxTimeToWaitForFirstFile timer fired- as of now there are %d file uploads %s', self._files.length, self._files.length === 0 ? '' : '(so it\'s fine)');
     if (self._files.length === 0) {
       var e = new Error();
       e.code = 'ETIMEOUT';
@@ -76,6 +77,7 @@ function Upstream(opts) {
   // that it is possible to build your own fake request stream, e.g. the request interpreter in
   // Sails, or MockReq)
   this.timeouts.untilMaxBufferTimer = setTimeout(function() {
+    debug('maxTimeToBuffer timer fired- upstream is %s As of now there are %d file uploads', self._connected?'connected to a receiver (so we\'re good).':'NOT CONNECTED TO A RECEIVER!!',self._files.length);
     if (!self._connected) {
       var e = new Error();
       e.code = 'EMAXBUFFER';
