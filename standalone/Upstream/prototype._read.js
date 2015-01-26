@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var log = require('../logger');
+var debug = require('debug')('skipper');
 
 
 
@@ -17,7 +17,7 @@ module.exports = function onNewDataRequested(numBytesRequested) {
 
   // Don't really need to do anything in here for now as far as pushing data--
   // we'll push to the receiving writestream when we're ready.
-  log.color('grey').write('Something is trying to read from Upstream `%s`...',this.fieldName);
+  debug('Something is trying to read from Upstream `%s`...',this.fieldName);
 
 
   // If we are a no-op Upstream, push `null` (ending the pipe) as soon
