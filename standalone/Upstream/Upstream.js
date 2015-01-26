@@ -32,7 +32,7 @@ function Upstream(opts) {
     // (no buffering is happening, so it's ok for this to be longer)
     // This needs to be long enough to allow any policies/middleware to run.
     // Should not need to exceed 500ms in most cases.
-    maxTimeToWaitForFirstFile: 500,
+    maxTimeToWaitForFirstFile: 10000,
 
     // The max # of ms this Upstream will buffer bytes and wait to be plugged
     // into a receiver.  highWaterMark isn't quite enough, since we want to be
@@ -68,6 +68,7 @@ function Upstream(opts) {
       self.fatalIncomingError(e);
     }
   }, opts.maxTimeToWaitForFirstFile);
+  debug('Set up "maxTimeToWaitForFirstFile" timer for %dms', opts.maxTimeToWaitForFirstFile);
 
   // Enforce the `maxTimeToBuffer` option.
   //
