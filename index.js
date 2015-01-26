@@ -51,12 +51,12 @@ module.exports = function toParseHTTPBody(options) {
 
   return function _parseHTTPBody(req, res, next) {
 
-    // Optimization: skip bodyParser for GET requests.
-    if (req.method.toLowerCase() === 'get') {
+    // Optimization: skip bodyParser for GET, OPTIONS, or body-less requests.
+    if (req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'options' || req.method.toLowerCase() === 'head') {
 
       // But stub out a `req.file()` method with a usage error:
       req.file = function() {
-        throw new Error('`req.file()` cannot be used with an HTTP GET request.');
+        throw new Error('`req.file()` cannot be used with an HTTP GET, OPTIONS, or HEAD request.');
       };
 
       return next();
