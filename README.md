@@ -137,6 +137,33 @@ It exposes the following adapter-specific options:
  uri       | ((string))                       | the MongoDB database where uploaded files should be stored (using [mongo client URI syntax](http://api.mongodb.org/java/current/com/mongodb/MongoClientURI.html)) <br/> e.g. `mongodb://jimmy:j1mtr0n1xx@mongo.jimmy.com:27017/coolapp.avatar_uploads`
 
 
+#### Uploading files to S3
+
+```shell
+$ npm install skipper-azure --save
+```
+
+[skipper-azure](https://github.com/lukasreichart/skipper-azure) is a filesystem adapter which enables Skipper to stream file uploads directly to Azure blob storage.
+
+```js
+req.file('avatar').upload({
+  // ...any other options here...
+  adapter: require('skipper-azure'),
+  key: 'YOUR_AZURE_STORAGE_ACCOUNT',
+  secret: 'YOUR_AZURE_API_SECRET',
+  container: 'YOUR_AZURE_CONTAINER'
+}, ...);
+```
+
+It exposes the following adapter-specific options:
+
+ Option     | Type                             | Description
+ ---------- | -------------------------------- | --------------
+ key        | ((string))                       | Your Azure "Storage Account", e.g. `"my_storage"` (_required_)
+ secret     | ((string))                       | Your Azure "Primary Secret Access Key", e.g. `"L8ZN3aP1B9qkUgggUnEZ6KzrQJbJxx4EMjNaWy3n"` (_required_)
+ container  | ((string))                       | The container to upload your files into, e.g. `"my_cool_file_uploads"` (_required_)
+
+
 <!--
 ============================================
 
