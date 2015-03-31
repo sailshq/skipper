@@ -28,7 +28,7 @@ module.exports = function writeFile (__filestream) {
 
   // Set up error handler for the new __filestream:
   //
-  __filestream.once('error', function(err) {
+  __filestream.on('error', (function() {
 
     // If the __filestream is not being consumed (i.e. this Upstream is not
     // `connected` to anything), then we shouldn't allow errors on it to
@@ -53,14 +53,27 @@ module.exports = function writeFile (__filestream) {
     // an error occurs (I don't see why we would..)
     // Anyways, it's absolutely crucial that this pipe to a `leaky` Writable
     // for everything to work.  Otherwise, responses never get sent.
-    var leaky = new Writable();
-    leaky._write = function(chunk, encoding, cb) {
-      cb();
-    };
-    __filestream.unpipe();
-    __filestream.pipe(leaky);
-    log('Piping the not-yet-written bytes from incoming file `' + __filestream.filename + '` to the memory hole..');
-  });
+
+    //An error can be emitted on this stream more than once by underlying libraries such as multiparty
+    //Mark this event as fired already so we do not pipe the stream twice to the 'leaky' stream.
+      var hasFired = false;
+
+      return function(err) {
+          
+          if (!hasFired) {
+              var leaky = new Writable();
+              leaky._write = function(chunk, encoding, cb) {
+                  cb();
+              };
+              __filestream.unpipe();
+              __filestream.pipe(leaky);
+              log('Piping the not-yet-written bytes from incoming file `' + __filestream.filename + '` to the memory hole..');
+          }
+
+          hasFired = true;
+      };
+
+  }()));
 
 
 
