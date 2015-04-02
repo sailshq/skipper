@@ -12,7 +12,7 @@ var connect = require('connect');
 if (!require('semver').satisfies(process.version, '>=0.10.0')) {
   console.error('`skipper` (bodyParser) requires node version >= 0.10.0.');
   console.error('Please upgrade Node at http://nodejs.org/ or with `nvm`');
-  process.exit(1);
+  throw new Error('Invalid Node.js version');
 }
 
 //
