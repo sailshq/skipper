@@ -12,6 +12,7 @@ var TransformStream = require('stream').Transform;
  */
 module.exports = function buildRenamerStream(acceptFile, files) {
   if (!acceptFile) {
+    //default accept every file
     acceptFile = function(fileMetadata, callback) {
       return callback(null, true);
     }
@@ -35,7 +36,6 @@ module.exports = function buildRenamerStream(acceptFile, files) {
         __accepter__.emit('error', error);
       }
       if (shouldPushFile) {
-
         var newFile = {
           stream: __file,
           status: 'bufferingOrWriting'
@@ -48,9 +48,6 @@ module.exports = function buildRenamerStream(acceptFile, files) {
         __accepter__.push(__file);
         next();
       } else {
-        //workaround
-        var index = __accepter__.files.indexOf(__file);
-        __accepter__.files.splice(index, 1);
         __accepter__.push(null);
         next();
       }

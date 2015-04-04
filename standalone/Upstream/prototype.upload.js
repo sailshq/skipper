@@ -168,7 +168,8 @@ module.exports = function upload(opts, _cb) {
     log: log
   });
 
-
+  //build an accepter stream. that will run acceptFile function (if provided) on each file 
+  //to see if we want to accept this file. Also needs a referenc to self._files to add metadata
   var __accepter__ = buildAccepterStream(opts.acceptFile,self._files);
 
   __accepter__.once('error', function unableToUpload(err) {
