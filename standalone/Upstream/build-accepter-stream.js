@@ -35,17 +35,26 @@ module.exports = function buildRenamerStream(acceptFile, files) {
         __accepter__.emit('error', error);
       }
       if (shouldPushFile) {
+
+        var newFile = {
+          stream: __file,
+          status: 'bufferingOrWriting'
+        };
+        
+          // Track incoming file stream for use in metadata sent back
+          // from `.upload()` and also in case we need to cancel it:
+        __accepter__.files.push(newFile);
+
         __accepter__.push(__file);
         next();
-      }
-      else{
+      } else {
         //workaround
         var index = __accepter__.files.indexOf(__file);
-        __accepter__.files.splice(index,1);
+        __accepter__.files.splice(index, 1);
         __accepter__.push(null);
         next();
       }
-      
+
     })
   };
 

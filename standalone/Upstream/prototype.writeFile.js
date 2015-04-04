@@ -12,19 +12,10 @@ module.exports = function writeFile (__filestream) {
   var self = this;
 
 
-  var newFile = {
-    stream: __filestream,
-    status: 'bufferingOrWriting'
-  };
-
   // Provide `__filestream.field` as alias to `__filestream.name`
   // for consistency within the receiver (final uploaded files
   // metadata objects have a `field` property)
   __filestream.field = __filestream.name;
-
-  // Track incoming file stream for use in metadata sent back
-  // from `.upload()` and also in case we need to cancel it:
-  self._files.push(newFile);
 
   // Set up error handler for the new __filestream:
   //
