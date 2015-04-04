@@ -7,6 +7,7 @@ var util = require('util');
 var log = require('../logger');
 var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
 var r_buildRenamerStream = require('./build-renamer-stream');
+var buildAccepterStream = require('./build-accepter-stream');
 var debug = require('debug')('skipper');
 var Writable = require('stream').Writable; // (for the leaky pipe)
 
@@ -39,7 +40,7 @@ var Writable = require('stream').Writable; // (for the leaky pipe)
  * @chainable
  */
 
-module.exports = function upload (opts, _cb) {
+module.exports = function upload(opts, _cb) {
   var self = this;
   var USAGE = '.upload([receiver] [,callback])';
 
@@ -52,7 +53,9 @@ module.exports = function upload (opts, _cb) {
   // Handle first argument when it's specified as string
   // (save it as the `saveAs` opt)
   if (typeof opts === 'string') {
-    opts = { saveAs: opts };
+    opts = {
+      saveAs: opts
+    };
   }
 
   // Handle `saveAs` when it's specified as string (normalize to fn)
@@ -66,14 +69,14 @@ module.exports = function upload (opts, _cb) {
     }
     // And in any case, we'll normalize "saveAs" to a function
     var desiredFilename = opts.saveAs;
-    opts.saveAs = function (__newFile, next) {
+    opts.saveAs = function(__newFile, next) {
       next(null, desiredFilename);
     };
   }
 
   // Ensure callback exists and can only be triggered once
   var cbTriggered;
-  var cb = function (err, files){
+  var cb = function(err, files) {
     if (cbTriggered) return;
     cbTriggered = true;
 
@@ -106,16 +109,17 @@ module.exports = function upload (opts, _cb) {
   }
 
   // If error is emitted on this upstream, trigger the callback
-  self.once('error', function (err){
-    debug('upstream emitted error, forcing us to trigger the callback for .upload() with err: %s',err);
+  self.once('error', function(err) {
+    debug('upstream emitted error, forcing us to trigger the callback for .upload() with err: %s', err);
     return cb(err);
   });
 
   // Locate, normalize, and/or build a receiver instance using the value passed in
   // as the first argument (`receiver__`)
   var receiver__;
-  try { receiver__ = buildOrNormalizeReceiver(opts); }
-  catch (e) {
+  try {
+    receiver__ = buildOrNormalizeReceiver(opts);
+  } catch (e) {
     return cb(e);
   }
 
@@ -165,15 +169,26 @@ module.exports = function upload (opts, _cb) {
   });
 
 
+  var __accepter__ = buildAccepterStream(opts.acceptFile,self._files);
+
+  __accepter__.once('error', function unableToUpload(err) {
+    log.color('red').write('A receiver handling Upstream `%s` encountered a write error :', self.fieldName, util.inspect(err));
+
+    // Forcibly end the incoming stream of files on this upstream
+    self.fatalIncomingError(err);
+
+    // Trigger callback
+    cb(err, self.serializeFiles());
+  });
+
+
   // Pipe to the (Writeable) receiver.  Every time the file parser encounters a new file
   // on this stream (i.e. a new file in the same form field), it will call Upstream's
   // writeFile method, which will push the new file stream into Upstream's buffer.  The
   // piping mechanism will then cause "_write" to be called on the Receiver, so it can
   // handle the file in whatever way it sees fit (saving to disk, streaming to S3, etc.)
-  self.pipe(__renamer__).pipe(receiver__);
+  self.pipe(__accepter__).pipe(__renamer__).pipe(receiver__);
 
   // Chainable
   return self;
 };
-
-
