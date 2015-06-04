@@ -54,6 +54,7 @@ describe('req.body ::', function() {
 		var pathToSmallFile = smallFile.path;
 		form.append('foo', 'hello');
 		form.append('bar', 'there');
+		form.append('emptyParam', '');
 		form.append('avatar', fsx.createReadStream(pathToSmallFile));
 
 	});
@@ -62,6 +63,7 @@ describe('req.body ::', function() {
 		assert(bodyParamsThatWereAccessible);
 		assert(bodyParamsThatWereAccessible.foo);
 		assert(bodyParamsThatWereAccessible.bar);
+		assert.strictEqual(bodyParamsThatWereAccessible.emptyParam, '');
 	});
 
 
