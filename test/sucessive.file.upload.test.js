@@ -36,7 +36,7 @@ describe('Sucessive file uploads should not fail ::', function() {
           saveAs: uuid()+'.jpg'
         }, function (err, files) {
           if (err) res.send(500, err);
-          res.send(200);
+          res.sendStatus(200);
         });
     });
   });

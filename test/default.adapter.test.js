@@ -45,7 +45,7 @@ describe('req.file(...).upload() defaults to skipper-disk adapter when passed a 
             } catch (e) {}
             return res.json(500, err);
           }
-          res.send(200);
+          res.sendStatus(200);
         });
     });
   });

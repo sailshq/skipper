@@ -157,7 +157,7 @@ describe('multipart form upload', function() {
         }
       }, function allDone(err) {
         if (err) res.send(500, err);
-        res.send(200);
+        res.sendStatus(200);
         log('All files uploaded.'.grey);
       });
 
