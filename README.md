@@ -69,7 +69,7 @@ req.file('avatar').upload(function (err, uploadedFiles) {
 
 #### Uploading files to disk
 
-[skipper-disk](https://github.com/balderdashy/skipper-disk) is a file adapter that uploads files to the local hard drive on the server.  It is bundled with Skipper, so if an `adapter` option is not specified (as in the [Quick Start]() example above) it is used by default.
+[skipper-disk](https://github.com/balderdashy/skipper-disk) is a file adapter that uploads files to the local hard drive on the server.  It is bundled with Skipper, so if an `adapter` option is not specified (as in the [Quick Start](#quick-start) example above) it is used by default.
 
 ```js
 req.file('avatar').upload({
