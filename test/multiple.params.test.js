@@ -52,7 +52,7 @@ describe('multiple params ::', function() {
           id: OUTPUT_PATH
         }), function (err, files) {
           if (err) res.send(500, err);
-          res.send(200);
+          res.sendStatus(200);
         });
     });
   });

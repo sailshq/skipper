@@ -23,9 +23,9 @@ module.exports = function (req, res) {
 		maxBytes: MAX_UPLOAD_SIZE_IN_BYTES,
 		id: OUTPUT_PATH
 	});
-	
+
 	req.file('avatar').upload(receiver__, function (err, files) {
 		if (err) return res.send(500,err);
-		return res.send(200);
+		return res.sendStatus(200);
 	});
 };

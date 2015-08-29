@@ -14,8 +14,7 @@
 module.exports = function (req, res) {
 	var DELAY = req.__FILE_PARSER_TESTS__DELAY;
 	if (DELAY) setTimeout(function (){
-		res.send(200);
+		res.sendStatus(200);
 	}, DELAY);
-	else res.send(200);
+	else res.sendStatus(200);
 };
-
