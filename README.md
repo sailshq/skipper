@@ -113,7 +113,8 @@ It exposes the following adapter-specific options:
  region     | ((string))                       | The S3 region where the bucket is located, e.g. `"us-west-2"`. Note: If `endpoint` is defined, `region` will be ignored. Defaults to `"us-standard"` |
  tmpdir     | ((string))                       | The path to the directory where buffering multipart requests can rest their heads.  Amazon requires "parts" sent to their multipart upload API to be at least 5MB in size, so this directory is used to queue up chunks of data until a big enough payload has accumulated.  Defaults to `.tmp/s3-upload-part-queue` (resolved from the current working directory of the node process- e.g. your app)
  
- #### Uploading files to PostgreSQL
+
+#### Uploading files to PostgreSQL
 
 ```shell
 $ npm install skipper-postgresql --save
