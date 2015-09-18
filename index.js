@@ -70,8 +70,14 @@ module.exports = function toParseHTTPBody(options) {
 
     JSONBodyParser(req, res, function(err) {
       if (err) return next(err);
+      // If parsing was successful, exit
+      if (!_.isEqual(req.body, {})) {return next();}
+      // Otherwise try the URL-encoded parser
       URLEncodedBodyParser(req, res, function(err) {
         if (err) return next(err);
+        // If parsing was successful, exit
+        if (!_.isEqual(req.body, {})) {return next();}
+        // Otherwise try the multipart parser
         MultipartBodyParser(req, res, function(err) {
           if (err) return next(err);
 
