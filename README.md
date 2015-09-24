@@ -539,7 +539,7 @@ See [ROADMAP.md]() for more information on where the project is headed and how y
 - [Professional/enterprise](https://github.com/balderdashy/sails-docs/blob/master/FAQ.md#are-there-professional-support-options)
 - [Tutorials](https://github.com/balderdashy/sails-docs/blob/master/FAQ.md#where-do-i-get-help)
 - [Waterline (ORM)](http://github.com/balderdashy/waterline)
-- <a href="http://sailsjs.org" target="_blank" title="Node.js framework for building realtime APIs."><img src="https://github-camo.global.ssl.fastly.net/9e49073459ed4e0e2687b80eaf515d87b0da4a6b/687474703a2f2f62616c64657264617368792e6769746875622e696f2f7361696c732f696d616765732f6c6f676f2e706e67" width=60 alt="Sails.js logo (small)"/></a>
+- <a href="http://sailsjs.org" target="_blank" title="Node.js framework for building realtime APIs."><img src="http://sailsjs.org/images/logos/sails-logo_ltBg_dkBlue.png" width=60 alt="Sails.js logo (small)"/></a>
 
 ============================================
 
@@ -553,9 +553,6 @@ This module is part of the [Sails framework](http://sailsjs.org), and is free an
 
 
 ![bkgd_seaScene.png](http://i.imgur.com/JpaJ8qw.png)
-
-
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/a22d3919de208c90c898986619efaa85 "githalytics.com")](http://githalytics.com/balderdashy/skipper)
 
 
 
