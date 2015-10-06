@@ -5,7 +5,7 @@
 var _ = require('lodash');
 var toParseMultipartHTTPRequest = require('./lib/multipart');
 var connect = require('connect');
-
+var Upstream = require('./standalone/Upstream');
 
 // Double-check that a valid Node version with support for streams2
 // is being used
@@ -68,11 +68,25 @@ module.exports = function toParseHTTPBody(options) {
 
     // log.verbose('Running request ('+req.method+' ' + req.url + ') through bodyParser...');
 
+    // Mock up a req.file handler that returns a noop upstream, so that user code
+    // can use `req.file` without having to check for it first.  This is useful in cases
+    // where there may or may not be file params coming in.  The Multipart parser will
+    // replace this with an actual upstream-acquiring function if the request isn't successfully
+    // handled by one of the other parsers first.
+    req.file = function(fieldName) {
+      var noopUpstream = new Upstream({
+        noop: true
+      });
+      noopUpstream.fieldName = 'NOOP_'+fieldName;
+      return noopUpstream;
+    };
+
+    // Try to parse a request that has application/json content type
     JSONBodyParser(req, res, function(err) {
       if (err) return next(err);
       // If parsing was successful, exit
       if (!_.isEqual(req.body, {})) {return next();}
-      // Otherwise try the URL-encoded parser
+      // Otherwise try the URL-encoded parser (application/x-www-form-urlencoded type)
       URLEncodedBodyParser(req, res, function(err) {
         if (err) return next(err);
         // If parsing was successful, exit
