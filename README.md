@@ -112,7 +112,7 @@ It exposes the following adapter-specific options:
  endpoint   | ((string))                       | By default all requests will be sent to the global endpoint `s3.amazonaws.com`. But if you want to manually set the endpoint, you can do it with the endpoint option. |
  region     | ((string))                       | The S3 region where the bucket is located, e.g. `"us-west-2"`. Note: If `endpoint` is defined, `region` will be ignored. Defaults to `"us-standard"` |
  tmpdir     | ((string))                       | The path to the directory where buffering multipart requests can rest their heads.  Amazon requires "parts" sent to their multipart upload API to be at least 5MB in size, so this directory is used to queue up chunks of data until a big enough payload has accumulated.  Defaults to `.tmp/s3-upload-part-queue` (resolved from the current working directory of the node process- e.g. your app)
- 
+
 
 #### Uploading files to PostgreSQL
 
@@ -239,9 +239,30 @@ After a lot of research, @zolmeister, @sgress454 and I came to understand a crit
 
 I realize there's a lot going on in here, so for sanity/confidence, let's look at some edge cases and explain how Skipper addresses them:
 
-#### EMAXBUFFER
-> TODO: document
+#### EMAXBUFFER:
 
+If you see this error you may want to change your `maxTimeToBuffer`. Here is one way to fix that.
+
+In [./config/http.js](./config/http.js) add the following:
+```
+module.exports.http = {
+  //START YOUR CUSTOM CODE
+	bodyParser: function(){
+		return require('skipper')({
+			maxTimeToBuffer: 10000
+			maxTimeToWaitForFirstFile:1000
+		})
+	},
+	//END YOUR CUSTOM CODE
+
+	middleware: {
+      ...
+  }
+}
+
+```
+
+**IMPORTANT**: Don't add it in the middleware property but instead directly to `sails.config.http`
 #### ETIMEOUT
 > TODO: document
 
