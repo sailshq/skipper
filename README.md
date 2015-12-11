@@ -112,7 +112,7 @@ It exposes the following adapter-specific options:
  endpoint   | ((string))                       | By default all requests will be sent to the global endpoint `s3.amazonaws.com`. But if you want to manually set the endpoint, you can do it with the endpoint option. |
  region     | ((string))                       | The S3 region where the bucket is located, e.g. `"us-west-2"`. Note: If `endpoint` is defined, `region` will be ignored. Defaults to `"us-standard"` |
  tmpdir     | ((string))                       | The path to the directory where buffering multipart requests can rest their heads.  Amazon requires "parts" sent to their multipart upload API to be at least 5MB in size, so this directory is used to queue up chunks of data until a big enough payload has accumulated.  Defaults to `.tmp/s3-upload-part-queue` (resolved from the current working directory of the node process- e.g. your app)
- 
+
 
 #### Uploading files to PostgreSQL
 
@@ -145,6 +145,29 @@ It exposes the following adapter-specific options:
  --------- | -------------------------------- | --------------
  uri       | ((string))                       | the MongoDB database where uploaded files should be stored (using [mongo client URI syntax](http://api.mongodb.org/java/current/com/mongodb/MongoClientURI.html)) <br/> e.g. `mongodb://jimmy:j1mtr0n1xx@mongo.jimmy.com:27017/coolapp.avatar_uploads`
 
+
+#### Uploading files to Openstack Swift
+
+```shell
+$ npm install skipper-openstack --save
+```
+
+[skipper-openstack](https://github.com/IBM-Bluemix/skipper-openstack) is a filesystem adapter which enables Skipper to stream file uploads directly to Openstack blob storage, Swift.
+
+```js
+req.file('avatar').upload({
+  // ...any other options here...
+  adapter: require('skipper-openstack'),
+  credentials: {
+    region: "YOUR_REGION",
+    userId: "YOUR_USER_ID"
+    password: "YOUR_PASSWORD"
+    auth_url: "YOUR_AUTH_URL"
+    projectId: "YOUR_TENANT_ID"
+  },
+  container: "YOUR_CONTAINER_NAME"
+}, ...);
+```
 
 #### Uploading files to Azure
 
