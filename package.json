@@ -31,17 +31,17 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "multiparty": "~3.2.2",
     "async": "~1.4.2",
-    "dot-access": "1.0.0",
-    "string_decoder": "~0.10.25-1",
-    "lodash": "~2.4.1",
     "colors": "~1.1.2",
-    "semver": "~5.0.1",
-    "connect": "~2.25.0",
-    "skipper-disk": "~0.5.0",
+    "connect": "^2.30.0",
+    "debug": "^2.1.1",
+    "dot-access": "1.0.0",
+    "lodash": "~2.4.1",
+    "multiparty": "~3.2.2",
     "node-uuid": "~1.4.1",
-    "debug": "^2.1.1"
+    "semver": "~5.0.1",
+    "skipper-disk": "~0.5.0",
+    "string_decoder": "~0.10.25-1"
   },
   "devDependencies": {
     "fs-extra": "~0.23.1",
