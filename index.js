@@ -55,7 +55,7 @@ module.exports = function toParseHTTPBody(options) {
     if (req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'options' || req.method.toLowerCase() === 'head') {
 
       // But stub out a `req.file()` method with a usage error:
-      req.file = function() {
+      req.file = function () {
         throw new Error('`req.file()` cannot be used with an HTTP GET, OPTIONS, or HEAD request.');
       };
 
@@ -73,26 +73,30 @@ module.exports = function toParseHTTPBody(options) {
     // where there may or may not be file params coming in.  The Multipart parser will
     // replace this with an actual upstream-acquiring function if the request isn't successfully
     // handled by one of the other parsers first.
-    req.file = function(fieldName) {
-      var noopUpstream = new Upstream({
+    req.file = function (fieldName) {
+      var noopUpstream = new Upstream(_.merge({
         noop: true
-      });
-      noopUpstream.fieldName = 'NOOP_'+fieldName;
+      }, options));
+      noopUpstream.fieldName = 'NOOP_' + fieldName;
       return noopUpstream;
     };
 
     // Try to parse a request that has application/json content type
-    JSONBodyParser(req, res, function(err) {
+    JSONBodyParser(req, res, function (err) {
       if (err) return next(err);
       // If parsing was successful, exit
-      if (!_.isEqual(req.body, {})) {return next();}
+      if (!_.isEqual(req.body, {})) {
+        return next();
+      }
       // Otherwise try the URL-encoded parser (application/x-www-form-urlencoded type)
-      URLEncodedBodyParser(req, res, function(err) {
+      URLEncodedBodyParser(req, res, function (err) {
         if (err) return next(err);
         // If parsing was successful, exit
-        if (!_.isEqual(req.body, {})) {return next();}
+        if (!_.isEqual(req.body, {})) {
+          return next();
+        }
         // Otherwise try the multipart parser
-        MultipartBodyParser(req, res, function(err) {
+        MultipartBodyParser(req, res, function (err) {
           if (err) return next(err);
 
           /**
@@ -129,7 +133,7 @@ module.exports = function toParseHTTPBody(options) {
           // and try parsing the request body again.
           var backupContentType = req.headers['content-type'];
           req.headers['content-type'] = 'application/json';
-          JSONBodyParser(req, res, function(err) {
+          JSONBodyParser(req, res, function (err) {
 
             // Revert content-type to what it originally was.
             // This is so we don't inadvertently corrupt `req.headers`--
