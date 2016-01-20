@@ -3,7 +3,7 @@
 [![NPM version](https://badge.fury.io/js/skipper.png)](http://badge.fury.io/js/skipper) &nbsp; &nbsp;
 [![Build Status](https://travis-ci.org/balderdashy/skipper.svg?branch=master)](https://travis-ci.org/balderdashy/skipper)
 
-Skipper makes it easy to implement streaming file uploads to disk, S3, or any of its supported file adapters.
+Skipper makes it easy to implement streaming file uploads to disk, S3, or any supported file upload adapters.
 
 ============================================
 
