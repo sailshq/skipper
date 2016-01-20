@@ -14,13 +14,6 @@ Skipper makes it easy to implement streaming file uploads to disk, S3, or any su
 ============================================
 
 
-## Installation &nbsp;
-**Skipper is bundled by default in [Sails](http://sailsjs.org).  To install it in your [Express](https://github.com/expressjs/express) project:**
-```sh
-# Install the latest stable release of Skipper as a dependency of the current project
-$ sudo npm install skipper@latest --save
-```
-
 ## Quick Start
 
 The following example assumes skipper is already installed as the body parser in your Express or Sails app. It receives one or more files from a **file parameter** named `avatar` using the default, built-in file adapter (skipper-disk).  This streams the file(s) to the default upload directory `.tmp/uploads/` on the server's local disk.
