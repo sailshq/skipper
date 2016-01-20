@@ -1,11 +1,22 @@
-# [![Skipper](http://i.imgur.com/P6gptnI.png)](https://github.com/balderdashy/skipper)
+<h1>
+<a href="https://github.com/balderdashy/skipper"><img alt="Skipper logo" src="http://i.imgur.com/P6gptnI.png" title="Skipper"/></a>
+</h1>
 
-[![NPM version](https://badge.fury.io/js/skipper.png)](http://badge.fury.io/js/skipper) &nbsp; &nbsp;
-[![Build Status](https://travis-ci.org/balderdashy/skipper.svg?branch=master)](https://travis-ci.org/balderdashy/skipper)
+[![NPM version](https://badge.fury.io/js/skipper.png)](http://badge.fury.io/js/skipper) &nbsp;
+[![Build Status](https://travis-ci.org/balderdashy/skipper.svg?branch=master)](https://travis-ci.org/balderdashy/skipper)  &nbsp;
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/balderdashy/sails?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Skipper makes it easy to implement streaming file uploads to disk, S3, or any supported file upload adapters.
 
 ============================================
+
+
+## Installation &nbsp;
+**Skipper is bundled by default in [Sails](http://sailsjs.org).  To install it in your [Express](https://github.com/expressjs/express) project:**
+```sh
+# Install the latest stable release of Skipper as a dependency of the current project
+$ sudo npm install skipper@latest --save
+```
 
 ## Quick Start
 
