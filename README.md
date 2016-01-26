@@ -150,6 +150,8 @@ It exposes the following adapter-specific options:
  --------- | -------------------------------- | --------------
  uri       | ((string))                       | the MongoDB database where uploaded files should be stored (using [mongo client URI syntax](http://api.mongodb.org/java/current/com/mongodb/MongoClientURI.html)) <br/> e.g. `mongodb://jimmy:j1mtr0n1xx@mongo.jimmy.com:27017/coolapp.avatar_uploads`
 
+> **Note:** As of `skipper-gridfs@0.5.3`, this adapter [does not currently support Node versions >= v4.0](https://gitter.im/balderdashy/sails?at=56a737d0c54bc2bf180c0d06).
+
 
 #### Uploading files to Openstack Swift
 
