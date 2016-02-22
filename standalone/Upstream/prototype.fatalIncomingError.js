@@ -46,13 +46,31 @@ module.exports = function fatalIncomingError (err) {
   // which were already written to the destination writestream(s).
   //
   // Receivers should, of course, ALSO listen for "WRITE" errors ('error' events on
-  // the outgoing writestream for each file.  The behavior is probably pretty much
+  // the outgoing writestream for each file).  The behavior is probably pretty much
   // the same in both cases, although a receiver might, for instance, choose to retry using
   // exponential back-off in the case of a "WRITE" error.  But on receiving a "READ" error,
   // it should always immediately stop.  This is because such an error is usually more
   // serious, and might even be an indication of the user trying to cancel a file upload.
   var self = this;
   _(this._files).each(function(file) {
+
+    // If the file has already been cancelled, return rather than emitting another error on the stream.
+    // This is because depending on the adapter, an error on the stream may result in fatalIncomingError
+    // being called again, and the receiver is only equipped to handle one fatal error (i.e. it uses
+    // .once(), which makes sense since the error is supposed to be _fatal_, after all).
+    if (file.status == 'cancelled') {
+      debug('Encountered read error on already-cancelled incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
+      return;
+    }
+
+    // If the file finished writing, ignore the error
+    // TODO -- implement setting the "finished" state in adapters
+    if (file.status == 'finished') {
+      debug('Encountered read error on already-finished incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
+      return;
+    }
+
+    // Mark the file as cancelled
     file.status = 'cancelled';
 
     // If upstream is not plugged in to a receiver, we shouldn't emit an error on the file streams,
