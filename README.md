@@ -103,7 +103,10 @@ req.file('avatar').upload({
   adapter: require('skipper-s3'),
   key: 'YOUR_S3_API_KEY',
   secret: 'YOUR_S3_API_SECRET',
-  bucket: 'YOUR_S3_BUCKET'
+  bucket: 'YOUR_S3_BUCKET',
+  headers: {
+    'x-amz-acl': 'YOUR_FILE_PERMISSIONS'
+  }
 }, ...);
 ```
 
@@ -117,6 +120,7 @@ It exposes the following adapter-specific options:
  endpoint   | ((string))                       | By default all requests will be sent to the global endpoint `s3.amazonaws.com`. But if you want to manually set the endpoint, you can do it with the endpoint option. |
  region     | ((string))                       | The S3 region where the bucket is located, e.g. `"us-west-2"`. Note: If `endpoint` is defined, `region` will be ignored. Defaults to `"us-standard"` |
  tmpdir     | ((string))                       | The path to the directory where buffering multipart requests can rest their heads.  Amazon requires "parts" sent to their multipart upload API to be at least 5MB in size, so this directory is used to queue up chunks of data until a big enough payload has accumulated.  Defaults to `.tmp/s3-upload-part-queue` (resolved from the current working directory of the node process- e.g. your app)
+ headers    | ((object))                       | A set of headers to be added to the upload request.  See the Amazon S3 [PUT Object docs](http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html#RESTObjectPUT-requests) for info about the available headers, and the [canned ACL docs](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl) for a list of access-control settings you can use with the `x-amz-acl` header to specify permissions for your uploaded files
 
 
 #### Uploading files to PostgreSQL
