@@ -559,18 +559,18 @@ var upstream = req.file('foo').upload({
 
 This module is published on npm.  Development takes place on the `master` branch.
 
-See [ROADMAP.md]() for more information on where the project is headed and how you can contribute.
+See [ROADMAP.md](./ROADMAP.md) for more information on where the project is headed and how you can contribute.
 
 ============================================
 
 ## More Resources
 
-- [Stackoverflow](http://stackoverflow.com/questions/tagged/sails.js)
-- [#sailsjs on Freenode](http://webchat.freenode.net/) (IRC channel)
+- [Stackoverflow](http://stackoverflow.com/questions/tagged/skipper)
+- [Blog](http://blog.sailsjs.org)
 - [Twitter](https://twitter.com/sailsjs)
-- [Professional/enterprise](https://github.com/balderdashy/sails-docs/blob/master/FAQ.md#are-there-professional-support-options)
-- [Tutorials](https://github.com/balderdashy/sails-docs/blob/master/FAQ.md#where-do-i-get-help)
-- [Waterline (ORM)](http://github.com/balderdashy/waterline)
+- [Roadmap](https://github.com/balderdashy/skipper/blob/master/ROADMAP.md)
+- [Chat](gitter.im/balderdashy/sails)
+- [Facebook](https://www.facebook.com/sailsjs)
 - <a href="http://sailsjs.org" target="_blank" title="Node.js framework for building realtime APIs."><img src="http://sailsjs.org/images/logos/sails-logo_ltBg_dkBlue.png" width=60 alt="Sails.js logo (small)"/></a>
 
 ============================================
@@ -578,85 +578,10 @@ See [ROADMAP.md]() for more information on where the project is headed and how y
 ## License
 
 **[MIT](./LICENSE)**
-&copy; 2014
-[Mike McNeil](http://michaelmcneil.com), [Scott Gress](https://github.com/sgress454), [Balderdash](http://balderdash.co) & contributors
+&copy; 2014-2016
+[Mike McNeil](https://github.com/mikermcneil), [Scott Gress](https://github.com/sgress454), [Balderdash](http://balderdash.co) & contributors
 
 This module is part of the [Sails framework](http://sailsjs.org), and is free and open-source under the [MIT License](http://sails.mit-license.org/).
 
 
 ![bkgd_seaScene.png](http://i.imgur.com/JpaJ8qw.png)
-
-
-
-
-
-<!--
-  #### Using an upstream receiver
-
-Whether you get it from calling `.receive()` on an adapter, or build a quick custom receiver, the usage is the same:
-
-```js
-req.file('foobar').upload(myReceiver, function onUploadComplete (err, uploadedFiles) {
-  // ...
-});
-```
-
--or-
-
-```js
-req.file('foobar').pipe(myReceiver)
-.once('error', function (err){
-  // ...
-})
-.once('finish', function (uploadedFiles){
-  // ...
-});
-```
--->
-
-<!--
-#### With Sails (v0.10.0)
-
-As of v0.10.0-rc6, skipper is installed as the default request body parser in Sails- you don't need to install it again.
-
-
-#### With Sails (v0.9.x)
-
-To use skipper with an existing v0.9.x Sails app, you'll need to install skipper, then modify `config/express.js`:
-
-```javascript
-module.exports.express = {
-  bodyParser: require('skipper')
-};
-```
-
-#### With Express/Connect
-
-This module is a drop-in replacement for the default Connect bodyParser, so if you're already using that bodyParser (`app.use(express.bodyParser)`), you'll need to replace it and hook up skipper instead.
-
-e.g. in the module where you set up your middleware:
-
-```javascript
-// ...
-app.use(require('skipper')());
-// ...
-```
-
-
-
-```js
-// ...
-return req.file('foobar').upload('./.tmp/test.jpg', function onUploadComplete (err, uploadedFiles) {
-  // ...
-});
-```
-
-To use dynamic filenames (i.e. whatever the name of the original file was), and still contain files within a particular directory (defaults to `.tmp/uploads/` relative to the current working directory):
-
-```js
-// ...
-return req.file('foobar').upload(function onUploadComplete (err, uploadedFiles) {
-  // ...
-});
-```
--->
