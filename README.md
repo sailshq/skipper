@@ -252,11 +252,11 @@ Working with upstreams means you can process file uploads in flight-- _before_ t
 
 #### Lazy Stream Initialization
 
-Skipper only examines/processes any given file upload for as long as it takes to determine whether it is _actually used_ by your app.  For instance, if you don't code `req.file('fake')` in your app code, the stream will be ignored, whether it contains a 25KB image or a 30TB binary payload. This conserves valuable system resources and reducing the effectiveness of would-be DDoS attacks.
+Skipper only examines/processes any given file upload for as long as it takes to determine whether it is _actually used_ by your app.  For instance, if you don't write `req.file('foo')` in your app code, the stream will be ignored, whether it contains a 25KB image or a 30TB binary payload. This conserves valuable system resources and reducing the effectiveness of would-be DoS attacks.
 
 #### Text Parameters
 
-Not only do you get access to incoming file uploads as raw streams, Skipper allows you to access the other _non-file_ metadata parameters (e.g "photoCaption" or "commentId") in the conventional way.  That includes url/JSON-encoded HTTP body parameters (`req.body`), querystring parameters (`req.query`), or "route" parameters (`req.params`); in other words, all the standard stuff sent in standard AJAX uploads or HTML form submissions.  And helper methods like `req.param()` and `req.allParams()` work too.
+In addition to providing access to incoming file uploads as raw streams, Skipper allows you to access the other _non-file_ metadata parameters (e.g "photoCaption" or "commentId") in the conventional way.  That includes url/JSON-encoded HTTP body parameters (`req.body`), querystring parameters (`req.query`), or "route" parameters (`req.params`); in other words, all the standard stuff sent in standard AJAX uploads or HTML form submissions.  And helper methods like `req.param()` and `req.allParams()` work too.
 
 > It is important to realize that the benefit above **relies on a crucial, simplifying assumption**: that user agents send any **text parameters** _before_ the first **file parameter** in the multipart HTTP request body.  For instance, in an HTML form that means putting all of your `<input type="file"/>` tags **after** the other inputs.  If you don't want to lay your form out that way, you'll want to use AJAX to submit it instead (see [jQuery File Upload](https://github.com/blueimp/jQuery-File-Upload) / [Angular File Upload](https://github.com/danialfarid/angular-file-upload)) or listen for the form's "submit" event to reorder the inputs before submitting the form to the server.
 
@@ -285,9 +285,7 @@ I realize there's a lot going on in here, so for sanity/confidence, let's look a
 
 #### History
 
-This module ~~may~~ **will** be included as a part of the stable release of Sails v0.10.  However we need help with documentation, examples, and writing additional receivers (currently receivers for S3 and local disk exist.)
-
-> The decision to include skipper in Sails v0.10 was tough-- it has stalled our release.  However, it was a consequence of rewriting this module to use streams2, as well as the spotty/fragmented/confusing state of file uploads around the community.  We hope this module helps clear things up for everybody.
+This module ~~may~~ ~~_will be_~~ **is** included as the default body parser in Sails, and has been since v0.10 when [file upload support was removed from Express](http://andrewkelley.me/post/do-not-use-bodyparser-with-express-js.html). The decision to include skipper in core was tough, since it _is_ quite opinionated.  But given the spotty/fragmented/confusing state of MPU implementations around the Node community, we didn't feel comfortable throwing out built-in support for file uploads.  We hope this module helps clear things up for everybody.
 
 
 
@@ -447,9 +445,6 @@ The `receive()` method in a filesystem adapter must build and return a new upstr
 
 This is the hardest part-- if you implement this, everything else in your adapter is a piece of cake.  Here's a quick walk-through of how you can build and return a upstream receiver instance:
 
-<!--
-> TODO: make sure this fd stuff is working-- may need to roll back docs to match the version on npm and pull this on a branch so as not to confuse anybody while this is in flux
--->
 
 ```js
 
