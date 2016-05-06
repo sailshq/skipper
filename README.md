@@ -86,7 +86,7 @@ It exposes the following adapter-specific options:
 
  Option     | Type                             | Description
  ---------- | -------------------------------- | --------------
- onProgress | ((function))                     | todo: document
+ onProgress | ((function))                     | A notifier function triggered with a report of upload progress.
 
 
 #### Uploading files to S3
@@ -269,6 +269,7 @@ After a lot of research, @zolmeister, @sgress454 and I came to understand a crit
 + http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4
 + https://github.com/jnicklas/capybara/issues/670#issue-3711585
 
+<!--
 #### Scenarios
 
 I realize there's a lot going on in here, so for sanity/confidence, let's look at some edge cases and explain how Skipper addresses them:
@@ -280,7 +281,7 @@ I realize there's a lot going on in here, so for sanity/confidence, let's look a
 > TODO: document
 
 ....others...
-
+-->
 
 #### History
 
@@ -446,7 +447,9 @@ The `receive()` method in a filesystem adapter must build and return a new upstr
 
 This is the hardest part-- if you implement this, everything else in your adapter is a piece of cake.  Here's a quick walk-through of how you can build and return a upstream receiver instance:
 
+<!--
 > TODO: make sure this fd stuff is working-- may need to roll back docs to match the version on npm and pull this on a branch so as not to confuse anybody while this is in flux
+-->
 
 ```js
 
