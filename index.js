@@ -15,16 +15,6 @@ if (!require('semver').satisfies(process.version, '>=0.10.0')) {
   throw new Error('Invalid Node.js version');
 }
 
-//
-// TODO: make this module lighter-weight by grabbing JSON and URLEncoded bodyparsers separately.
-//
-// (this allows us to drop the Connect dep-- which probably doesn't matter
-// actually, because you almost certainly have Connect installed already w/
-// Sails, but still would be cleaner....)
-//
-
-
-
 /**
  * Skipper
  *
