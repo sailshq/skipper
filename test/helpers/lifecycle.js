@@ -43,7 +43,12 @@ module.exports = function() {
 
     outputDir: outputDir,
 
-    setup: function(done) {
+    setup: function(skipperOptions, done) {
+
+      if (_.isFunction(skipperOptions)) {
+        done = skipperOptions;
+        skipperOptions = {};
+      }
 
       // Write nonsense bytes to our file fixtures.
       for (var bytes = 10; bytes < 10000000; bytes *= 10) {
@@ -70,7 +75,7 @@ module.exports = function() {
       public.app = Express();
 
       // Use file-parser middleware
-      public.app.use(Skipper());
+      public.app.use(Skipper(skipperOptions));
 
       // Provide a default outputPath for testing purposes
       // (gets used by the test receiver to write the test file to disk in each suite)
