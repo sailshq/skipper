@@ -4,7 +4,7 @@
 
 var _ = require('lodash');
 var toParseMultipartHTTPRequest = require('./lib/multipart');
-var connect = require('connect');
+var bodyParser = require('body-parser');
 var Upstream = require('./standalone/Upstream');
 
 // Double-check that a valid Node version with support for streams2
@@ -36,9 +36,9 @@ module.exports = function toParseHTTPBody(options) {
   options = options || {};
 
   // Configure body parser components
-  var URLEncodedBodyParser = connect.urlencoded(options);
+  var URLEncodedBodyParser = bodyParser.urlencoded(options);
   var MultipartBodyParser = toParseMultipartHTTPRequest(options);
-  var JSONBodyParser = connect.json(options);
+  var JSONBodyParser = bodyParser.json(options);
 
 
   /**
