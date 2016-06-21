@@ -29,6 +29,7 @@ module.exports = function toParseHTTPBody(options) {
 
   // For URLEncoded, default the "extended" option to true for backwards compatibility,
   // and to avoid a deprecation warning (see https://github.com/expressjs/body-parser#options-3)
+  // Also default request limit for JSON and URL-encoded parsers to 1mb for backwards compatibility.
   var URLEncodedBodyParser = bodyParser.urlencoded(_.extend({extended: true, limit: '1mb'}, options));
   var JSONBodyParser = bodyParser.json(_.extend({limit: '1mb'}, options));
   var MultipartBodyParser = toParseMultipartHTTPRequest(options);
