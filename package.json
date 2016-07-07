@@ -34,7 +34,6 @@
     "async": "~1.4.2",
     "body-parser": "1.15.1",
     "colors": "~1.1.2",
-    "connect": "^2.30.0",
     "debug": "^2.1.1",
     "dot-access": "1.0.0",
     "lodash": "~2.4.1",
