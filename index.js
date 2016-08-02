@@ -56,8 +56,6 @@ module.exports = function toParseHTTPBody(options) {
       return next();
     }
 
-    // TODO: Optimization: skip bodyParser for other HTTP requests w/o a body.
-
     // TODO: Optimization: only run bodyParser if this is a known route
 
     // log.verbose('Running request ('+req.method+' ' + req.url + ') through bodyParser...');
@@ -74,6 +72,15 @@ module.exports = function toParseHTTPBody(options) {
       noopUpstream.fieldName = 'NOOP_'+fieldName;
       return noopUpstream;
     };
+
+    if (
+      // If we have a content-length header...
+      !_.isUndefined(req.headers['content-length']) &&
+      // And the content length is declared to be zero...
+      (req.headers['content-length'] === 0 || req.headers['content-length'] === '0')) {
+      // Then we can skip all this body-parsing mishegoss.
+      return next();
+    }
 
     // Try to parse a request that has application/json content type
     JSONBodyParser(req, res, function(err) {
