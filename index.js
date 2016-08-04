@@ -78,7 +78,9 @@ module.exports = function toParseHTTPBody(options) {
       !_.isUndefined(req.headers['content-length']) &&
       // And the content length is declared to be zero...
       (req.headers['content-length'] === 0 || req.headers['content-length'] === '0')) {
-      // Then we can skip all this body-parsing mishegoss.
+      // Then we set the body to any empty object
+      // and skip all this body-parsing mishegoss.
+      req.body = {};
       return next();
     }
 
