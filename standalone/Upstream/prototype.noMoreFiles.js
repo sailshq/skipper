@@ -23,7 +23,7 @@ module.exports = function noMoreFiles () {
   this.push(null);
 
   // Clear all timeouts
-  _(this.timeouts).each(function(timer, key) {
+  _.each(this.timeouts, function(timer, key) {
     clearTimeout(timer);
   });
 };

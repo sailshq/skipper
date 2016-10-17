@@ -23,7 +23,7 @@ describe('req.file(...).upload() defaults to skipper-disk adapter when passed a 
   before(suite.setup);
   after(suite.teardown);
 
-  it('binds a file uploader action', function() {
+  before(function() {
     suite.app.post('/upload', function(req, res) {
       bodyParamsThatWereAccessible = _.cloneDeep(req.body);
 

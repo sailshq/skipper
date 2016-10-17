@@ -52,7 +52,7 @@ module.exports = function fatalIncomingError (err) {
   // it should always immediately stop.  This is because such an error is usually more
   // serious, and might even be an indication of the user trying to cancel a file upload.
   var self = this;
-  _(this._files).each(function(file) {
+  _.each(this._files, function(file) {
 
     // If the file has already been cancelled, return rather than emitting another error on the stream.
     // This is because depending on the adapter, an error on the stream may result in fatalIncomingError

@@ -93,7 +93,7 @@ module.exports = function upload (opts, _cb) {
   if (self._fatalErrors.length > 0) {
     debug('Triggering cb w/ error--upstream already has fatal error: %s', self._fatalErrors[0]);
     // self.pipe()
-    _(self._files).each(function(file) {
+    _.each(self._files, function(file) {
       var leaky = new Writable();
       leaky._write = function(chunk, encoding, cb) {
         cb();
