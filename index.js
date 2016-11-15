@@ -45,6 +45,15 @@ module.exports = function toParseHTTPBody(options) {
 
   return function _parseHTTPBody(req, res, next) {
 
+    // Use custom body parser error handler if provided, otherwise
+    // just forward the error to the next Express error-handling middleware.
+    var handleError = function (err) {
+      if (options.onBodyParserError) {
+        return options.onBodyParserError(err, req, res, next);
+      }
+      return next(err);
+    };
+
     // Optimization: skip bodyParser for GET, OPTIONS, or body-less requests.
     if (req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'options' || req.method.toLowerCase() === 'head') {
 
@@ -86,17 +95,17 @@ module.exports = function toParseHTTPBody(options) {
 
     // Try to parse a request that has application/json content type
     JSONBodyParser(req, res, function(err) {
-      if (err) return next(err);
+      if (err) return handleError(err);
       // If parsing was successful, exit
       if (!_.isEqual(req.body, {})) {return next();}
       // Otherwise try the URL-encoded parser (application/x-www-form-urlencoded type)
       URLEncodedBodyParser(req, res, function(err) {
-        if (err) return next(err);
+        if (err) return handleError(err);
         // If parsing was successful, exit
         if (!_.isEqual(req.body, {})) {return next();}
         // Otherwise try the multipart parser
         MultipartBodyParser(req, res, function(err) {
-          if (err) return next(err);
+          if (err) return handleError(err);
 
           /**
            * OK, here's how the re-run of the JSON bodyparser works:
