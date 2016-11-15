@@ -136,7 +136,7 @@ module.exports = function upload (opts, _cb) {
 
   // Write stream encountered a fatal error and had to quit early!
   // (some of the files may still have been successfully written, though)
-  receiver__.once('error', function unableToUpload(err) {
+  receiver__.on('error', function unableToUpload(err) {
     log.color('red').write('A receiver handling Upstream `%s` encountered a write error :', self.fieldName, util.inspect(err));
 
     // Forcibly end the incoming stream of files on this upstream
