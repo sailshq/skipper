@@ -127,7 +127,16 @@ module.exports = function upload (opts, _cb) {
     self.emit('progress', milestone);
   });
 
+  // The receiver supposedly persisted a single file successfully.
+  // This should be called once per file in the upstream.
+  receiver__.on('writefile', function(fileStream) {
+    var file = _.find(self._files, {stream: fileStream});
+    file.status = 'finished';
+  });
+
   // The receiver write stream finished successfully!
+  // This should be called when all files in the upstream
+  // have been persisted, according to the adapter.
   receiver__.once('finish', function allFilesUploaded() {
     log.color('grey').write('A receiver is finished writing files from Upstream `' + self.fieldName + '`.');
     log.color('grey').write('(this doesn\'t necessarily mean any files were actually written...)');

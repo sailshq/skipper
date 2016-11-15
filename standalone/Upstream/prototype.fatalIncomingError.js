@@ -58,14 +58,13 @@ module.exports = function fatalIncomingError (err) {
     // This is because depending on the adapter, an error on the stream may result in fatalIncomingError
     // being called again, and the receiver is only equipped to handle one fatal error (i.e. it uses
     // .once(), which makes sense since the error is supposed to be _fatal_, after all).
-    if (file.status == 'cancelled') {
+    if (file.status === 'cancelled') {
       debug('Encountered read error on already-cancelled incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
       return;
     }
 
-    // If the file finished writing, ignore the error
-    // TODO -- implement setting the "finished" state in adapters
-    if (file.status == 'finished') {
+    // If the file is finished, ignore the error.
+    if (file.status === 'finished') {
       debug('Encountered read error on already-finished incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
       return;
     }
