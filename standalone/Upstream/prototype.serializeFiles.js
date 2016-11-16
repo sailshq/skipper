@@ -21,8 +21,14 @@ module.exports = function serializeFiles() {
       // Unique file descriptor:
       fd: file.stream.fd,
 
-      // Conventional bodyParser stuff:
+      // File size.
+      // Multiparty will attempt to set this to the value of a part's
+      // `content-length` header if such a header exists, but adapters
+      // should override this by setting `byteCount` to the size of the
+      // persisted file to ensure accuracy.
       size: file.stream.byteCount,
+
+      // Conventional bodyParser stuff:
       type: file.stream.headers && file.stream.headers['content-type'],
 
       // Custom stuff:
