@@ -5,7 +5,7 @@
 var path = require('path');
 var _ = require('lodash');
 var TransformStream = require('stream').Transform;
-var UUIDGenerator = require('node-uuid');
+var UUIDGenerator = require('uuid');
 
 
 /**

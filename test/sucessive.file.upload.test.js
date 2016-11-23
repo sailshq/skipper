@@ -11,7 +11,7 @@ var Lifecycle = require('./helpers/lifecycle')
   , toValidateTheHTTPResponse = require('./helpers/toValidateTheHTTPResponse')
   , fsx = require('fs-extra')
   , async = require('async')
-  , uuid = require('node-uuid');
+  , uuid = require('uuid');
 
 
 // Fixtures
