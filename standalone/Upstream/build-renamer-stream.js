@@ -5,7 +5,7 @@
 var path = require('path');
 var _ = require('lodash');
 var TransformStream = require('stream').Transform;
-var UUIDGenerator = require('node-uuid');
+var UUIDGenerator = require('uuid/v4');
 
 
 /**
@@ -35,7 +35,7 @@ module.exports = function buildRenamerStream (options) {
       //  • a generated UUID  (like "4d5f444-38b4-4dc3-b9c3-74cb7fbbc932")
       //  • the uploaded file's original extension (like ".jpg")
       else {
-        return cb(null, UUIDGenerator.v4()+ path.extname(__file.filename));
+        return cb(null, UUIDGenerator()+ path.extname(__file.filename));
       }
     })(function (err, basename) {
       if (err) return next(err);

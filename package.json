@@ -38,10 +38,10 @@
     "dot-access": "1.0.0",
     "lodash": "3.10.1",
     "multiparty": "3.2.10",
-    "node-uuid": "1.4.7",
     "semver": "4.3.6",
     "skipper-disk": "~0.5.6",
-    "string_decoder": "0.10.31"
+    "string_decoder": "0.10.31",
+    "uuid": "3.0.1"
   },
   "devDependencies": {
     "concat-stream": "1.5.2",
