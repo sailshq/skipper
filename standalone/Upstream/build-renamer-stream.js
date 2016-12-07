@@ -2,6 +2,7 @@
  * Module dependencies
  */
 
+var util = require('util');
 var path = require('path');
 var _ = require('lodash');
 var TransformStream = require('stream').Transform;
@@ -25,17 +26,25 @@ module.exports = function buildRenamerStream (options) {
     (function determineBasename (cb) {
       // Use the `saveAs` string verbatim
       if (_.isString(options.saveAs)) {
-        return cb(null, options.saveAs);
+        return cb(undefined, options.saveAs);
       }
       // Run the `saveAs` fn to determine the basename
       else if (_.isFunction(options.saveAs)) {
-        options.saveAs(__file, cb);
+        options.saveAs(__file, function (err, fdFromUserland){
+          if (err) { return cb(err); }
+          
+          if (!_.isString(fdFromUserland)) {
+            return cb(new Error('The `saveAs` function triggered its callback, but did not send back a valid string as the 2nd argument.  Instead, got: '+util.inspect(fdFromUserland, {depth:null})+''));
+          }
+          
+          return cb(undefined, fdFromUserland);
+        });//</saveAs>
       }
       // The default `saveAs` implements a unique filename by combining:
       //  • a generated UUID  (like "4d5f444-38b4-4dc3-b9c3-74cb7fbbc932")
       //  • the uploaded file's original extension (like ".jpg")
       else {
-        return cb(null, UUIDGenerator()+ path.extname(__file.filename));
+        return cb(undefined, UUIDGenerator()+ path.extname(__file.filename));
       }
     })(function (err, basename) {
       if (err) return next(err);
