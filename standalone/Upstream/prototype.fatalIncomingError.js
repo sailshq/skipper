@@ -59,27 +59,30 @@ module.exports = function fatalIncomingError (err) {
     // being called again, and the receiver is only equipped to handle one fatal error (i.e. it uses
     // .once(), which makes sense since the error is supposed to be _fatal_, after all).
     if (file.status === 'cancelled') {
-      debug('Encountered read error on already-cancelled incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
+      debug('Swallowing fatal upstream error for already-cancelled incoming file `%s` of upstream `%s`', file.stream.filename, self.fieldName);
       return;
     }
 
     // If the file is finished, ignore the error.
     if (file.status === 'finished') {
-      debug('Encountered read error on already-finished incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
+      debug('Swallowing fatal upstream error for already-finished incoming file `%s` of upstream `%s`', file.stream.filename, self.fieldName);
       return;
     }
 
     // Mark the file as cancelled
     file.status = 'cancelled';
 
-    // If upstream is not plugged in to a receiver, we shouldn't emit an error on the file streams,
-    // since there's no way that error could be handled yet.
+    // Output a debug message indicating that an error occurred on the incoming file.
     if (!self._connected){
-      debug('Unconnected upstream: Encountered read error on incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
-      return;
+      debug('Forwarding fatal upstream error for unconnected (i.e. not connected to receiver) incoming file `%s` of upstream `%s`', file.stream.filename, self.fieldName);
+    } else {
+      debug('Forwarding fatal upstream error for already-connected (to receiver) incoming file `%s` of upstream `%s`', file.stream.filename, self.fieldName);
     }
-    debug('Connected upstream: Emitting read error on incoming file `%s` :: %s', file.stream.filename, util.inspect(err));
+
+    // Forward the fatal upstream error to the actual file stream so that it can re-route to the leaky pipe.
+    // Otherwise, the stream may never close, causing the response to hang.
     file.stream.emit('error', err);
+
   });
 
   // Indicate the end of the Upstream (no more files coming)
