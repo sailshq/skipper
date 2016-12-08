@@ -76,9 +76,7 @@ describe('maxWaitTimeBeforePassingControlToApp', function() {
         // we'll be aborting the request anyway
       ];
 
-      // Calculate the content size.  We need to know this because if we send a Content-Length
-      // header with a too-small value, the server will think it has all the data before we
-      // have a chance to abort
+      // Calculate the content size.
       var contentSize = _.reduce(body, function(memo,chunk){return memo+chunk.length;}, 0);
 
       // Set up the request options
@@ -199,9 +197,7 @@ describe('maxWaitTimeBeforePassingControlToApp', function() {
         // we'll be aborting the request anyway
       ];
 
-      // Calculate the content size.  We need to know this because if we send a Content-Length
-      // header with a too-small value, the server will think it has all the data before we
-      // have a chance to abort
+      // Calculate the content size.
       var contentSize = _.reduce(body, function(memo,chunk){return memo+chunk.length;}, 0);
 
       // Set up the request options
