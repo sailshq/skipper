@@ -42,6 +42,11 @@ app.use(require('skipper')());
 ============================================
 
 
+## Global options
+
+Skipper accepts several options when it is first instantiated that allow you to configure how it behaves, including various timeouts.  See the [&ldquo;Configuring Skipper&rdquo; docs on sailshs.org](http://sailsjs.com/documentation/reference/configuration/sails-config-http#?configuring-skipper) for more information.
+
+
 ## Using `req.file(...).upload()`
 
 As is true with most methods on `req`, usage of Skipper's `req.file()` is identical between Sails (in a controller) and Express (in a route).
@@ -269,19 +274,6 @@ After a lot of research, @zolmeister, @sgress454 and I came to understand a crit
 + http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4
 + https://github.com/jnicklas/capybara/issues/670#issue-3711585
 
-<!--
-#### Scenarios
-
-I realize there's a lot going on in here, so for sanity/confidence, let's look at some edge cases and explain how Skipper addresses them:
-
-#### EMAXBUFFER
-> TODO: document
-
-#### ETIMEOUT
-> TODO: document
-
-....others...
--->
 
 #### History
 
@@ -291,6 +283,65 @@ This module ~~may~~ ~~_will be_~~ **is** included as the default body parser in 
 
 ## FAQ
 
+#### How do I customize the Skipper options in my Sails app?
+
+In Sails v0.12.x on, simply configure the `sails.config.http.middleware.bodyParser` setting in `config/http.js` with a Skipper instance using your desired options:
+
+```
+// config/http.js
+
+module.exports.http = {
+
+  middleware: {
+
+    bodyParser: require('skipper')({
+      maxWaitTimeBeforePassingControlToApp: 1000
+    })
+
+  }
+
+};
+```
+
+In Sails &lt; v0.12.x, you&rsquo;ll need to comment-out `bodyParser` from the middleware order, and replace it with a "custom" middleware.  For example:
+
+```
+
+// config/http.js
+
+module.exports.http = {
+
+  middleware: {
+
+    // The order in which middleware should be run for HTTP request.
+    // (the Sails router is invoked by the "router" middleware below.)
+    order: [
+      'startRequestTimer',
+      'cookieParser',
+      'session',
+      // 'bodyParser', // <-- don't add the "bodyParser" middleware to the stack
+      'skipper',   // <-- instead use this "custom" middleware
+      'handleBodyParserError',
+      'compress',
+      'methodOverride',
+      'poweredBy',
+      '$custom',
+      'router',
+      'www',
+      'favicon',
+      '404',
+      '500'
+    ],
+
+    // Configure Skipper
+    skipper: require('skipper')({
+      maxWaitTimeBeforePassingControlToApp: 1000
+    })
+
+  }
+
+};
+```
 
 #### How Does the Multipart Body Parser Work?
 
