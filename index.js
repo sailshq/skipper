@@ -146,7 +146,7 @@ module.exports = function toParseHTTPBody(options) {
           var backupContentType = req.headers['content-type'];
           req.headers['content-type'] = 'application/json';
           JSONBodyParser(req, res, function(err) {
-            console.log('ERRRR',err);
+
             // Revert content-type to what it originally was.
             // This is so we don't inadvertently corrupt `req.headers`--
             // our apps' actions might be looking for 'em.
