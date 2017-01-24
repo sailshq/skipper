@@ -104,6 +104,11 @@ module.exports = function toParseHTTPBody(options) {
     // Try to parse a request that has application/json content type
     JSONBodyParser(req, res, function(err) {
       if (err) return handleError(err);
+      // If accept header is JSON, exit
+      if (!_.isUndefined(req.headers.accept) &&
+        req.headers.accept === 'application/json') {
+        return next();
+      }
       // If parsing was successful, exit
       if (!_.isEqual(req.body, {})) {return next();}
       // Otherwise try the URL-encoded parser (application/x-www-form-urlencoded type)
