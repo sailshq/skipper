@@ -45,6 +45,14 @@ module.exports = function toParseHTTPBody(options) {
 
   return function _parseHTTPBody(req, res, next) {
 
+    // If there's no `req.is`, bail out early because we won't be able to tell
+    // with certainty what the content-type is or isn't.
+    if (!req.is) {
+      return next(new Error('Consistency violation: `req.is` is not defined.\n' +
+                            'This typically means that you are using an outdated version of Express.\n'+
+                            'Skipper requires Express 3 or above.\n'));
+    }
+
     // Use custom body parser error handler if provided, otherwise
     // just forward the error to the next Express error-handling middleware.
     var handleError = function (err) {
@@ -129,10 +137,6 @@ module.exports = function toParseHTTPBody(options) {
             return next();
           }
 
-          // TODO: consider adding some basic support for this instead of relying on a peer dependency.
-          // Chances are, if `req.is()` doesn't exist, we really really don't want to rerun the JSON bodyparser.
-          if (!req.is) return next();
-
           // If the content type is explicitly set to "multipart/form-data",
           // we should not try to rerun the JSON bodyparser- it may hang forever.
           if (req.is('multipart/form-data')) return next();
@@ -142,7 +146,7 @@ module.exports = function toParseHTTPBody(options) {
           var backupContentType = req.headers['content-type'];
           req.headers['content-type'] = 'application/json';
           JSONBodyParser(req, res, function(err) {
-
+            console.log('ERRRR',err);
             // Revert content-type to what it originally was.
             // This is so we don't inadvertently corrupt `req.headers`--
             // our apps' actions might be looking for 'em.
