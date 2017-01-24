@@ -47,10 +47,10 @@
     "concat-stream": "1.5.2",
     "express": "4.13.4",
     "fs-extra": "0.30.0",
-    "mocha": "2.2.5",
+    "mocha": "3.0.2",
     "request": "2.74.0",
     "sails": "~0.11.0",
-    "skipper-adapter-tests": "~1.5.8",
+    "skipper-adapter-tests": "^1.5.8",
     "temporary": "0.0.8"
   }
 }
