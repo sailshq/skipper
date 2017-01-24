@@ -104,11 +104,6 @@ module.exports = function toParseHTTPBody(options) {
     // Try to parse a request that has application/json content type
     JSONBodyParser(req, res, function(err) {
       if (err) return handleError(err);
-      // If accept header is JSON, exit
-      if (!_.isUndefined(req.headers.accept) &&
-        req.headers.accept === 'application/json') {
-        return next();
-      }
       // If parsing was successful, exit
       if (!_.isEqual(req.body, {})) {return next();}
       // Otherwise try the URL-encoded parser (application/x-www-form-urlencoded type)
@@ -151,7 +146,6 @@ module.exports = function toParseHTTPBody(options) {
           var backupContentType = req.headers['content-type'];
           req.headers['content-type'] = 'application/json';
           JSONBodyParser(req, res, function(err) {
-            console.log('ERRRR',err);
             // Revert content-type to what it originally was.
             // This is so we don't inadvertently corrupt `req.headers`--
             // our apps' actions might be looking for 'em.
