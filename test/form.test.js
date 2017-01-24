@@ -36,7 +36,7 @@ var BYTES = 100000;
 
 
 
-describe('multipart form upload', function() {
+xdescribe('multipart form upload', function() {
 
   //
   // Basic sanity check on multipart form parser's
