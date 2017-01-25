@@ -104,16 +104,18 @@ module.exports = function toParseHTTPBody(options) {
     // Try to parse a request that has application/json content type
     JSONBodyParser(req, res, function(err) {
       if (err) return handleError(err);
-      // If parsing was successful, exit
-      if (!_.isEqual(req.body, {})) {return next();}
+      // If the parser actually ran and did some parsing, then we're done.
+      if (req.is('application/json')) {return next();}
       // Otherwise try the URL-encoded parser (application/x-www-form-urlencoded type)
       URLEncodedBodyParser(req, res, function(err) {
         if (err) return handleError(err);
-        // If parsing was successful, exit
-        if (!_.isEqual(req.body, {})) {return next();}
+        // If the parser actually ran and did some parsing, then we're done.
+        if (req.is('application/x-www-form-urlencoded')) {return next();}
         // Otherwise try the multipart parser
         MultipartBodyParser(req, res, function(err) {
           if (err) return handleError(err);
+          // If the parser actually ran and did some parsing, then we're done.
+          if (req.is('multipart/form-data')) return next();
 
           /**
            * OK, here's how the re-run of the JSON bodyparser works:
@@ -124,25 +126,6 @@ module.exports = function toParseHTTPBody(options) {
            * the user sent a JSON request body, but forgot to set the appropriate header
            * (which is pretty much every time, I think.)
            */
-
-          // If we were able to parse something at this point (req.body isn't empty)
-          // or files are/were being uploaded/ignored (req._fileparser.upstreams isn't empty)
-          // or the content-type is JSON,
-          var reqBodyNotEmpty = !_.isEqual(req.body, {});
-          var hasUpstreams = req._fileparser && req._fileparser.upstreams.length;
-          var contentTypeIsJSON = (backupContentType === 'application/json');
-          // ...then the original parsing must have worked.
-          // In that case, we'll skip the JSON retry stuff.
-          if (contentTypeIsJSON || reqBodyNotEmpty || hasUpstreams) {
-            return next();
-          }
-
-          // If the content type is explicitly set to "multipart/form-data",
-          // we should not try to rerun the JSON bodyparser- it may hang forever.
-          if (req.is('multipart/form-data')) return next();
-
-          // Otherwise, set an explicit JSON content-type
-          // and try parsing the request body again.
           var backupContentType = req.headers['content-type'];
           req.headers['content-type'] = 'application/json';
           JSONBodyParser(req, res, function(err) {
