@@ -27,9 +27,9 @@ req.file('avatar').upload(function (err, uploadedFiles){
 
 ## Installation
 
-Skipper is installed in [Sails](http://beta.sailsjs.org) automatically (see https://github.com/sails101/file-uploads for a sample Sails app that handles file uploads).
+Skipper is installed in [Sails](http://sailsjs.com/) automatically (see https://github.com/sails101/file-uploads for a sample Sails app that handles file uploads).
 
-To install Skipper in a vanilla [Express](http://expressjs.org) app:
+To install Skipper in a vanilla [Express](http://expressjs.com/) app:
 
 ```sh
 npm install skipper --save
@@ -632,7 +632,7 @@ See [ROADMAP.md](./ROADMAP.md) for more information on where the project is head
 &copy; 2014-2016
 [Mike McNeil](https://github.com/mikermcneil), [Scott Gress](https://github.com/sgress454), [Balderdash](http://balderdash.co) & contributors
 
-This module is part of the [Sails framework](http://sailsjs.org), and is free and open-source under the [MIT License](http://sails.mit-license.org/).
+This module is part of the [Sails framework](http://sailsjs.com/), and is free and open-source under the [MIT License](http://sails.mit-license.org/).
 
 
 ![bkgd_seaScene.png](http://i.imgur.com/JpaJ8qw.png)
