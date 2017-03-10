@@ -36,6 +36,12 @@ module.exports = function buildOrNormalizeReceiver (opts) {
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   var receiverOpts = _.cloneDeep(opts);
 
+  // If we got the adapter as an object, it's best to preserve it instead of just copying its
+  // functions into a new object - that could break adapters which are implemented as ES 2015
+  // classes, for example.
+  if (opts.adapter instanceof Object) {
+    receiverOpts.adapter = opts.adapter;
+  }
 
   // At this point, we know we didn't receive a proper receiver instance, so we should have
   // ended up with a configuration object. Otherwise, this is an error.
