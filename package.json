@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/balderdashy/file-parser.git"
+    "url": "git://github.com/balderdashy/skipper.git"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -21,7 +21,8 @@
     "express",
     "connect",
     "streaming",
-    "file-upload"
+    "file-upload",
+    "skipper"
   ],
   "author": "Mike McNeil",
   "contributors": [
