@@ -57,8 +57,29 @@ module.exports = function toParseHTTPBody(options) {
     // just forward the error to the next Express error-handling middleware.
     var handleError = function (err) {
       if (options.onBodyParserError) {
-        return options.onBodyParserError(err, req, res, next);
+
+        try {
+          // If the logic is a Node async function, attach a `.catch()` to handle rejections.
+          if (options.onBodyParserError.constructor.name === 'AsyncFunction') {
+            var promise = options.onBodyParserError(err, req, res, next);
+            // If `beforeConnect` throws an error, we'll take that as a rejection of the connection.
+            // Although we'd much rather it just call its callback than throw an error!
+            promise.catch(function(err){
+              // Socket.io expects the first argument (if any) of the callback to be a string.
+              return next(err);
+            });
+          }
+          // Otherwise just run the synchronous function.
+          else {
+            return options.onBodyParserError(err, req, res, next);
+          }
+        } catch (e) {
+          return next(e);
+        }
+
+        return;
       }
+
       return next(err);
     };
 
