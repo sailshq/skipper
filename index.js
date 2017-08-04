@@ -56,32 +56,25 @@ module.exports = function toParseHTTPBody(options) {
     // Use custom body parser error handler if provided, otherwise
     // just forward the error to the next Express error-handling middleware.
     var handleError = function (err) {
-      if (options.onBodyParserError) {
 
+      if (options.onBodyParserError) {
         try {
-          // If the logic is a Node async function, attach a `.catch()` to handle rejections.
+          // If the logic is an async function, attach a `.catch()` to handle rejections.
           if (options.onBodyParserError.constructor.name === 'AsyncFunction') {
             var promise = options.onBodyParserError(err, req, res, next);
-            // If `beforeConnect` throws an error, we'll take that as a rejection of the connection.
-            // Although we'd much rather it just call its callback than throw an error!
-            promise.catch(function(err){
-              // Socket.io expects the first argument (if any) of the callback to be a string.
-              return next(err);
-            });
+            promise.catch(function(err){ next(err); });
           }
           // Otherwise just run the synchronous function.
           else {
             return options.onBodyParserError(err, req, res, next);
           }
-        } catch (e) {
-          return next(e);
-        }
-
+        } catch (e) { return next(e); }
         return;
       }
-
-      return next(err);
-    };
+      else {
+        return next(err);
+      }
+    };//</handleError>
 
     // Optimization: skip bodyParser for GET, OPTIONS, or body-less requests.
     if (req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'options' || req.method.toLowerCase() === 'head') {
