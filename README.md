@@ -9,8 +9,7 @@
 
 Skipper makes it easy to implement streaming file uploads to disk, S3, or any supported file upload adapters.
 
-============================================
-
+--------------------------------------------
 
 ## Quick Start
 
@@ -22,7 +21,7 @@ req.file('avatar').upload(function (err, uploadedFiles){
   return res.send(200, uploadedFiles);
 });
 ```
-============================================
+--------------------------------------------
 
 
 ## Installation
@@ -39,7 +38,7 @@ npm install skipper --save
 app.use(require('skipper')());
 ```
 
-============================================
+--------------------------------------------
 
 
 ## Global options
@@ -71,7 +70,7 @@ req.file('avatar').upload(function (err, uploadedFiles) {
  onProgress  | ((function))                     | Optional. This function will be called again and again as the upstream pumps chunks into the receiver with an object representing the current status of the upload, until the upload completes.  Currently experimental.
 
 
-============================================
+--------------------------------------------
 
 
 ## Use Cases
@@ -213,7 +212,7 @@ It exposes the following adapter-specific options:
 
 
 <!--
-============================================
+--------------------------------------------
 
 #### Customizing at-rest filenames for uploads
 
@@ -237,7 +236,7 @@ It exposes the following adapter-specific options:
 > TODO
 -->
 
-============================================
+--------------------------------------------
 
 
 ## Background
@@ -435,7 +434,7 @@ The most important method is `receive()` -- it builds the upstream receiver whic
 -->
 
 
-============================================
+--------------------------------------------
 
 
 ## Low-Level Usage
@@ -603,7 +602,7 @@ var upstream = req.file('foo').upload({
 ```
 
 
-============================================
+--------------------------------------------
 
 
 ## Status
@@ -612,7 +611,7 @@ This module is published on npm.  Development takes place on the `master` branch
 
 See [ROADMAP.md](./ROADMAP.md) for more information on where the project is headed and how you can contribute.
 
-============================================
+--------------------------------------------
 
 ## More Resources
 
@@ -624,7 +623,7 @@ See [ROADMAP.md](./ROADMAP.md) for more information on where the project is head
 - [Facebook](https://www.facebook.com/sailsjs)
 - <a href="http://sailsjs.org" target="_blank" title="Node.js framework for building realtime APIs."><img src="http://sailsjs.org/images/logos/sails-logo_ltBg_dkBlue.png" width=60 alt="Sails.js logo (small)"/></a>
 
-============================================
+--------------------------------------------
 
 ## License
 
