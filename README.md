@@ -244,6 +244,8 @@ req.file('file')
 | `path` | ((string)) | An optional parameter if you wish to save the file in a particular path in your file server. Default value :`/`|
 | `username` | ((string)) | An optional parameter for authentication. Default value :`root`|
 | `password` | ((string)) | An optional parameter for authentication. Default value :`root`|
+| `saveAs` | ((string)) | An optional parameter for saving the file with the specified name here instead of the original file name. Default value :`undefined`
+
 
 
 
