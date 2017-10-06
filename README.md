@@ -218,7 +218,8 @@ It exposes the following adapter-specific options:
 $ npm install skipper-ftp --save
 ```
 
-[skipper-ftp](https://github.com/theo4u/skipper-ftp) This is used to upload files directly to FTP server skipper adapter and [node-ftp](https://github.com/mscdex/node-ftp)
+[skipper-ftp](https://github.com/theo4u/skipper-ftp) This is used to upload files directly to FTP server using [skipper](https://github.com/balderdashy/skipper) and [node-ftp](https://github.com/mscdex/node-ftp)
+
 ```javascript
 req.file('file')
 .upload({
