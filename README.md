@@ -239,13 +239,13 @@ req.file('file')
 
 | Option        | Type       | Details |
 |-----------    |:----------:|---------|
-| `host`         | ((string)) | An optional parameter of the host or domain. Default value: `ftp.localhost`|
+| `host`         | ((string)) | An optional parameter of the host or domain/IP. Default value: `localhost`|
 | `port` | ((number)) | An optional parameter for port. Default value :`21`|
 | `path` | ((string)) | An optional parameter if you wish to save the file in a particular path in your file server. Default value :`/`|
-| `username` | ((string)) | An optional parameter for authentication. Default value :`root`|
+| `user` | ((string)) | An optional parameter for authentication. Default value :`root`|
 | `password` | ((string)) | An optional parameter for authentication. Default value :`root`|
 
-
+check  [node-ftp](https://github.com/mscdex/node-ftp#methods) options for more
 
 
 
