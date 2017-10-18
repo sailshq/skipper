@@ -51,7 +51,7 @@ describe('onBodyParserError ::', function() {
 
 if (Number(process.version.match(/^v(\d+\.\d+)/)[1]) >= 7.6) {
 
-  describe.only('with async function', function() {
+  describe('with async function', function() {
 
     describe('basic functioning', function() {
 
