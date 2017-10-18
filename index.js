@@ -147,7 +147,14 @@ module.exports = function toParseHTTPBody(options) {
             // Revert content-type to what it originally was.
             // This is so we don't inadvertently corrupt `req.headers`--
             // our apps' actions might be looking for 'em.
-            req.headers['content-type'] = backupContentType;
+            //
+            // If the original request didn't include a content-type,
+            // remove the header entirely.
+            if (backupContentType) {
+              req.headers['content-type'] = backupContentType;
+            } else {
+              delete req.headers['content-type'];
+            }
 
             // If an error occurred in the retry, it's not actually an error
             // (we can't assume EVERY requeset was intended to be JSON)
