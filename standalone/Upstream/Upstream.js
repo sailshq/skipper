@@ -89,7 +89,9 @@ function Upstream(opts) {
         e.code + ': ' +
         'An Upstream (`' + self.fieldName + '`) timed out before it was plugged into a receiver. ' +
         'It was still unused after waiting ' + opts.maxTimeToBuffer + 'ms. ' +
-        'You can configure this timeout by changing the `maxTimeToBuffer` option.';
+        'You can configure this timeout by changing the `maxTimeToBuffer` option.\n\n';
+        'Note that this error might be occurring due to an earlier file upload that is ' +
+        'finally timing out after an unrelated server error.'
       self.fatalIncomingError(e);
     }
   }, opts.maxTimeToBuffer);
