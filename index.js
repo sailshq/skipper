@@ -36,7 +36,7 @@ module.exports = function toParseHTTPBody(options) {
 
 
   /**
-   * Connet/Express/Sails-compatible middleware.
+   * Connect/Express/Sails-compatible middleware.
    *
    * @param  {Request}   req  [description]
    * @param  {Response}   res  [description]
