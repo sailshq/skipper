@@ -2,7 +2,6 @@
  * Module dependencies
  */
 
-var path = require('path');
 var _ = require('@sailshq/lodash');
 var DefaultFileAdapter = require('skipper-disk');
 
@@ -41,8 +40,7 @@ module.exports = function buildOrNormalizeReceiver (opts) {
   // ended up with a configuration object. Otherwise, this is an error.
   if (typeof receiverOpts !== 'object') {
     var err = new Error('No valid receiver specified!');
-    e.code = 'E_USAGE';
-    err.usage = USAGE;
+    err.code = 'E_USAGE';
     err.toString = function() {
       return err.message + '\nUsage: ' + err.usage + '\n';
     };

@@ -3,10 +3,8 @@
  */
 
 var util = require('util');
-var path = require('path');
 var Readable = require('stream').Readable;
 var _ = require('@sailshq/lodash');
-var DefaultFileAdapter = require('skipper-disk');
 var debug = require('debug')('skipper');
 
 
@@ -45,7 +43,9 @@ function Upstream(opts) {
   this._fatalErrors = [];
 
   // Allow `noop` to be passed in to force this Upstream to immediately end.
-  if (opts.noop) this.isNoop = true;
+  if (opts.noop) {
+    this.isNoop = true;
+  }
 
   // Keep track of file streams which we've emitted.
   this._files = [];
@@ -85,17 +85,15 @@ function Upstream(opts) {
     if (!self._connected) {
       var e = new Error();
       e.code = 'EMAXBUFFER';
-      e.message =
-        e.code + ': ' +
-        'An Upstream (`' + self.fieldName + '`) timed out before it was plugged into a receiver. ' +
-        'It was still unused after waiting ' + opts.maxTimeToBuffer + 'ms. ' +
-        'You can configure this timeout by changing the `maxTimeToBuffer` option.\n\n';
-        'Note that this error might be occurring due to an earlier file upload that is ' +
-        'finally timing out after an unrelated server error.'
+      e.message = e.code + ': An upstream (`' + self.fieldName + '`) timed out before it was plugged into a receiver. ' +
+      'It was still unused after waiting ' + opts.maxTimeToBuffer + 'ms. ' +
+      'You can configure this timeout by changing the `maxTimeToBuffer` option.\n\n'+
+      'Note that this error might be occurring due to an earlier file upload that is ' +
+      'finally timing out after an unrelated server error.';
       self.fatalIncomingError(e);
-    }
-  }, opts.maxTimeToBuffer);
-}
+    }//ﬁ
+  }, opts.maxTimeToBuffer);//œ
+}//ƒ < Upstream() >
 
 
 
@@ -106,11 +104,5 @@ Upstream.prototype.serializeFiles = require('./prototype.serializeFiles');
 Upstream.prototype.writeFile = require('./prototype.writeFile');
 Upstream.prototype.fatalIncomingError = require('./prototype.fatalIncomingError');
 Upstream.prototype.noMoreFiles = require('./prototype.noMoreFiles');
-
-
-
-
-
-
 
 module.exports = Upstream;
