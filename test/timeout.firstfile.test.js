@@ -1,6 +1,6 @@
 var Lifecycle = require('./helpers/lifecycle')
   , request = require('request')
-  , _ = require('lodash')
+  , _ = require('@sailshq/lodash')
   , util = require('util')
   , path = require('path')
   , assert = require('assert')
@@ -8,7 +8,7 @@ var Lifecycle = require('./helpers/lifecycle')
   , newReceiverStream = require('./helpers/receiver').newReceiverStream
   , fsx = require('fs-extra');
 
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 describe('maxTimeToWaitForFirstFile', function() {
 
   describe('with a setting of 600 and a 1200ms delay', function() {

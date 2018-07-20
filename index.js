@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var toParseMultipartHTTPRequest = require('./lib/multipart');
 var bodyParser = require('body-parser');
 var Upstream = require('./standalone/Upstream');

@@ -1,6 +1,6 @@
 var Lifecycle = require('./helpers/lifecycle')
   , request = require('request')
-  , _ = require('lodash')
+  , _ = require('@sailshq/lodash')
   , util = require('util')
   , path = require('path')
   , assert = require('assert')
@@ -8,7 +8,7 @@ var Lifecycle = require('./helpers/lifecycle')
   , newReceiverStream = require('./helpers/receiver').newReceiverStream
   , fsx = require('fs-extra');
 
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 describe('maxWaitTimeBeforePassingControlToApp', function() {
 
   describe('with the default 500ms setting and a 600ms delay', function() {

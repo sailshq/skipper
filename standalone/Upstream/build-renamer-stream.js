@@ -4,7 +4,7 @@
 
 var util = require('util');
 var path = require('path');
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var TransformStream = require('stream').Transform;
 var UUIDGenerator = require('uuid/v4');
 

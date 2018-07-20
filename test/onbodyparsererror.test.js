@@ -4,7 +4,7 @@
 
 var Lifecycle = require('./helpers/lifecycle')
 	, request = require('request')
-	, _ = require('lodash')
+	, _ = require('@sailshq/lodash')
 	, util = require('util')
 	, path = require('path')
 	, assert = require('assert')
