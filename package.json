@@ -5,7 +5,9 @@
   "main": "index.js",
   "directories": {},
   "scripts": {
-    "test": "mocha && node -e \"require('skipper-adapter-tests')({module: require('skipper-disk')});\""
+    "lint": "eslint . --max-warnings=0 --ignore-pattern 'test/' && echo '✔  Your code looks good.'",
+    "test": "npm run lint && npm run custom-tests",
+    "custom-tests": "mocha && node -e \"require('skipper-adapter-tests')({module: require('skipper-disk')});\""
   },
   "repository": {
     "type": "git",

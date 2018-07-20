@@ -68,8 +68,13 @@ req.file('avatar').upload(function (err, uploadedFiles) {
  dirname     | ((string))                       | Optional. The path to the directory on the remote filesystem where file uploads should be streamed.  May be specified as an absolute path (e.g. `/Users/mikermcneil/foo`) or a relative path.  In the latter case, or if no `dirname` is provided, the configured filesystem adapter will determine a `dirname` using a conventional default (varies adapter to adapter).  If `dirname` is used with `saveAs`- the filename from saveAs will be relative to dirname.
  saveAs      | ((string)) -or- ((function))     | Optional.  By default, Skipper decides an "at-rest" filename for your uploaded files (called the `fd`) by generating a UUID and combining it with the file's original file extension when it was uploaded ("e.g. 24d5f444-38b4-4dc3-b9c3-74cb7fbbc932.jpg"). <br/>  If `saveAs` is specified as a string, any uploaded file(s) will be saved to that particular path instead (should only be used for simple, single-file uploads).<br/> When used with multi-file uploads, `saveAs` should be specified as a function.  This function will be called _each time a file is received_, and Skipper will pass it the raw file stream (`__newFileStream`) and a callback (`next`).   If something goes critically wrong, your `saveAs` function should trigger its callback with an Error instance as the first argument (e.g. `return next(new Error('Could not determine appropriate filename.'));`).  Otherwise, it should call its callback with `undefined` as the first argument, and pass in the `fd` string as the second argument. For example: <br/> `saveAs: function (__newFileStream, next) { return next(undefined, 'the-uploaded-file.txt'); }` <br/>If a file already exists with the same `fd`, it will be overridden.<br/>The final file descriptor (`fd`) for the upload will be resolved relative from `dirname`.
  maxBytes    | ((integer))                      | Optional. Max total number of bytes permitted for a given upload, calculated by summing the size of all files in the upstream; e.g. if you created an upstream that watches the "avatar" field (`req.file('avatar')`), and a given request sends 15 file fields with the name "avatar", `maxBytes` will check the total number of bytes in all of the 15 files.  If maxBytes is exceeded, the already-written files will be left untouched, but unfinshed file uploads will be garbage-collected, and not-yet-started uploads will be cancelled.  (Note that `maxBytes` is currently experimental)
- onProgress  | ((function))                     | Optional. This function will be called again and again as the upstream pumps chunks into the receiver with an object representing the current status of the upload, until the upload completes.  Currently experimental.
+ onProgress  | ((function))                     | Optional. This function will be called again and again as the upstream pumps chunks into the receiver with a dictionary (plain JavaScript object) representing the current status of the upload, until the upload completes.
 
+
+#### Error codes
+
+- `E_EXCEEDS_UPLOAD_LIMIT` _(when `maxBytes` is exceeded for upstream)_
+- `E_EXCEEDS_FILE_SIZE_LIMIT` _(when `maxBytesPerFile` is exceeded for any given file -- currently S3 only)_
 
 ============================================
 
@@ -91,7 +96,7 @@ It exposes the following adapter-specific options:
 
  Option     | Type                             | Description
  ---------- | -------------------------------- | --------------
- onProgress | ((function))                     | A notifier function triggered with a report of upload progress.
+ dirname    | ((string))                       | The path to a directory where files will be uploaded.  By default, this is relative to cwd in `./.tmp/uploads`.
 
 
 #### Uploading files to S3
@@ -124,7 +129,6 @@ It exposes the following adapter-specific options:
  bucket     | ((string))                       | The bucket to upload your files into, e.g. `"my_cool_file_uploads"` (_required_)
  endpoint   | ((string))                       | By default all requests will be sent to the global endpoint `s3.amazonaws.com`. But if you want to manually set the endpoint, you can do it with the endpoint option. |
  region     | ((string))                       | The S3 region where the bucket is located, e.g. `"us-west-2"`. Note: If `endpoint` is defined, `region` will be ignored. Defaults to `"us-standard"` |
- tmpdir     | ((string))                       | The path to the directory where buffering multipart requests can rest their heads.  Amazon requires "parts" sent to their multipart upload API to be at least 5MB in size, so this directory is used to queue up chunks of data until a big enough payload has accumulated.  Defaults to `.tmp/s3-upload-part-queue` (resolved from the current working directory of the node process- e.g. your app)
  headers    | ((object))                       | A set of headers to be added to the upload request.  See the Amazon S3 [PUT Object docs](http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html#RESTObjectPUT-requests) for info about the available headers, and the [canned ACL docs](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl) for a list of access-control settings you can use with the `x-amz-acl` header to specify permissions for your uploaded files
 
 
