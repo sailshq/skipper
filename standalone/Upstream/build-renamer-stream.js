@@ -32,11 +32,11 @@ module.exports = function buildRenamerStream (options) {
       else if (_.isFunction(options.saveAs)) {
         options.saveAs(__file, function (err, fdFromUserland){
           if (err) { return cb(err); }
-          
+
           if (!_.isString(fdFromUserland)) {
             return cb(new Error('The `saveAs` function triggered its callback, but did not send back a valid string as the 2nd argument.  Instead, got: '+util.inspect(fdFromUserland, {depth:null})+''));
           }
-          
+
           return cb(undefined, fdFromUserland);
         });//</saveAs>
       }
@@ -47,7 +47,7 @@ module.exports = function buildRenamerStream (options) {
         return cb(undefined, UUIDGenerator()+ path.extname(__file.filename));
       }
     })(function (err, basename) {
-      if (err) return next(err);
+      if (err) { return next(err); }
 
       __file.fd = basename;
       if (_.isString(options.dirname)) {

@@ -8,7 +8,7 @@ var debug = require('debug')('skipper');
 
 
 module.exports = function onNewDataRequested(numBytesRequested) {
-  if (numBytesRequested === 0) return;
+  if (numBytesRequested === 0) { return; }
 
   // <todo>
   // re: line 70 of `prototype.writeFile.js`:
@@ -22,5 +22,5 @@ module.exports = function onNewDataRequested(numBytesRequested) {
 
   // If we are a no-op Upstream, push `null` (ending the pipe) as soon
   // as something tries to read us.
-  if (this.isNoop) return this.noMoreFiles();
+  if (this.isNoop) { return this.noMoreFiles(); }
 };

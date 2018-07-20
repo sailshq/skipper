@@ -7,7 +7,7 @@ var path = require('path');
 var util = require('util');
 var log = require('../logger');
 var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
-var r_buildRenamerStream = require('./build-renamer-stream');
+var buildRenamerStream = require('./build-renamer-stream');
 var debug = require('debug')('skipper');
 var Writable = require('stream').Writable; // (for the leaky pipe)
 
@@ -42,7 +42,6 @@ var Writable = require('stream').Writable; // (for the leaky pipe)
 
 module.exports = function upload (opts, _cb) {
   var self = this;
-  var USAGE = '.upload([receiver] [,callback])';
 
   // If first parameter is the callback-function not a `receiver__`
   if (!arguments[1] && typeof arguments[0] === 'function') {
@@ -75,7 +74,7 @@ module.exports = function upload (opts, _cb) {
   // Ensure callback exists and can only be triggered once
   var cbTriggered;
   var cb = function (err, files){
-    if (cbTriggered) return;
+    if (cbTriggered) { return; }
     cbTriggered = true;
 
     if (typeof _cb === 'function') {
@@ -168,7 +167,7 @@ module.exports = function upload (opts, _cb) {
   // in the revised spot.  Then when skipper calls the .upload() callback, it will
   // transparently pass down the updated `fd` in the metadata object for that uploaded
   // file.
-  var __renamer__ = r_buildRenamerStream({
+  var __renamer__ = buildRenamerStream({
     saveAs: opts.saveAs,
     dirname: opts.dirname,
     log: log

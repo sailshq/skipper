@@ -3,7 +3,6 @@
  */
 
 var _ = require('@sailshq/lodash');
-var log = require('../logger');
 var debug = require('debug')('skipper');
 
 
@@ -23,7 +22,7 @@ module.exports = function noMoreFiles () {
   this.push(null);
 
   // Clear all timeouts
-  _.each(this.timeouts, function(timer, key) {
+  _.each(this.timeouts, function(timer, unusedKey) {
     clearTimeout(timer);
   });
 };
