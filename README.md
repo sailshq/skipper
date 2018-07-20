@@ -429,7 +429,7 @@ A **filesystem adapter** is a node module which exports an object with the follo
  `rm()`      | Remove a file or directory from the remote filesystem
  `receive()` | Return an "upstream receiver" which will receive files pumped from an upstream and write them to the remote filesystem
 
-At present, the first three methods are actually only used by skipper-adapter-tests to test your module.  That said, it is unlikely that any of one them involves writing more than ~5-20 lines of code, so it's worth it to create them so you can use the generic test suite.  See [skipper-disk](https://github.com/balderdashy/skipper-disk/blob/master/index.js#L27) or [skipper-s3](https://github.com/balderdashy/skipper-s3/blob/master/index.js#L54) for example implementations.
+The first three methods are also used by tools like `sails-hook-uploads` and `skipper-adapter-tests`.  See [skipper-disk](https://github.com/balderdashy/skipper-disk/blob/master/index.js#L27) or [skipper-s3](https://github.com/balderdashy/skipper-s3/blob/master/index.js#L54) for example implementations.
 
 The most important method is `receive()` -- it builds the upstream receiver which is responsible for writing incoming files to the remote filesystem.
 
