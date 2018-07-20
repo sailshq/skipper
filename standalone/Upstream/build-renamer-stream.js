@@ -4,8 +4,9 @@
 
 var util = require('util');
 var path = require('path');
-var _ = require('@sailshq/lodash');
 var TransformStream = require('stream').Transform;
+var _ = require('@sailshq/lodash');
+var debug = require('debug')('skipper');
 var UUIDGenerator = require('uuid/v4');
 
 
@@ -16,7 +17,6 @@ var UUIDGenerator = require('uuid/v4');
  */
 module.exports = function buildRenamerStream (options) {
   options = options || {};
-  var log = options.log || function noOpLog(){};
 
   var __renamer__ = new TransformStream({objectMode: true});
   __renamer__._transform = function(__file, enctype, next) {
@@ -54,7 +54,7 @@ module.exports = function buildRenamerStream (options) {
         __file.fd = path.join(options.dirname, __file.fd);
       }
 
-      log.color('blue').write('RenamerPump:\n• dirname => %s\n• field => %s\n• fd => %s', __file.dirname, __file.field,__file.fd);
+      debug('RenamerPump:\n• dirname => %s\n• field => %s\n• fd => %s', __file.dirname, __file.field, __file.fd);
       __renamer__.push(__file);
       next();
     });

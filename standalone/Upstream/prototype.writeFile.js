@@ -2,8 +2,8 @@
  * Module dependencies
  */
 
+var debug = require('debug')('skipper');
 var Writable = require('stream').Writable; // (for the leaky pipe)
-var log = require('../logger');
 
 
 module.exports = function writeFile (__filestream) {
@@ -59,7 +59,7 @@ module.exports = function writeFile (__filestream) {
       };
       __filestream.unpipe();
       __filestream.pipe(leaky);
-      log('Piping the not-yet-written bytes from incoming file `' + __filestream.filename + '` to the memory hole..');
+      debug('Piping the not-yet-written bytes from incoming file `' + __filestream.filename + '` to the memory hole..');
     }
 
     hasFileStreamErrorEventFired = true;
@@ -85,6 +85,6 @@ module.exports = function writeFile (__filestream) {
   // as they arrive.  Not sure if changing this is even preferable...
   // </PERHAPS?>
 
-  log.color('grey').write('Upstream: Pumping incoming file through field `%s`', self.fieldName);
+  debug('Upstream: Pumping incoming file through field `%s`', self.fieldName);
 
 };

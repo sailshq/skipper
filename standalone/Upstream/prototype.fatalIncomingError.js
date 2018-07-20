@@ -2,9 +2,8 @@
  * Module dependencies
  */
 
-var _ = require('@sailshq/lodash');
 var util = require('util');
-var log = require('../logger');
+var _ = require('@sailshq/lodash');
 var debug = require('debug')('skipper');
 
 
@@ -28,14 +27,14 @@ var debug = require('debug')('skipper');
  */
 module.exports = function fatalIncomingError (err) {
 
-  // Log message indicating that we are now aborting/cancelling all
+  // Write a message indicating that we are now aborting/cancelling all
   // future, current, and previously uploaded files from this Upstream.
-  log.color('red').write('Fatal incoming error in Upstream `%s` ::   (source or user may have cancelled the request)',this.fieldName);
-  log.color('red').write(err.toString && err.toString());
-  log.color('red').write('-----------');
-  log(err.code);
-  log('%s - %s', util.inspect(err.message), util.inspect(err.name));
-  log.color('red').write('-----------');
+  debug('Fatal incoming error in Upstream `%s` ::   (source or user may have cancelled the request)',this.fieldName);
+  debug(err.toString && err.toString());
+  debug('-----------');
+  debug(err.code);
+  debug('%s - %s', util.inspect(err.message), util.inspect(err.name));
+  debug('-----------');
 
   // Emit an error event to any of file streams in this Upstream
   // which are still being consumed.

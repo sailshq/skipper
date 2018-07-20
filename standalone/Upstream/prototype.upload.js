@@ -2,14 +2,13 @@
  * Module dependencies
  */
 
-var _ = require('@sailshq/lodash');
-var path = require('path');
 var util = require('util');
-var log = require('../logger');
+var path = require('path');
+var Writable = require('stream').Writable; // (for the leaky pipe)
+var _ = require('@sailshq/lodash');
+var debug = require('debug')('skipper');
 var buildOrNormalizeReceiver = require('./build-or-normalize-receiver');
 var buildRenamerStream = require('./build-renamer-stream');
-var debug = require('debug')('skipper');
-var Writable = require('stream').Writable; // (for the leaky pipe)
 
 
 /**
@@ -137,22 +136,22 @@ module.exports = function upload (opts, _cb) {
   // This should be called when all files in the upstream
   // have been persisted, according to the adapter.
   receiver__.once('finish', function allFilesUploaded() {
-    log.color('grey').write('A receiver is finished writing files from Upstream `' + self.fieldName + '`.');
-    log.color('grey').write('(this doesn\'t necessarily mean any files were actually written...)');
+    debug('A receiver is finished writing files from Upstream `' + self.fieldName + '`.');
+    debug('(this doesn\'t necessarily mean any files were actually written...)');
     cb(null, self.serializeFiles());
   });
 
   // Write stream encountered a fatal error and had to quit early!
   // (some of the files may still have been successfully written, though)
   receiver__.on('error', function unableToUpload(err) {
-    log.color('red').write('A receiver handling Upstream `%s` encountered a write error :', self.fieldName, util.inspect(err));
+    debug('A receiver handling Upstream `%s` encountered a write error :', self.fieldName, util.inspect(err));
 
     // Forcibly end the incoming stream of files on this upstream
     self.fatalIncomingError(err);
 
     // Trigger callback
     cb(err, self.serializeFiles());
-  });
+  });//œ
 
   // Build a renamer stream which will construct an `fd` for each incoming file
   // will use the `saveAs` option, or fallback to a UUID.  Also respects `dirname`
@@ -169,8 +168,7 @@ module.exports = function upload (opts, _cb) {
   // file.
   var __renamer__ = buildRenamerStream({
     saveAs: opts.saveAs,
-    dirname: opts.dirname,
-    log: log
+    dirname: opts.dirname
   });
 
 

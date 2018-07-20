@@ -47,8 +47,6 @@ module.exports = function buildOrNormalizeReceiver (opts) {
     throw err;
   }
 
-  // console.log('receiverOpts:',receiverOpts);
-
   // Determine the file adapter to use
   // (defaults to `DefaultFileAdapter`, defined above in the module dependencies at the top of this file)
   var Adapter = receiverOpts.adapter || DefaultFileAdapter;

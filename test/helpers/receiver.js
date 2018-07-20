@@ -3,7 +3,7 @@
  */
 
 var fsx = require('fs-extra');
-var log = require('../../standalone/logger');
+var log = require('./logger');
 
 
 

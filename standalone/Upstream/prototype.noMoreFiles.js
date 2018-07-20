@@ -17,7 +17,6 @@ var debug = require('debug')('skipper');
  */
 
 module.exports = function noMoreFiles () {
-  // log.color('grey').write('Upstream: No more files will be sent through field `%s`', this.fieldName);
   debug('Upstream: No more files will be sent through field `%s`- clearing timeouts...', this.fieldName);
   this.push(null);
 

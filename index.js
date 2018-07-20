@@ -3,8 +3,8 @@
  */
 
 var _ = require('@sailshq/lodash');
-var toParseMultipartHTTPRequest = require('./lib/multipart');
 var bodyParser = require('body-parser');
+var toParseMultipartHTTPRequest = require('./lib/multipart');
 var Upstream = require('./standalone/Upstream');
 
 // Double-check that a valid Node version with support for streams2
