@@ -217,28 +217,25 @@ It exposes the following adapter-specific options:
 
 
 <!--
-============================================
 
 #### Customizing at-rest filenames for uploads
-
-> TODO: document `saveAs`
+> FUTURE: document `saveAs`
 
 #### Restricting file size
+> FUTURE: document `maxBytes`
 
-> TODO: document `maxBytes`
-
-
-  #### Preventing/allowing uploads of a certain file type
-> TODO
+#### Preventing/allowing uploads of a certain file type
+> FUTURE: Show example of this
 
 #### Compressing uploaded files
-> TODO
+> FUTURE: Show example of this
 
 #### Encrypting uploaded files
-> TODO
+> FUTURE: Show example of this
 
 #### Creating thumbnails for uploaded images
-> TODO
+> FUTURE: Show example of this
+
 -->
 
 ============================================
@@ -433,10 +430,7 @@ The first three methods are also used by tools like `sails-hook-uploads` and `sk
 
 The most important method is `receive()` -- it builds the upstream receiver which is responsible for writing incoming files to the remote filesystem.
 
-
-<!--
- TODO: simplify the API for building receivers- we could make it so you really only need to define the _write() method
--->
+> Note that in future releases of Skipper, the `.receive()` method may be replaced with a simpler alternative.  ([Discuss](https://sailsjs.com/support))
 
 
 ============================================

@@ -6,7 +6,6 @@ var fsx = require('fs-extra');
 var log = require('./logger');
 
 
-
 module.exports = {
 
 
@@ -58,8 +57,6 @@ var blobAdapter = {
 		var id = options.id;
 		var filePath = options.id || '/dev/null';
 
-		// TODO: validate/normalize file path
-
 		return fsx.createWriteStream(filePath);
 	},
 
@@ -67,19 +64,15 @@ var blobAdapter = {
 		var id = options.id;
 		var filePath = id;
 
-		// TODO: validate/normalize file path
-
 		return fsx.createReadStream(filePath, 'utf8');
 	},
 
 	rm: function (options, cb) {
 		var id = options.id;
 		var filePath = options.id || '/dev/null';
-		// TODO: validate/normalize file path
 
 		fsx.remove(filePath, function (err) {
 			if (err) {
-				// TODO: normalize error
 				return cb(err);
 			}
 			return cb();

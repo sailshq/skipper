@@ -1,6 +1,5 @@
 var _ = require('@sailshq/lodash');
 
-// todo rip this out (use the debug module)
 
 var logger;
 if (_.isString(process.env.DEBUG) && process.env.DEBUG.match('skipper')) {
