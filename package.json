@@ -2,7 +2,7 @@
   "name": "skipper",
   "version": "0.8.5",
   "description": "Bodyparser for Express/Sails. Exposes simple API for streaming multiple files to disk, S3, etc. without buffering to a .tmp directory.",
-  "main": "index.js",
+  "main": "lib/skipper.js",
   "directories": {},
   "scripts": {
     "lint": "eslint . --max-warnings=0 --ignore-pattern 'test/' && echo '✔  Your code looks good.'",
