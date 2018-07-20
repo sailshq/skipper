@@ -18,7 +18,8 @@ if (global.FILE_PARSER_LOGGER_ENABLED) {
         console.log.apply(console,
           _.reduce(Array.prototype.slice.call(arguments), function (m,v) {
             try {
-              m.push(v[color]);
+              // FUTURE: bring back colors using chalk or better yet just deprecate this because it's not useful
+              m.push(v);
             }
             catch(e) { m.push(v); }
             return m;

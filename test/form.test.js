@@ -93,7 +93,7 @@ xdescribe('multipart form upload', function() {
       async.auto({
         formClosed: function(cb) {
           form.on('close', function() {
-            log('Form: emitted `close`'.bold.grey);
+            log('Form: emitted `close`');
             cb();
           });
         },
@@ -105,7 +105,7 @@ xdescribe('multipart form upload', function() {
             var size = part.byteCount - part.byteOffset;
             var name = part.filename;
 
-            log(('Form: received part: ' + name + ' with ' + size + ' bytes').grey);
+            log(('Form: received part: ' + name + ' with ' + size + ' bytes'));
 
             // Add '*' event to part stream to allow us to tap in
             // and watch all events. (for testing only)
@@ -125,14 +125,14 @@ xdescribe('multipart form upload', function() {
 
               // Simulate a delayed write
               setTimeout(function() {
-                log('Wrote chunk'.grey);
+                log('Wrote chunk');
                 next();
               }, 150);
             };
             part.pipe(box);
 
             box.on('finish', function() {
-              log('File written successfully.'.grey);
+              log('File written successfully.');
               cb();
             });
 
@@ -158,7 +158,7 @@ xdescribe('multipart form upload', function() {
       }, function allDone(err) {
         if (err) res.send(500, err);
         res.sendStatus(200);
-        log('All files uploaded.'.grey);
+        log('All files uploaded.');
       });
 
       form.parse(req);

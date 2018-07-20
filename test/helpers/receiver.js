@@ -24,15 +24,15 @@ module.exports = {
 
 		receiver__._write = function onFile (__newFile, encoding, next) {
 
-			log(('Receiver: Received file `'+__newFile.filename+'` from an Upstream.').grey);
+			log('Receiver: Received file `'+__newFile.filename+'` from an Upstream.');
 
 			var outs = blobAdapter.touch({id: options.id});
 			outs.on('finish', function () {
-				log(('Receiver: Finished writing `'+__newFile.filename+'`').grey);
+				log('Receiver: Finished writing `'+__newFile.filename+'`');
 				next();
 			});
 			outs.on('error', function (err) {
-				log(('Receiver: Error writing `'+__newFile.filename+'`:: '+ require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...').red);
+				log(('Receiver: Error writing `'+__newFile.filename+'`:: '+ require('util').inspect(err)+' :: Cancelling upload and cleaning up already-written bytes...'));
 
 				// Garbage-collects the already-written bytes for this file.
 				blobAdapter.rm({id: options.id}, function (rmErr) {

@@ -117,19 +117,19 @@ module.exports = function toParseHTTPBody(options) {
 
     // Try to parse a request that has application/json content type
     JSONBodyParser(req, res, function(err) {
-      if (err) return handleError(err);
+      if (err) { return handleError(err); }
       // If the parser actually ran and did some parsing, then we're done.
       if (req.is('application/json')) {return next();}
       // Otherwise try the URL-encoded parser (application/x-www-form-urlencoded type)
       URLEncodedBodyParser(req, res, function(err) {
-        if (err) return handleError(err);
+        if (err) { return handleError(err); }
         // If the parser actually ran and did some parsing, then we're done.
-        if (req.is('application/x-www-form-urlencoded')) {return next();}
+        if (req.is('application/x-www-form-urlencoded')) { return next(); }
         // Otherwise try the multipart parser
         MultipartBodyParser(req, res, function(err) {
-          if (err) return handleError(err);
+          if (err) { return handleError(err); }
           // If the parser actually ran and did some parsing, then we're done.
-          if (req.is('multipart/form-data')) return next();
+          if (req.is('multipart/form-data')) { return next(); }
 
           /**
            * OK, here's how the re-run of the JSON bodyparser works:
@@ -164,9 +164,9 @@ module.exports = function toParseHTTPBody(options) {
 
             // Proceed, whether or not the body was parsed.
             next();
-          });
-        });
-      });
-    });
-  };
-};
+          });//_∏_
+        });//_∏_
+      });//_∏_
+    });//_∏_
+  };//ƒ(req,res,next)
+};//ƒ(options)
