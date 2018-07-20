@@ -51,7 +51,7 @@
     "fs-extra": "0.30.0",
     "mocha": "3.0.2",
     "request": "2.74.0",
-    "skipper-adapter-tests": "^1.5.8",
+    "skipper-adapter-tests": "^2.0.0",
     "temporary": "0.0.8"
   }
 }
