@@ -1,6 +1,4 @@
-<h1>
-<a href="https://github.com/balderdashy/skipper"><img alt="Skipper logo" src="http://i.imgur.com/P6gptnI.png" title="Skipper"/></a>
-</h1>
+# [![Skipper logo](http://i.imgur.com/P6gptnI.png "Skipper")](https://github.com/balderdashy/skipper)
 
 [![NPM version](https://badge.fury.io/js/skipper.png)](http://badge.fury.io/js/skipper) &nbsp;
 [![Build Status](https://travis-ci.org/balderdashy/skipper.svg?branch=master)](https://travis-ci.org/balderdashy/skipper)  &nbsp;
