@@ -358,7 +358,7 @@ _When a multipart request is received..._
 
 #### What are Upstreams?
 
-An upstream is an [object-mode Readable stream](http://nodejs.org/api/stream.html#stream_object_mode) of [Readable streams](https://nodejs.org/api/stream.html#stream_class_stream_readable).  It's purpose is to pump out incoming files.
+An upstream is an [object-mode Readable stream](http://nodejs.org/api/stream.html#stream_object_mode) of [Readable streams](https://nodejs.org/api/stream.html#stream_class_stream_readable).  Its purpose is to pump out incoming files.
 
 When you call `req.file('foo')`, the upstream for the "foo" parameter in the current request (`req`) is lazy-initialized and returned (subsequent calls to `req.file('foo')` will return the same upstream, calling `req.file('bar')` will return the upstream for "bar", etc.).
 
