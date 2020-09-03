@@ -1,12 +1,12 @@
 {
-  "name": "skipper",
+  "name": "@annoai/skipper",
   "version": "0.9.0-4",
   "description": "Bodyparser for Express/Sails. Exposes simple API for streaming multiple files to disk, S3, etc. without buffering to a .tmp directory.",
   "main": "lib/skipper.js",
   "directories": {},
   "scripts": {
     "lint": "eslint . --max-warnings=0 --ignore-pattern 'test/' && echo '✔  Your code looks good.'",
-    "test": "npm run lint && npm run custom-tests",
+    "test:unit": "npm run lint && npm run custom-tests",
     "custom-tests": "mocha && node -e \"require('skipper-adapter-tests')({module: require('skipper-disk')});\""
   },
   "repository": {
