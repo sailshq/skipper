@@ -11,8 +11,7 @@ var Lifecycle = require('./helpers/lifecycle')
   , toValidateTheHTTPResponse = require('./helpers/toValidateTheHTTPResponse')
   , fsx = require('fs-extra')
   , async = require('async')
-  , { v4: uuidv4 } = require('uuid');
-  // , uuid = require('uuid/v4');
+  , uuidv4 = require('uuid').v4;
 
 
 // Fixtures
