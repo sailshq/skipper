@@ -42,7 +42,7 @@
     "semver": "4.3.6",
     "skipper-disk": "~0.5.6",
     "string_decoder": "0.10.31",
-    "uuid": "3.0.1"
+    "uuid": "7.0.0"
   },
   "devDependencies": {
     "concat-stream": "1.5.2",
