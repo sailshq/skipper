@@ -35,7 +35,7 @@
   "license": "MIT",
   "dependencies": {
     "@sailshq/lodash": "^3.10.3",
-    "async": "2.0.1",
+    "async": "2.6.4",
     "body-parser": "1.18.2",
     "debug": "3.1.0",
     "multiparty": "4.1.3",
