@@ -42,7 +42,7 @@ app.use(require('skipper')());
 
 ## Global options
 
-Skipper accepts several options when it is first instantiated that allow you to configure how it behaves, including various timeouts.  See the [&ldquo;Configuring Skipper&rdquo; docs on sailshs.org](http://sailsjs.com/documentation/reference/configuration/sails-config-http#?configuring-skipper) for more information.
+Skipper accepts several options when it is first instantiated that allow you to configure how it behaves, including various timeouts.  See the [&ldquo;Configuring Skipper&rdquo; docs on sailsjs.com](http://sailsjs.com/documentation/reference/configuration/sails-config-http#?configuring-skipper) for more information.
 
 
 ## Using `req.file(...).upload()`
