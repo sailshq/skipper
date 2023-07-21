@@ -2,7 +2,7 @@
 
 [![NPM version](https://badge.fury.io/js/skipper.png)](http://badge.fury.io/js/skipper) &nbsp;
 [![Build Status](https://travis-ci.org/balderdashy/skipper.svg?branch=master)](https://travis-ci.org/balderdashy/skipper)  &nbsp;
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/balderdashy/sails?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/balderdashy/sails?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 Skipper makes it easy to implement streaming file uploads to disk, S3, or any supported file upload adapters.
@@ -42,7 +42,7 @@ app.use(require('skipper')());
 
 ## Global options
 
-Skipper accepts several options when it is first instantiated that allow you to configure how it behaves, including various timeouts.  See the [&ldquo;Configuring Skipper&rdquo; docs on sailshs.org](http://sailsjs.com/documentation/reference/configuration/sails-config-http#?configuring-skipper) for more information.
+Skipper accepts several options when it is first instantiated that allow you to configure how it behaves, including various timeouts.  See the [&ldquo;Configuring Skipper&rdquo; docs on sailsjs.org](http://sailsjs.com/documentation/reference/configuration/sails-config-http#?configuring-skipper) for more information.
 
 
 ## Using `req.file(...).upload()`
