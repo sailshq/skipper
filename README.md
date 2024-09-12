@@ -112,6 +112,7 @@ req.file('avatar').upload({
   key: 'YOUR_S3_API_KEY',
   secret: 'YOUR_S3_API_SECRET',
   bucket: 'YOUR_S3_BUCKET',
+  token: 'THE_AWS_SESSION_TOKEN_FROM_STS',
   headers: {
     'x-amz-acl': 'YOUR_FILE_PERMISSIONS'
   }
@@ -125,6 +126,7 @@ It exposes the following adapter-specific options:
  key        | ((string))                       | Your AWS "Access Key ID", e.g. `"BZIZIZFFHXR27BFUOZ7"` (_required_)
  secret     | ((string))                       | Your AWS "Secret Access Key", e.g. `"L8ZN3aP1B9qkUgggUnEZ6KzrQJbJxx4EMjNaWy3n"` (_required_)
  bucket     | ((string))                       | The bucket to upload your files into, e.g. `"my_cool_file_uploads"` (_required_)
+ token      | ((string))                       | If you are using [Temporary Security Credentials via AWS Security Token Service](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html) instead of your long-term AWS Access Key, provide the sessionToken in that option, e.g. using `require("aws-sdk").config.credentials.sessionToken`
  endpoint   | ((string))                       | By default all requests will be sent to the global endpoint `s3.amazonaws.com`. But if you want to manually set the endpoint, you can do it with the endpoint option. |
  region     | ((string))                       | The S3 region where the bucket is located, e.g. `"us-west-2"`. Note: If `endpoint` is defined, `region` will be ignored. Defaults to `"us-standard"` |
  headers    | ((object))                       | A set of headers to be added to the upload request.  See the Amazon S3 [PUT Object docs](http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html#RESTObjectPUT-requests) for info about the available headers, and the [canned ACL docs](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl) for a list of access-control settings you can use with the `x-amz-acl` header to specify permissions for your uploaded files
