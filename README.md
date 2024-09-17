@@ -151,17 +151,20 @@ $ npm install skipper-gridfs --save
 req.file('avatar').upload({
   // ...any other options here...
   adapter: require('skipper-gridfs'),
-  uri: 'mongodb://[username:password@]host1[:port1][/[database[.bucket]]'
+  uri: 'mongodb://[username:password@]host1[:port1][/[database]'
 }, ...);
 ```
 
 It exposes the following adapter-specific options:
 
- Option    | Type                             | Description
- --------- | -------------------------------- | --------------
- uri       | ((string))                       | the MongoDB database where uploaded files should be stored (using [mongo client URI syntax](http://api.mongodb.org/java/current/com/mongodb/MongoClientURI.html)) <br/> e.g. `mongodb://jimmy:j1mtr0n1xx@mongo.jimmy.com:27017/coolapp.avatar_uploads`
 
-> **Note:** As of `skipper-gridfs@0.5.3`, this adapter [does not currently support Node versions >= v4.0](https://gitter.im/balderdashy/sails?at=56a737d0c54bc2bf180c0d06).
+| Option          | Type       | Details                                                                                                                                                                                                 |
+| --------------- | :--------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `uri`           | ((string)) | URI to connect to Mongo instance, e.g. `mongodb://username:password@localhost:27107/databasename`.<br/> (Check [mongo client URI syntax](https://docs.mongodb.com/manual/reference/connection-string)). |
+| `bucketOptions` | ((object)) | An optional parameter that matches the GridFSBucket options (Check [mongo gridfs bucket options](http://mongodb.github.io/node-mongodb-native/3.1/api/GridFSBucket.html)).                              |
+| `mongoOptions`  | ((object)) | An optional paramter that matches the MongoClient.connect options (Check [mongo client options](http://mongodb.github.io/node-mongodb-native/3.1/api/MongoClient.html#.connect)).                       |
+
+> **Note:** As of `skipper-gridfs@1.0.0`, this adapter does not currently support Node versions <= v4.0.
 
 
 #### Uploading files to Openstack Swift
