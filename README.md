@@ -214,6 +214,43 @@ It exposes the following adapter-specific options:
  container  | ((string))                       | The container to upload your files into, e.g. `"my_cool_file_uploads"` (_required_)
 
 
+#### Uploading files to FTP File server
+
+```shell
+$ npm install skipper-ftp --save
+```
+
+[skipper-ftp](https://github.com/theo4u/skipper-ftp) This is used to upload files directly to FTP server using [skipper](https://github.com/balderdashy/skipper) and [node-ftp](https://github.com/mscdex/node-ftp)
+
+```javascript
+req.file('file')
+.upload({
+  adapter: require('skipper-ftp'),
+  host: 'ftp.localhost',
+  port:'21',
+  username:'root',
+  password:'root',
+  path:'/'
+}, function whenDone(err, uploadedFiles) {
+  if (err) return res.negotiate(err);
+  else return res.ok({
+    files: uploadedFiles
+  });
+});
+```
+
+| Option        | Type       | Details |
+|-----------    |:----------:|---------|
+| `host`         | ((string)) | An optional parameter of the host or domain/IP. Default value: `localhost`|
+| `port` | ((number)) | An optional parameter for port. Default value :`21`|
+| `path` | ((string)) | An optional parameter if you wish to save the file in a particular path in your file server. Default value :`/`|
+| `user` | ((string)) | An optional parameter for authentication. Default value :`root`|
+| `password` | ((string)) | An optional parameter for authentication. Default value :`root`|
+
+check  [node-ftp](https://github.com/mscdex/node-ftp#methods) options for more
+
+
+
 <!--
 
 #### Customizing at-rest filenames for uploads
